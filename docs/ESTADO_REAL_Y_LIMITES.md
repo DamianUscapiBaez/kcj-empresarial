@@ -5,8 +5,8 @@
 ## Verificado en este entorno
 
 - Paquete de código fuente nativo, sin HTML independiente, Python, BAT o PS1.
-- 31 modelos definidos en Prisma, 10 enumeraciones, migración SQL inicial y seed idempotente.
-- 54 pruebas unitarias/estructurales ejecutadas con éxito.
+- 33 modelos definidos en Prisma, 10 enumeraciones, migración SQL inicial + migración aditiva de auditoría y seed idempotente.
+- 86 pruebas unitarias/estructurales ejecutadas con éxito.
 - Archivos TS/TSX analizados sintácticamente con TypeScript global, sin errores de análisis.
 - Catálogo de 17 módulos del Documento Maestro + Almacén y Herramientas.
 - Curso ficticio de inspección preoperacional V17 extraído y separado de datos de producción.

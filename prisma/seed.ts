@@ -16,8 +16,8 @@ async function run():Promise<void> {
     if (existing.role !== Role.ADMIN) throw new Error("El login ya existe con otro cargo: intervención manual requerida.");
     console.log("Administrador ya existe; no se sobrescribe su contraseña ni la información.");
   } else {
-    await prisma.user.create({data:{login,displayName:name,passwordHash:hash(password),role:Role.ADMIN,active:true,mustChangePassword:true}});
-    console.log("Cuenta inicial creada, debe cambiar la contraseña al ingresar.");
+    await prisma.user.create({data:{login,displayName:name,passwordHash:hash(password),role:Role.ADMIN,active:true,mustChangePassword:false}});
+    console.log("Cuenta inicial creada. Puede ingresar con la contraseña configurada.");
   }
   console.log(`Catálogos de referencia leídos desde JSON (no importados como filas): ${catalogos.empresa}; ${catalogos.areas.length} áreas. Los catálogos no crean trabajadores ni unidades ficticias.`);
 }

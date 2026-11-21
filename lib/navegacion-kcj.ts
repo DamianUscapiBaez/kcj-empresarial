@@ -12,7 +12,7 @@ const sections = [
  {title:"Administración de plataforma", slugs:["acceso"]},
 ] as const satisfies readonly {title:string;slugs:readonly ModuleSlug[]}[];
 
-export function navigationForRole(role:Role){
+export function navigationForRole(role:Role|Role[]){
  return sections.map(section=>({
   title:section.title,
   modules:section.slugs.filter(slug=>canAccess(role,slug)).map(slug=>modules.find(m=>m.slug===slug)!),

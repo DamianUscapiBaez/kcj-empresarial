@@ -86,6 +86,7 @@ model Worker {
   enrollments Enrollment[]
   contracts Contract[]
   safetyCases SafetyCase[]
+  pauses ActivePause[]
   @@index([area,active])
 }
 
@@ -100,13 +101,26 @@ model User {
   passwordHash String
   role Role
   active Boolean @default(true)
-  mustChangePassword Boolean @default(true)
+  mustChangePassword Boolean @default(false)
   failedLogins Int @default(0)
   lockedUntil DateTime?
   sessions Session[]
+  grants UserRoleGrant[]
   receipts Receipt[]
   audit AuditLog[]
   createdAt DateTime @default(now())
+}
+
+model UserRoleGrant {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields:[userId], references:[id], onDelete:Cascade)
+  role Role
+  grantedBy String
+  grantedAt DateTime @default(now())
+  revokedAt DateTime?
+  @@unique([userId,role])
+  @@index([userId,revokedAt])
 }
 
 model Session {
@@ -161,6 +175,7 @@ model Vehicle {
   services Service[]
   cases SafetyCase[]
   inspections Inspection[]
+  pauses ActivePause[]
   @@index([ownerId])
 }
 
@@ -252,6 +267,7 @@ model Service {
   startsAt DateTime
   endsAt DateTime
   mineRequired Boolean @default(false)
+  mineScope String?
   workerId String?
   worker Worker? @relation(fields:[workerId],references:[id])
   vehicleId String?
@@ -262,6 +278,7 @@ model Service {
   createdAt DateTime @default(now())
   events ServiceEvent[]
   timesheets Timesheet[]
+  pauses ActivePause[]
   @@index([workerId,startsAt,endsAt])
   @@index([vehicleId,startsAt,endsAt])
 }
@@ -304,6 +321,8 @@ model Timesheet {
   hours Float
   status ApprovalStatus @default(PENDIENTE)
   source String
+  // Área al momento de registrar; null en tareos anteriores a esta migración.
+  areaAtEntry String?
   reason String?
   reviewerId String?
   createdAt DateTime @default(now())
@@ -322,6 +341,7 @@ model SafetyCase {
   worker Worker? @relation(fields:[workerId],references:[id])
   vehicleId String?
   vehicle Vehicle? @relation(fields:[vehicleId],references:[id])
+  evidenceKey String?
   closureReason String?
   closedBy String?
   closedAt DateTime?
@@ -363,10 +383,26 @@ model Course {
   hours Float
   passingScore Int @default(80)
   maxAttempts Int @default(2)
+  modality TrainingModality @default(PRESENCIAL)
+  minVirtualMinutes Int @default(5)
   published Boolean @default(false)
+  archivedAt DateTime?
+  seriesKey String?
+  requireMaterial Boolean @default(false)
+  requiresExam Boolean @default(true)
+  materials CourseMaterial[]
   createdAt DateTime @default(now())
   questions Question[]
   enrollments Enrollment[]
+}
+
+model CourseMaterial {
+  id String @id @default(cuid())
+  courseId String
+  course Course @relation(fields:[courseId],references:[id],onDelete:Restrict)
+  title String
+  content String
+  createdAt DateTime @default(now())
 }
 
 model Question {
@@ -394,6 +430,15 @@ model Enrollment {
   workerId String
   worker Worker @relation(fields:[workerId],references:[id])
   attendedAt DateTime?
+  attendanceStatus AttendanceStatus @default(PENDIENTE)
+  attendanceRecordedAt DateTime?
+  attendanceRecordedBy String?
+  attendanceEvidenceKey String? @unique
+  absenceReason String?
+  virtualStartedAt DateTime?
+  virtualCompletedAt DateTime?
+  materialValidatedAt DateTime?
+  cycle Int @default(1)
   approvedAt DateTime?
   score Int?
   certificateCode String? @unique
@@ -406,6 +451,7 @@ model QuizAttempt {
   enrollmentId String
   enrollment Enrollment @relation(fields:[enrollmentId],references:[id])
   sequence Int
+  cycle Int @default(1)
   score Int
   passed Boolean
   responses Json
@@ -474,10 +520,24 @@ model CustodyEvent {
   party String
   condition String
   evidenceKey String?
+  technicalVerifiedAt DateTime?
+  technicalVerifiedBy String?
+  safetyVerifiedAt DateTime?
+  safetyVerifiedBy String?
   at DateTime @default(now())
   recordedBy String
 }
 
+enum TrainingModality {
+  PRESENCIAL
+  VIRTUAL
+}
+enum AttendanceStatus {
+  PENDIENTE
+  ASISTIO
+  NO_ASISTIO
+  JUSTIFICADO
+}
 enum EvidencePurpose {
   FLOTA
   MANTENIMIENTO
@@ -486,6 +546,7 @@ enum EvidencePurpose {
   RRHH
   CUSTODIA
   CONNECT
+  AULA
 }
 
 model EvidenceAsset {
@@ -498,4 +559,32 @@ model EvidenceAsset {
   verifiedAt DateTime?
   createdAt DateTime @default(now())
   @@index([uploadedBy,createdAt])
+}
+
+// Pausas diarias: una ficha central por fecha con múltiples registros por conductor.
+// Foto obligatoria para una pausa realizada; motivo para una pausa omitida.
+model ActivePause {
+  id String @id @default(cuid())
+  clientEventId String @unique
+  workerId String
+  worker Worker @relation(fields:[workerId], references:[id])
+  serviceId String?
+  service Service? @relation(fields:[serviceId], references:[id])
+  vehicleId String?
+  vehicle Vehicle? @relation(fields:[vehicleId], references:[id])
+  evidenceKey String? @unique
+  status String // EN_CURSO, FINALIZADA, NO_REALIZADA
+  plannedMinutes Int @default(5)
+  startedAt DateTime?
+  dueAt DateTime?
+  completedAt DateTime?
+  missedReason String?
+  registeredBy String
+  workerName String
+  unitCode String?
+  plate String?
+  serviceCode String?
+  createdAt DateTime @default(now())
+  @@index([workerId,createdAt])
+  @@index([serviceId,createdAt])
 }

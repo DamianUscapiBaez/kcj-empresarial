@@ -30,7 +30,7 @@ const roles: Record<ModuleSlug,readonly Role[]> = {
  aula:["ADMIN","INSTRUCTOR","SSOMA","SALUD","RRHH","OPERACIONES","JEFE_OPERACIONES","GERENCIA","CONDUCTOR"],
  rrhh:["ADMIN","RRHH","GERENCIA"],salud:["ADMIN","SALUD"],propietarios:["ADMIN","OPERACIONES","JEFE_OPERACIONES","PROPIETARIO"],
  comunicaciones:["ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","CONDUCTOR","RRHH","SALUD","MANTENIMIENTO","HOMOLOGACION","INSTRUCTOR","ALMACEN","PROPIETARIO"],
- reportes:["ADMIN","GERENCIA","JEFE_OPERACIONES","SSOMA","RRHH"], custodia:["ADMIN","OPERACIONES","JEFE_OPERACIONES","MANTENIMIENTO"],
+ reportes:["ADMIN","GERENCIA","JEFE_OPERACIONES","SSOMA","RRHH"], custodia:["ADMIN","OPERACIONES","JEFE_OPERACIONES","MANTENIMIENTO","SSOMA"],
  almacen:["ADMIN","ALMACEN","OPERACIONES","JEFE_OPERACIONES","RRHH","MANTENIMIENTO","GERENCIA","SSOMA"]
 };
-export function canAccess(role:Role,slug:ModuleSlug):boolean{return roles[slug].includes(role);}
+export function canAccess(role:Role|Role[],slug:ModuleSlug):boolean{return (Array.isArray(role)?role:[role]).some(r=>roles[slug].includes(r));}

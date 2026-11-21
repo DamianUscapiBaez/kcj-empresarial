@@ -1,6 +1,6 @@
 {
   "name": "kcj-control-empresarial",
-  "version": "1.0.0-piloto",
+  "version": "1.0.4-piloto-claves-administradas",
   "private": true,
   "scripts": {
     "dev": "next dev",
