@@ -1,0 +1,28 @@
+{
+  "source": "Ejemplo ficticio V17; no es curso oficial",
+  "course": {
+    "title": "Inspección preoperacional · práctica SSOMA",
+    "description": "Curso ilustrativo. No reemplaza la capacitación oficial.",
+    "area": "SSOMA",
+    "hours": 1.5,
+    "passingScore": 70,
+    "questions": [
+      {
+        "text": "¿La alarma audible de retroceso debe comprobarse por separado de la luz?",
+        "options": [
+          "Sí, ambas comprobaciones son distintas",
+          "No, basta con la luz"
+        ],
+        "correct": 0
+      },
+      {
+        "text": "¿Qué debe hacerse ante un extintor vencido?",
+        "options": [
+          "Reportarlo y aplicar el procedimiento SSOMA",
+          "Continuar sin registrar"
+        ],
+        "correct": 0
+      }
+    ]
+  }
+}

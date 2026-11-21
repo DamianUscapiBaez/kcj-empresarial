@@ -1,0 +1,7 @@
+{
+  "empresa":"KCJ PERÚ S.A.C.",
+  "areas":["Administración","Operaciones","Jefatura de Operaciones","SSOMA","Mantenimiento","Recursos Humanos","Salud Ocupacional","Homologación","Almacén","Gerencia"],
+  "categoriasSSOMA":["Incidente","Accidente","Condición insegura","Inspección","IPERC","Observación"],
+  "tiposUnidad":["Camioneta","Microbús","Minibús","Ómnibus"],
+  "rutas":"Registrar únicamente rutas verificadas por Operaciones. No se crean rutas ficticias."
+}

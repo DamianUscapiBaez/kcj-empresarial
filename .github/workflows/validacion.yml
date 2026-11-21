@@ -1,0 +1,51 @@
+name: KCJ - Compilación y PostgreSQL
+on:
+  push:
+  pull_request:
+jobs:
+  build-and-db:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: kcj_test
+          POSTGRES_USER: kcj
+          POSTGRES_PASSWORD: test_only_not_prod
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U kcj -d kcj_test"
+          --health-interval 10s --health-timeout 5s --health-retries 5
+    env:
+      DATABASE_URL: postgresql://kcj:test_only_not_prod@localhost:5432/kcj_test?schema=public
+      KCJ_ADMIN_DOCUMENT: TESTADMIN000
+      KCJ_ADMIN_NAME: Administrador de pruebas
+      KCJ_ADMIN_PASSWORD: test-password-only-not-for-production-2026
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar dependencias
+        run: npm install --no-audit --no-fund
+      - name: Validar Prisma y migración real
+        run: |
+          npx prisma validate
+          npx prisma generate
+          npx prisma migrate deploy
+      - name: Seed idempotente y conteos PostgreSQL
+        run: |
+          npm run db:seed
+          npm run db:seed
+          npm run db:verify
+      - name: Integración real de 7 procesos con PostgreSQL y rollback
+        env:
+          KCJ_INTEGRATION_TEST_DB: "1"
+        run: npm run db:integration
+      - name: Reglas unitarias
+        run: npm test
+      - name: Tipado estricto y compilación Next.js
+        run: |
+          npm run typecheck
+          npm run build

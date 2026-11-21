@@ -1,0 +1,2 @@
+"use client";
+export default function DashboardError({error,reset}:{error:Error&{digest?:string};reset:()=>void}){return <div role="alert" className="card space-y-3"><h2 className="font-bold text-red-700">No se pudo completar esta operación</h2><p className="text-sm">Verifica los datos y permisos. Si persiste, comunica a TI el identificador del error para revisar los registros del servidor.</p>{error.digest&&<p className="font-mono text-xs text-slate-500">Referencia: {error.digest}</p>}<button onClick={reset} className="btn">Reintentar</button></div>}

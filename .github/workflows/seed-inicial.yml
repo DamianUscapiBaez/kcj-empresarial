@@ -1,0 +1,21 @@
+name: KCJ - Crear administrador inicial (una sola vez)
+on:
+  workflow_dispatch:
+jobs:
+  init:
+    environment: kcj-produccion
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      KCJ_ADMIN_DOCUMENT: ${{ secrets.KCJ_ADMIN_DOCUMENT }}
+      KCJ_ADMIN_NAME: ${{ secrets.KCJ_ADMIN_NAME }}
+      KCJ_ADMIN_PASSWORD: ${{ secrets.KCJ_ADMIN_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npx prisma migrate deploy
+      - name: Crear usuario y comprobar la base
+        run: npm run db:seed && npm run db:verify && npm run db:check-login

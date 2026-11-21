@@ -1,0 +1,501 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  GERENCIA
+  OPERACIONES
+  JEFE_OPERACIONES
+  SSOMA
+  MANTENIMIENTO
+  RRHH
+  SALUD
+  HOMOLOGACION
+  INSTRUCTOR
+  ALMACEN
+  CONDUCTOR
+  PROPIETARIO
+}
+enum CaseStatus {
+  ABIERTO
+  EN_ACCION
+  VERIFICADO
+  CERRADO
+}
+enum ActionStatus {
+  PENDIENTE
+  EJECUTADA
+  VERIFICADA
+}
+enum WorkStatus {
+  ABIERTA
+  EN_PROCESO
+  LIBERADA
+}
+enum RosterStatus {
+  BORRADOR
+  PUBLICADO
+}
+enum RosterKind {
+  GUARDIA
+  DESCANSO
+}
+enum ServiceStatus {
+  PLANIFICADO
+  ASIGNADO
+  EN_CURSO
+  FINALIZADO
+  CANCELADO
+}
+enum FitnessStatus {
+  APTO
+  RESTRINGIDO
+  NO_APTO
+  PENDIENTE
+}
+enum ApprovalStatus {
+  PENDIENTE
+  VALIDADO
+  OBSERVADO
+}
+
+model Worker {
+  id String @id @default(cuid())
+  document String @unique
+  name String
+  job String
+  area String
+  active Boolean @default(true)
+  license String?
+  licenseExpires DateTime?
+  entryDate DateTime?
+  createdAt DateTime @default(now())
+  user User?
+  rosters Roster[]
+  services Service[]
+  timesheets Timesheet[]
+  fitness MedicalFitness?
+  clearances Clearance[]
+  inspections Inspection[]
+  enrollments Enrollment[]
+  contracts Contract[]
+  safetyCases SafetyCase[]
+  @@index([area,active])
+}
+
+model User {
+  id String @id @default(cuid())
+  workerId String? @unique
+  ownerId String?
+  owner Owner? @relation(fields:[ownerId],references:[id])
+  worker Worker? @relation(fields:[workerId],references:[id])
+  login String @unique
+  displayName String
+  passwordHash String
+  role Role
+  active Boolean @default(true)
+  mustChangePassword Boolean @default(true)
+  failedLogins Int @default(0)
+  lockedUntil DateTime?
+  sessions Session[]
+  receipts Receipt[]
+  audit AuditLog[]
+  createdAt DateTime @default(now())
+}
+
+model Session {
+  id String @id @default(cuid())
+  userId String
+  tokenHash String @unique
+  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+  @@index([userId,expiresAt])
+}
+
+model AuditLog {
+  id String @id @default(cuid())
+  userId String?
+  user User? @relation(fields:[userId],references:[id],onDelete:SetNull)
+  entity String
+  entityId String
+  action String
+  payload Json?
+  at DateTime @default(now())
+  @@index([entity,entityId,at])
+}
+
+model Owner {
+  id String @id @default(cuid())
+  name String
+  document String @unique
+  contact String?
+  vehicles Vehicle[]
+  users User[]
+}
+
+model Vehicle {
+  id String @id @default(cuid())
+  code String @unique
+  plate String @unique
+  type String
+  make String?
+  model String?
+  year Int?
+  ownerId String?
+  owner Owner? @relation(fields:[ownerId],references:[id])
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
+  documents VehicleDocument[]
+  readings OdometerReading[]
+  workOrders WorkOrder[]
+  clearances Clearance[]
+  custody CustodyEvent[]
+  services Service[]
+  cases SafetyCase[]
+  inspections Inspection[]
+  @@index([ownerId])
+}
+
+model VehicleDocument {
+  id String @id @default(cuid())
+  vehicleId String
+  vehicle Vehicle @relation(fields:[vehicleId],references:[id])
+  kind String
+  reference String?
+  expiresAt DateTime
+  evidenceKey String?
+  verifiedAt DateTime?
+  createdAt DateTime @default(now())
+  @@index([vehicleId,kind,expiresAt])
+}
+
+model OdometerReading {
+  id String @id @default(cuid())
+  vehicleId String
+  vehicle Vehicle @relation(fields:[vehicleId],references:[id])
+  kilometers Int
+  evidenceKey String?
+  at DateTime @default(now())
+  @@index([vehicleId,at])
+}
+
+model WorkOrder {
+  id String @id @default(cuid())
+  vehicleId String
+  vehicle Vehicle @relation(fields:[vehicleId],references:[id])
+  issue String
+  critical Boolean @default(false)
+  status WorkStatus @default(ABIERTA)
+  openedAt DateTime @default(now())
+  releasedAt DateTime?
+  releasedBy String?
+  evidenceKey String?
+  @@index([vehicleId,status])
+}
+
+model Clearance {
+  id String @id @default(cuid())
+  workerId String?
+  worker Worker? @relation(fields:[workerId],references:[id])
+  vehicleId String?
+  vehicle Vehicle? @relation(fields:[vehicleId],references:[id])
+  kind String
+  scope String @default("MINA")
+  validUntil DateTime
+  verified Boolean @default(false)
+  evidenceKey String?
+  createdAt DateTime @default(now())
+  @@index([vehicleId,kind,validUntil])
+  @@index([workerId,kind,validUntil])
+}
+
+model MedicalFitness {
+  id String @id @default(cuid())
+  workerId String @unique
+  worker Worker @relation(fields:[workerId],references:[id])
+  status FitnessStatus
+  validUntil DateTime
+  reviewedBy String
+  reviewedAt DateTime @default(now())
+  // No se guarda historia clínica ni diagnóstico en esta tabla.
+}
+
+model Roster {
+  id String @id @default(cuid())
+  workerId String
+  worker Worker @relation(fields:[workerId],references:[id])
+  kind RosterKind
+  startsAt DateTime
+  endsAt DateTime
+  status RosterStatus @default(BORRADOR)
+  createdBy String
+  publishedBy String?
+  publishedAt DateTime?
+  version Int @default(1)
+  createdAt DateTime @default(now())
+  @@index([workerId,startsAt,endsAt])
+}
+
+model Service {
+  id String @id @default(cuid())
+  code String @unique
+  customer String
+  route String
+  startsAt DateTime
+  endsAt DateTime
+  mineRequired Boolean @default(false)
+  workerId String?
+  worker Worker? @relation(fields:[workerId],references:[id])
+  vehicleId String?
+  vehicle Vehicle? @relation(fields:[vehicleId],references:[id])
+  status ServiceStatus @default(PLANIFICADO)
+  startedAt DateTime?
+  endedAt DateTime?
+  createdAt DateTime @default(now())
+  events ServiceEvent[]
+  timesheets Timesheet[]
+  @@index([workerId,startsAt,endsAt])
+  @@index([vehicleId,startsAt,endsAt])
+}
+
+model ServiceEvent {
+  id String @id @default(cuid())
+  serviceId String
+  service Service @relation(fields:[serviceId],references:[id])
+  clientEventId String @unique
+  type String
+  description String?
+  occurredAt DateTime
+  receivedAt DateTime @default(now())
+  @@index([serviceId,occurredAt])
+}
+
+model Inspection {
+  id String @id @default(cuid())
+  clientEventId String @unique
+  workerId String
+  worker Worker @relation(fields:[workerId],references:[id])
+  vehicleId String
+  vehicle Vehicle @relation(fields:[vehicleId],references:[id])
+  result String
+  checklist Json
+  kilometers Int?
+  evidenceKey String?
+  occurredAt DateTime
+  receivedAt DateTime @default(now())
+}
+
+model Timesheet {
+  id String @id @default(cuid())
+  workerId String
+  worker Worker @relation(fields:[workerId],references:[id])
+  serviceId String?
+  service Service? @relation(fields:[serviceId],references:[id])
+  startsAt DateTime
+  endsAt DateTime
+  hours Float
+  status ApprovalStatus @default(PENDIENTE)
+  source String
+  reason String?
+  reviewerId String?
+  createdAt DateTime @default(now())
+  @@index([workerId,startsAt,endsAt])
+}
+
+model SafetyCase {
+  id String @id @default(cuid())
+  reference String @unique
+  category String
+  severity String
+  title String
+  details String
+  status CaseStatus @default(ABIERTO)
+  workerId String?
+  worker Worker? @relation(fields:[workerId],references:[id])
+  vehicleId String?
+  vehicle Vehicle? @relation(fields:[vehicleId],references:[id])
+  closureReason String?
+  closedBy String?
+  closedAt DateTime?
+  createdAt DateTime @default(now())
+  actions SafetyAction[]
+  @@index([vehicleId,status])
+}
+
+model SafetyAction {
+  id String @id @default(cuid())
+  caseId String
+  safetyCase SafetyCase @relation(fields:[caseId],references:[id])
+  description String
+  responsible String
+  dueAt DateTime
+  status ActionStatus @default(PENDIENTE)
+  evidenceKey String?
+  verifiedBy String?
+  verifiedAt DateTime?
+}
+
+model Contract {
+  id String @id @default(cuid())
+  workerId String
+  worker Worker @relation(fields:[workerId],references:[id])
+  kind String
+  startsAt DateTime
+  endsAt DateTime?
+  evidenceKey String?
+  createdAt DateTime @default(now())
+}
+
+model Course {
+  id String @id @default(cuid())
+  title String
+  area String @default("SSOMA")
+  description String
+  version Int @default(1)
+  hours Float
+  passingScore Int @default(80)
+  maxAttempts Int @default(2)
+  published Boolean @default(false)
+  createdAt DateTime @default(now())
+  questions Question[]
+  enrollments Enrollment[]
+}
+
+model Question {
+  id String @id @default(cuid())
+  courseId String
+  course Course @relation(fields:[courseId],references:[id],onDelete:Restrict)
+  statement String
+  position Int
+  choices Choice[]
+  @@unique([courseId,position])
+}
+
+model Choice {
+  id String @id @default(cuid())
+  questionId String
+  question Question @relation(fields:[questionId],references:[id],onDelete:Restrict)
+  text String
+  correct Boolean @default(false)
+}
+
+model Enrollment {
+  id String @id @default(cuid())
+  courseId String
+  course Course @relation(fields:[courseId],references:[id])
+  workerId String
+  worker Worker @relation(fields:[workerId],references:[id])
+  attendedAt DateTime?
+  approvedAt DateTime?
+  score Int?
+  certificateCode String? @unique
+  attempts QuizAttempt[]
+  @@unique([courseId,workerId])
+}
+
+model QuizAttempt {
+  id String @id @default(cuid())
+  enrollmentId String
+  enrollment Enrollment @relation(fields:[enrollmentId],references:[id])
+  sequence Int
+  score Int
+  passed Boolean
+  responses Json
+  createdAt DateTime @default(now())
+  @@unique([enrollmentId,sequence])
+}
+
+model Announcement {
+  id String @id @default(cuid())
+  title String
+  body String
+  targetRole Role?
+  version Int @default(1)
+  publishedAt DateTime @default(now())
+  receipts Receipt[]
+  revisions AnnouncementRevision[]
+}
+
+model AnnouncementRevision {
+  id String @id @default(cuid())
+  announcementId String
+  announcement Announcement @relation(fields:[announcementId],references:[id])
+  version Int
+  title String
+  body String
+  modifiedBy String
+  at DateTime @default(now())
+  @@unique([announcementId,version])
+}
+
+model Receipt {
+  id String @id @default(cuid())
+  announcementId String
+  announcement Announcement @relation(fields:[announcementId],references:[id])
+  userId String
+  user User @relation(fields:[userId],references:[id])
+  version Int
+  at DateTime @default(now())
+  @@unique([announcementId,userId,version])
+}
+
+model InventoryItem {
+  id String @id @default(cuid())
+  sku String @unique
+  name String
+  unit String
+  quantity Int @default(0)
+  moves StockMovement[]
+}
+
+model StockMovement {
+  id String @id @default(cuid())
+  itemId String
+  item InventoryItem @relation(fields:[itemId],references:[id])
+  delta Int
+  reason String
+  actorId String
+  createdAt DateTime @default(now())
+}
+
+model CustodyEvent {
+  id String @id @default(cuid())
+  vehicleId String
+  vehicle Vehicle @relation(fields:[vehicleId],references:[id])
+  kind String
+  party String
+  condition String
+  evidenceKey String?
+  at DateTime @default(now())
+  recordedBy String
+}
+
+enum EvidencePurpose {
+  FLOTA
+  MANTENIMIENTO
+  SSOMA
+  HOMOLOGACION
+  RRHH
+  CUSTODIA
+  CONNECT
+}
+
+model EvidenceAsset {
+  id String @id @default(cuid())
+  key String @unique
+  uploadedBy String
+  filename String
+  contentType String
+  purpose EvidencePurpose
+  verifiedAt DateTime?
+  createdAt DateTime @default(now())
+  @@index([uploadedBy,createdAt])
+}
