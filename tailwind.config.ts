@@ -1,2 +1,27 @@
 import type { Config } from "tailwindcss";
-export default {content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],theme:{extend:{colors:{navy:"#10263C",marine:"#18364F",gold:"#D69C3A",cloud:"#F3F6F9"}}},plugins:[]} satisfies Config;
+
+const config: Config = {
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}"
+  ],
+  theme: {
+    extend: {
+      colors: {
+        kcj: {
+          paper: "#F8F9FC",
+          red: "#A6192E",
+          redDark: "#731022",
+          charcoal: "#263238"
+        }
+      },
+      boxShadow: {
+        pane: "0 4px 20px rgba(15, 23, 42, 0.06)"
+      }
+    }
+  },
+  plugins: []
+};
+
+export default config;
