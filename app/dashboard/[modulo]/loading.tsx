@@ -1,1 +1,1 @@
-export default function Loading(){return <div role="status" className="card">Cargando módulo...</div>}
+export default function Loading(){return <div role="status" className="space-y-4 animate-pulse"><div className="h-24 rounded-2xl bg-slate-200"/><div className="h-60 rounded-2xl bg-slate-200"/><span className="sr-only">Cargando módulo...</span></div>}

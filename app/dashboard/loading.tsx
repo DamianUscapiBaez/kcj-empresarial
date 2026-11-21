@@ -1,1 +1,1 @@
-export default function Loading(){return <div role="status" className="card animate-pulse text-slate-500">Cargando información autorizada...</div>}
+export default function Loading(){return <div role="status" className="space-y-4 animate-pulse"><div className="h-28 rounded-2xl bg-slate-200"/><div className="grid gap-4 sm:grid-cols-3">{[1,2,3].map(n=><div key={n} className="h-32 rounded-2xl bg-slate-200"/>)}</div><span className="sr-only">Cargando información autorizada...</span></div>}
