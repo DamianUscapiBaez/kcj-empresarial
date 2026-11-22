@@ -4,16 +4,22 @@ import {prisma} from "@/lib/prisma";
 import {modules,canAccess,type ModuleSlug} from "@/lib/modulos";
 import {navigationForRole,labelsNavegacion} from "@/lib/navegacion-kcj";
 import {requireUser} from "@/lib/auth";
+import {panelActual} from "@/lib/panel-sesion";
+import {panelesDisponibles,rolesParaPanel} from "@/lib/paneles-kcj";
+import {redirect} from "next/navigation";
 import {UIIcon,moduleIcon} from "@/components/ui/ModuleIcon";
 
 const highlights:Record<ModuleSlug,string>={
- acceso:"Perfiles y seguridad",personal:"Áreas de trabajo y ficha única",operaciones:"Servicios y movimientos",roster:"Programación de guardias",connect:"Mis actividades",flota:"Control de unidades",mantenimiento:"Órdenes y liberaciones",ssoma:"Hallazgos y prevención",homologacion:"Habilitaciones externas",tareo:"Horas efectivas",aula:"Formación y evaluaciones",rrhh:"Gestión laboral",salud:"Aptitud operacional",propietarios:"Mis unidades",comunicaciones:"Avisos y confirmaciones",reportes:"Indicadores e informes",custodia:"Actas y devoluciones",almacen:"Inventario compartido",
+ acceso:"Perfiles y seguridad",personal:"Áreas de trabajo y ficha única",operaciones:"Servicios y movimientos",roster:"Programación de guardias",connect:"Mis actividades",flota:"Control de unidades",mantenimiento:"Órdenes y liberaciones",ssoma:"Hallazgos y prevención",homologacion:"Habilitaciones externas",tareo:"Horas efectivas",aula:"Formación y evaluaciones","simulacros-tecsup":"Preparación teórica y práctica TECSUP","simulacros-mmg":"Práctica de Manejo a la Izquierda",rrhh:"Gestión laboral",salud:"Aptitud operacional",propietarios:"Mis unidades",comunicaciones:"Avisos y confirmaciones",reportes:"Indicadores e informes",custodia:"Actas y devoluciones",almacen:"Inventario compartido",
 };
 export default async function Dashboard(){
  const user=await requireUser();
+ const panel=await panelActual(user);
+ if(!panel)redirect("/seleccionar-panel");
+ if(panel==="conductor")redirect("/dashboard/connect");
  // El menú siempre debe renderizar aunque falle un indicador secundario.
  // Un error de PostgreSQL no debe presentarse como si hubiera cero registros.
- const showStats=!["CONDUCTOR","PROPIETARIO","SALUD"].includes(user.role);
+ const showStats=rolesParaPanel(user,panel).some(r=>!["CONDUCTOR","PROPIETARIO","SALUD"].includes(r));
  const results=showStats?await Promise.allSettled([
   prisma.worker.count(),prisma.vehicle.count(),prisma.service.count(),
   prisma.safetyCase.count({where:{status:{not:"CERRADO"}}}),
@@ -32,7 +38,9 @@ export default async function Dashboard(){
  ];
  const failedMetrics=results.filter(result=>result.status==="rejected").length;
  if(failedMetrics>0)console.error(`[KCJ] Fallaron ${failedMetrics} indicadores del dashboard. Verificar migraciones y conexión de PostgreSQL.`);
- const sections=navigationForRole(rolesActivos(user));
+ const sections=navigationForRole(rolesActivos(user))
+  .map(s=>({...s,modules:panelesDisponibles(user).length===2?s.modules.filter(m=>m.slug!=="connect"):s.modules}))
+  .filter(s=>s.modules.length>0||s.showPausas);
  const date=new Intl.DateTimeFormat("es-PE",{timeZone:"America/Lima",weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(new Date());
  const favorite:ModuleSlug[]=["operaciones","roster","tareo","flota","ssoma","aula"];
  const shortcuts=favorite.filter(slug=>canAccess(rolesActivos(user),slug));

@@ -36,7 +36,11 @@ test("ADMIN: reset verifica rol, audita cambio y revoca todas las sesiones",()=>
 });
 test("ADMIN: formularios de creación y reset con confirmación",()=>{
  const ui=read("components/dominio/ContenidoModulo.tsx");
- assert.match(ui,/Crear cuenta con contraseña asignada/);
+ assert.match(ui,/action=\{op\.crearCuenta\}/);
+ const create=read("components/dominio/CrearCuentaForm.tsx");
+ assert.match(create,/Crear cuenta con contraseña asignada/);
+ assert.match(create,/name="confirmPassword"/);
+ assert.match(create,/name="workerId"/);
  assert.match(ui,/Cambiar contraseña de un colaborador/);
  assert.match(ui,/action=\{op\.restablecerContrasena\}/);
  assert.match(ui,/confirmPassword/);

@@ -9,3 +9,9 @@ export async function requireEvidenceOwned(key:string,purpose:string,actorId:str
  const asset=await prisma.evidenceAsset.findUnique({where:{key},select:{purpose:true,verifiedAt:true,uploadedBy:true}});
  if(!asset?.verifiedAt||asset.purpose!==purpose||asset.uploadedBy!==actorId)throw new Error("La evidencia no está confirmada o no pertenece a esta sesión y proceso");
 }
+
+/** Reportes nuevos solo pueden adjuntar archivos del actor que los está registrando. */
+export async function requireEvidenceOwnedAny(key:string,purposes:readonly string[],actorId:string):Promise<void>{
+ const asset=await prisma.evidenceAsset.findUnique({where:{key},select:{purpose:true,verifiedAt:true,uploadedBy:true}});
+ if(!asset?.verifiedAt||asset.uploadedBy!==actorId||!purposes.includes(asset.purpose))throw new Error("La evidencia no está confirmada o no pertenece al responsable y proceso");
+}

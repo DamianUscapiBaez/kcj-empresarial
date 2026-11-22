@@ -16,8 +16,8 @@ function AreaSelect({name,areas,value,onChange,optional=false,excluded}:{name:st
 function Intro({title,subtitle}:{title:string;subtitle:string}){return <div className="border-b border-kcj-border px-5 py-5 sm:px-6"><h2 className="kcj-card-heading">{title}</h2><p className="mt-1 text-xs leading-5 text-kcj-muted">{subtitle}</p></div>}
 function Submit({text,disabled=false}:{text:string;disabled?:boolean}){return <div className="flex justify-end border-t border-kcj-border bg-[#F8F9FA] px-5 py-4 sm:px-6"><button className="btn" disabled={disabled} type="submit">{text}</button></div>}
 
-export function RegistrarColaboradorForm({action,areas}:{action:Action;areas:Option[]}){
- const [principal,setPrincipal]=useState("");const [secundaria,setSecundaria]=useState("");
+export function RegistrarColaboradorForm({action,areas,puedeCrearAcceso=false}:{action:Action;areas:Option[];puedeCrearAcceso?:boolean}){
+ const [principal,setPrincipal]=useState("");const [secundaria,setSecundaria]=useState("");const [crearAcceso,setCrearAcceso]=useState(false);
  return <form className="card overflow-hidden !p-0" action={action}>
   <Intro title="Registrar colaborador" subtitle="Una ficha por persona. Selecciona el área de trabajo principal y, solo si corresponde, una segunda área."/>
   <div className="grid gap-4 px-5 py-5 sm:grid-cols-2 sm:px-6">
@@ -28,8 +28,18 @@ export function RegistrarColaboradorForm({action,areas}:{action:Action;areas:Opt
    <label className={label}>N.º de licencia (si conduce)<input className={input} name="license"/></label>
    <label className={label}>Vencimiento de licencia<input className={input} type="date" name="licenseExpires"/></label>
   </div>
+  {puedeCrearAcceso&&<div className="mx-5 mb-5 rounded-xl border border-blue-200 bg-blue-50 p-4 sm:mx-6">
+   <label className="flex items-center gap-3 text-sm font-semibold text-slate-800"><input type="checkbox" name="crearAcceso" checked={crearAcceso} onChange={e=>setCrearAcceso(e.target.checked)} className="h-4 w-4 accent-kcj-red"/>Crear también su cuenta para ingresar al sistema (ADMIN)</label>
+   <p className="mt-2 text-xs text-slate-700">La ficha y la cuenta se registran juntas o no se registra ninguna. El área laboral no otorga permisos automáticamente: selecciona expresamente la función principal del usuario.</p>
+   {crearAcceso&&<div className="mt-4 grid gap-4 sm:grid-cols-2">
+    <label className={label}>Nombre de usuario *<input className={input} name="login" minLength={6} maxLength={32} required autoComplete="off" placeholder="Ej. kcj.conductor01"/></label>
+    <label className={label}>Función principal *<select className={input} name="role" required defaultValue=""><option value="">Selecciona el cargo autorizado</option>{["CONDUCTOR","OPERACIONES","JEFE_OPERACIONES","SSOMA","MANTENIMIENTO","RRHH","SALUD","GERENCIA","HOMOLOGACION","INSTRUCTOR","ALMACEN","ADMIN"].map(r=><option key={r} value={r}>{r}</option>)}</select></label>
+    <label className={label}>Contraseña inicial (mín. 16 caracteres) *<input className={input} type="password" name="password" minLength={16} maxLength={256} autoComplete="new-password" required/></label>
+    <label className={label}>Confirmar contraseña *<input className={input} type="password" name="confirmPassword" minLength={16} maxLength={256} autoComplete="new-password" required/></label>
+   </div>}
+  </div>}
   <p className="px-5 pb-4 text-xs text-slate-600">Las áreas de trabajo no asignan permisos automáticamente. Centro de Control gestiona los accesos desde Usuarios.</p>
-  <Submit text="Registrar colaborador" disabled={!areas.length}/>
+  <Submit text={crearAcceso?"Registrar colaborador y crear cuenta":"Registrar colaborador"} disabled={!areas.length}/>
  </form>;
 }
 

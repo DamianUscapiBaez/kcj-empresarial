@@ -1,0 +1,23 @@
+/** Guías de procesos, no reemplazan permisos ni validaciones del servidor. */
+export const GUIAS_MODULOS:Record<string,{responsable:string;secuencia:string;control:string}>={
+ acceso:{responsable:"ADMIN / TI",secuencia:"Comprobar ficha laboral → crear una cuenta única → asignar cargo → verificar inicio de sesión.",control:"No duplicar cuentas. Revocar sesiones al cambiar contraseña o permisos."},
+ personal:{responsable:"RR. HH. / ADMIN",secuencia:"Registrar ficha laboral → área principal y segunda opcional → crear cuenta si corresponde.",control:"No registrar departamentos ficticios: Flota, Homologación, ROSTER y Tareo son procesos."},
+ operaciones:{responsable:"Operaciones",secuencia:"Verificar unidad, conductor y habilitaciones → programar → asignar → iniciar → cerrar.",control:"Una unidad o persona no debe tener servicios incompatibles en el mismo horario."},
+ roster:{responsable:"Operaciones / Jefatura",secuencia:"Elaborar guardias y descansos → revisar cruces → aprobación/publicación por Jefatura.",control:"El ROSTER planifica turnos; no registra por sí solo horas trabajadas ni pagadas."},
+ flota:{responsable:"Operaciones",secuencia:"Ficha y documentación → inventario → inspección → disponibilidad operativa.",control:"Una ficha completa no equivale a unidad habilitada para un servicio."},
+ ssoma:{responsable:"SSOMA",secuencia:"Reportar riesgo → acción correctiva → evidencia → verificar → cerrar o reabrir.",control:"Solo SSOMA autorizado cierra y reabre. Todo cierre debe tener sustento."},
+ mantenimiento:{responsable:"Mantenimiento",secuencia:"Registrar condición → orden de trabajo → evidencia → liberación técnica.",control:"No levantar bloqueos SSOMA ni de documentación desde Mantenimiento."},
+ homologacion:{responsable:"Operaciones",secuencia:"Registrar certificados externos → vigencias y mina → verificar habilitación.",control:"Los simulacros TECSUP/MMG no sustituyen resultados de entidades externas."},
+ tareo:{responsable:"Operaciones / RR. HH.",secuencia:"Registrar hechos y horas efectivas → revisar evidencia → validar por RR. HH.",control:"Separar HHT, pagos laborales, suspensiones y horas de capacitación HHC."},
+ aula:{responsable:"SSOMA / Instructores",secuencia:"Preparar curso y material → convocar → registrar asistencia → evaluar → acreditar.",control:"El examen interno no emite habilitación minera oficial."},
+ connect:{responsable:"Conductor",secuencia:"Consultar guardia → inspección → informar condición → confirmar inicio/fin de servicio.",control:"Registrar hechos reales de la propia unidad; validar sin conexión antes de uso oficial."},
+ custodia:{responsable:"Operaciones / SSOMA / Mantenimiento",secuencia:"Entrega documentada → uso → devolución e inventario comparativo → conformidades.",control:"Las diferencias y bloqueos pendientes impiden liberar la unidad."},
+ almacen:{responsable:"Almacén compartido",secuencia:"Registrar artículo → ingreso/salida → asignar destino → conciliar existencias.",control:"No crear inventarios paralelos para áreas distintas."},
+ comunicaciones:{responsable:"Áreas autorizadas",secuencia:"Redactar → elegir destinatarios → publicar → revisar acuses personales.",control:"Una nueva versión requiere nueva confirmación."},
+ reportes:{responsable:"Gerencia / responsables",secuencia:"Definir período → revisar fuente de datos → generar reporte → conciliar indicadores.",control:"Diferenciar HHT, HHC y demás indicadores sin doble conteo."},
+ rrhh:{responsable:"Recursos Humanos",secuencia:"Consultar ficha única → registrar contrato y evidencia → actualizar estado laboral → revisar tareo.",control:"La información contractual se maneja con privacidad y trazabilidad histórica."},
+ salud:{responsable:"Salud Ocupacional",secuencia:"Registrar la aptitud operativa y vigencia → actualizar restricciones → confirmar el estado autorizado.",control:"No divulgar historias clínicas ni reemplazar la evaluación médica por un simulacro."},
+ propietarios:{responsable:"Operaciones / Propietario",secuencia:"Registrar propietario → vincular unidades → consultar solo los vehículos propios.",control:"Nunca mostrar datos de otro propietario ni permitir cambios en permisos de seguridad."},
+ "simulacros-tecsup":{responsable:"Instructor / ADMIN",secuencia:"Agregar preguntas y cuatro alternativas → marcar respuesta → publicar → practicar.",control:"Prueba interna. Examen práctico: solo material audiovisual por tipo de unidad."},
+ "simulacros-mmg":{responsable:"Instructor / ADMIN",secuencia:"Cargar preguntas de Manejo a la Izquierda → publicar → práctica exclusiva de conductores.",control:"Resultados internos no homologan ni autorizan conducción en mina."}
+};

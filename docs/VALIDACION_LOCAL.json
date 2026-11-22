@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-21",
+  "project": "KCJ CONTROL fase 03.0 (copia sin desplegar)",
+  "tsJsFilesChecked": 135,
+  "syntaxErrors": [],
+  "unresolvedInternalImports": [],
+  "unitTests": {
+    "passed": 271,
+    "failed": 0,
+    "kind": "pruebas puras y comprobaciones de código, no E2E"
+  },
+  "typecheck": {
+    "passed": false,
+    "reason": "dependencias no instaladas; errores de módulos Next/React/Prisma no resueltos"
+  },
+  "nextBuild": {
+    "passed": false,
+    "reason": "prisma: not found; sin node_modules"
+  },
+  "postgresIntegration": {
+    "performed": false
+  },
+  "visualProductionAudit": {
+    "performed": false
+  },
+  "deployed": {
+    "performed": false
+  },
+  "changesToRealData": false
+}

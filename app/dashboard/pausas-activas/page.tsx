@@ -1,6 +1,7 @@
 import Link from "next/link";
-import {notFound} from "next/navigation";
+import {notFound,redirect} from "next/navigation";
 import {requireUser} from "@/lib/auth";
+import {panelActual} from "@/lib/panel-sesion";
 import {tieneRol} from "@/lib/permisos-kcj";
 import {dailyPauseReport} from "@/lib/consulta-pausas";
 import {durationMinutes,localDateTime,todayInLima,parseDayInLima} from "@/lib/pausas-utils";
@@ -8,6 +9,9 @@ import {durationMinutes,localDateTime,todayInLima,parseDayInLima} from "@/lib/pa
 const labels:Record<string,string>={TRABAJANDO:"Trabajando",DESCANSANDO:"Descanso",SIN_PROGRAMACION:"Sin programación",CRUCE_ROSTER:"Revisar ROSTER",TRABAJO_Y_DESCANSO:"Trabajo y descanso",REGISTRADA:"Con pausa finalizada",EN_CURSO:"Pausa en curso",NO_REALIZADA:"No realizada",SIN_REGISTRO:"Sin registro",NO_APLICA:"No aplica",REVISAR_ROSTER:"Revisar guardia"};
 export default async function PausasActivas({searchParams}:{searchParams:Promise<{fecha?:string}>}){
  const user=await requireUser();
+ const panel=await panelActual(user);
+ if(!panel)redirect("/seleccionar-panel");
+ if(panel==="conductor")notFound();
  if(!tieneRol(user,"ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","SALUD"))notFound();
  const {fecha}=await searchParams;
  const date=fecha??todayInLima();

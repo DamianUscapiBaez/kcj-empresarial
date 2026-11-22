@@ -1,8 +1,9 @@
 import Link from "next/link";
 import {randomUUID} from "node:crypto";
-import {notFound} from "next/navigation";
+import {notFound,redirect} from "next/navigation";
 import {prisma} from "@/lib/prisma";
 import {requireUser} from "@/lib/auth";
+import {panelActual} from "@/lib/panel-sesion";
 import {rolesActivos,tieneRol} from "@/lib/permisos-kcj";
 import {canAccess} from "@/lib/modulos";
 import {RecordForm,DataTable} from "@/components/ui/fields";
@@ -13,6 +14,9 @@ const fmt=(date:Date|null|undefined)=>date?new Intl.DateTimeFormat("es-PE",{date
 export default async function FichaVehicular({params}:{params:Promise<{id:string}>}){
  const {id}=await params;
  const user=await requireUser();
+ const panel=await panelActual(user);
+ if(!panel)redirect("/seleccionar-panel");
+ if(panel==="conductor")notFound();
  if(!canAccess(rolesActivos(user),"flota"))notFound();
  const vehicle=await prisma.vehicle.findUnique({where:{id},include:{owner:{select:{name:true}},documents:{orderBy:{createdAt:"desc"},take:30},equipment:{orderBy:[{category:"asc"},{label:"asc"}]},checklists:{orderBy:{performedAt:"desc"},take:25},clearances:{where:{kind:"TARJETA_AMARILLA"},orderBy:{createdAt:"desc"},take:25},custody:{orderBy:{at:"desc"},take:15},readings:{orderBy:{at:"desc"},take:5},workOrders:{orderBy:{openedAt:"desc"},take:5}}});
  if(!vehicle || (user.role==="PROPIETARIO"&&vehicle.ownerId!==user.ownerId))notFound();

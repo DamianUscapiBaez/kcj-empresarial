@@ -88,6 +88,7 @@ model Worker {
   contracts Contract[]
   safetyCases SafetyCase[]
   pauses ActivePause[]
+  practiceAttempts PracticeAttempt[]
   @@index([area,active])
 }
 
@@ -714,4 +715,55 @@ model WorkArea {
   name String @id
   active Boolean @default(true)
   createdAt DateTime @default(now())
+}
+
+// SIMULACROS INTERNOS: no son cursos oficiales ni generan homologaciones o certificados.
+model PracticeTopicState {
+  code String @id
+  published Boolean @default(false)
+  publishedAt DateTime?
+  updatedAt DateTime @updatedAt
+}
+
+model PracticeQuestion {
+  id String @id @default(cuid())
+  topicCode String
+  statement String
+  optionA String
+  optionB String
+  optionC String
+  optionD String
+  correctOption String
+  active Boolean @default(true)
+  createdBy String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([topicCode,active,createdAt])
+}
+
+model PracticeMaterial {
+  id String @id @default(cuid())
+  topicCode String
+  title String
+  content String?
+  url String?
+  evidenceKey String?
+  vehicleType String?
+  createdBy String
+  createdAt DateTime @default(now())
+  @@index([topicCode,createdAt])
+}
+
+model PracticeAttempt {
+  id String @id @default(cuid())
+  clientEventId String @unique
+  topicCode String
+  workerId String
+  worker Worker @relation(fields:[workerId],references:[id],onDelete:Restrict)
+  answers Json
+  correctCount Int
+  totalQuestions Int
+  score Int
+  createdAt DateTime @default(now())
+  @@index([workerId,topicCode,createdAt])
 }

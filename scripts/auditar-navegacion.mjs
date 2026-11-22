@@ -7,8 +7,8 @@ const modules=[...mod.matchAll(/\{slug:"([\w-]+)",title:/g)].map(m=>m[1]);
 const cases=[...cont.matchAll(/case "([\w-]+)":/g)].map(m=>m[1]);
 const navSlugs=[...nav.matchAll(/slugs:\[([^\]]+)\]/g)].flatMap(m=>[...m[1].matchAll(/"([\w-]+)"/g)].map(n=>n[1]));
 const missing=[];const check=(condition,message)=>{if(!condition)missing.push(message)};
-check(modules.length===18,`Módulos: esperados 18, detectados ${modules.length}`);
-for(const slug of modules){check(cases.includes(slug),`Sin componente de contenido: ${slug}`);check(navSlugs.includes(slug),`No aparece en agrupación de menú: ${slug}`);check(icons.includes(`${slug}:"`),`No hay icono: ${slug}`);}
+check(modules.length===20,`Módulos: esperados 20, detectados ${modules.length}`);
+for(const slug of modules){check(cases.includes(slug),`Sin componente de contenido: ${slug}`);check(navSlugs.includes(slug),`No aparece en agrupación de menú: ${slug}`);check((icons.includes(`${slug}:"`)||icons.includes(`"${slug}":"`)),`No hay icono: ${slug}`);}
 check(existsSync(path.join(root,'app/dashboard/[modulo]/page.tsx')),'Falta pantalla dinámica de módulos');
 check(existsSync(path.join(root,'app/dashboard/pausas-activas/page.tsx')),'Falta pantalla de Pausas Activas');
 check(existsSync(path.join(root,'app/api/pausas-activas/pdf/route.ts')),'Falta exportación PDF');
@@ -19,5 +19,5 @@ check(get('app/api/pausas-activas/pdf/route.ts').includes('tieneRol'),'Falta con
 check(get('app/api/pausas-activas/pdf/route.ts').includes('EXPORTAR_PDF'),'Falta trazabilidad de descarga');
 check(get('app/actions-pausas.ts').includes('clientEventId'),'Falta identificador de idempotencia');
 check(get('prisma/schema.prisma').includes('model ActivePause'),'Falta modelo de pausas');
-const result={modules:modules.length,withContent:modules.filter(m=>cases.includes(m)).length,withNav:modules.filter(m=>navSlugs.includes(m)).length,withIcon:modules.filter(m=>icons.includes(`${m}:"`)).length,pausesRoute:existsSync(path.join(root,'app/dashboard/pausas-activas/page.tsx')),pdfRoute:existsSync(path.join(root,'app/api/pausas-activas/pdf/route.ts')),missing};
+const result={modules:modules.length,withContent:modules.filter(m=>cases.includes(m)).length,withNav:modules.filter(m=>navSlugs.includes(m)).length,withIcon:modules.filter(m=>(icons.includes(`${m}:"`)||icons.includes(`"${m}":"`))).length,pausesRoute:existsSync(path.join(root,'app/dashboard/pausas-activas/page.tsx')),pdfRoute:existsSync(path.join(root,'app/api/pausas-activas/pdf/route.ts')),missing};
 console.log(JSON.stringify(result,null,2));if(missing.length)process.exit(1);

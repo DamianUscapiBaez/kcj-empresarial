@@ -1,8 +1,9 @@
 import Link from "next/link";
 import {randomUUID} from "node:crypto";
-import {notFound} from "next/navigation";
+import {notFound,redirect} from "next/navigation";
 import {prisma} from "@/lib/prisma";
 import {requireUser} from "@/lib/auth";
+import {panelActual} from "@/lib/panel-sesion";
 import {tieneRol} from "@/lib/permisos-kcj";
 import {EvidenceUploader} from "@/components/ui/EvidenceUploader";
 import {FotosCustodiaUploader} from "@/components/dominio/FotosCustodiaUploader";
@@ -17,6 +18,9 @@ const estados=[{value:"CONFORME",label:"Conforme"},{value:"OBSERVADO",label:"Obs
 export default async function CustodiaUnidad({params}:{params:Promise<{vehicleId:string}>}){
  const {vehicleId}=await params;
  const user=await requireUser();
+ const panel=await panelActual(user);
+ if(!panel)redirect("/seleccionar-panel");
+ if(panel==="conductor")notFound();
  if(!tieneRol(user,"ADMIN","OPERACIONES","JEFE_OPERACIONES","MANTENIMIENTO","SSOMA"))notFound();
  const vehicle=await prisma.vehicle.findUnique({where:{id:vehicleId},include:{
   equipment:{orderBy:[{category:"asc"},{label:"asc"}]},

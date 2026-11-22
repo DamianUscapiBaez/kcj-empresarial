@@ -29,5 +29,5 @@ export function UIIcon({name,size=20,className=""}:{name:IconName;size?:number;c
  return <svg aria-hidden="true" className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
 }
 export const moduleIcon:Record<ModuleSlug,IconName>={
- acceso:"key", personal:"users", operaciones:"truck", roster:"calendar", connect:"bus", flota:"bus", mantenimiento:"wrench", ssoma:"shield", homologacion:"clipboard", tareo:"clock", aula:"book", rrhh:"users", salud:"medical", propietarios:"folder", comunicaciones:"bell", reportes:"chart", custodia:"clipboard", almacen:"package",
+ acceso:"key", personal:"users", operaciones:"truck", roster:"calendar", connect:"bus", flota:"bus", mantenimiento:"wrench", ssoma:"shield", homologacion:"clipboard", tareo:"clock", aula:"book", "simulacros-tecsup":"clipboard", "simulacros-mmg":"truck", rrhh:"users", salud:"medical", propietarios:"folder", comunicaciones:"bell", reportes:"chart", custodia:"clipboard", almacen:"package",
 };

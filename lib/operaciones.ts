@@ -1,13 +1,14 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
+import type {Prisma} from "@prisma/client";
 import { eligibilityVehicle, eligibilityDriver, overlaps, alcanceMineroValido, recepcionPendiente, type DutyKind } from "@/lib/dominio-kcj";
-export async function comprobarAsignacion(workerId:string,vehicleId:string,startsAt:Date,endsAt:Date,mineRequired:boolean,serviceId?:string,mineScope?:string|null):Promise<string[]> {
+export async function comprobarAsignacion(workerId:string,vehicleId:string,startsAt:Date,endsAt:Date,mineRequired:boolean,serviceId?:string,mineScope?:string|null,db:Prisma.TransactionClient|typeof prisma=prisma):Promise<string[]> {
  const [worker,vehicle,driverServices,vehicleServices,rosters]=await Promise.all([
-  prisma.worker.findUnique({where:{id:workerId},include:{fitness:true,clearances:true}}),
-  prisma.vehicle.findUnique({where:{id:vehicleId},include:{documents:true,workOrders:true,cases:true,custody:{orderBy:{at:"desc"},take:1},clearances:true}}),
-  prisma.service.findMany({where:{workerId,status:{in:["ASIGNADO","EN_CURSO"]},id:{not:serviceId}},select:{startsAt:true,endsAt:true}}),
-  prisma.service.findMany({where:{vehicleId,status:{in:["ASIGNADO","EN_CURSO"]},id:{not:serviceId}},select:{startsAt:true,endsAt:true}}),
-  prisma.roster.findMany({where:{workerId,status:"PUBLICADO",startsAt:{lte:startsAt},endsAt:{gte:endsAt}}})
+  db.worker.findUnique({where:{id:workerId},include:{fitness:true,clearances:true}}),
+  db.vehicle.findUnique({where:{id:vehicleId},include:{documents:true,workOrders:true,cases:true,custody:{orderBy:{at:"desc"},take:1},clearances:true}}),
+  db.service.findMany({where:{workerId,status:{in:["ASIGNADO","EN_CURSO"]},id:{not:serviceId}},select:{startsAt:true,endsAt:true}}),
+  db.service.findMany({where:{vehicleId,status:{in:["ASIGNADO","EN_CURSO"]},id:{not:serviceId}},select:{startsAt:true,endsAt:true}}),
+  db.roster.findMany({where:{workerId,status:"PUBLICADO",startsAt:{lte:startsAt},endsAt:{gte:endsAt}}})
  ]);
  if(!worker||!vehicle)return ["Conductor o vehículo inexistente"];
  const latestCustody=vehicle.custody[0];

@@ -15,11 +15,11 @@ test("Propuesta B: siete categorías correctas y en orden",()=>{
  "Servicios y jornadas","Unidades y habilitaciones","Trabajadores y formación",
  "Seguridad y cumplimiento","Recursos corporativos","Análisis y reportes","Accesos y configuración"]);
 });
-test("Se mantienen los 18 módulos en exactamente un grupo, sin cambiar rutas ni roles",()=>{
+test("Se mantienen los módulos anteriores y se agregan dos simulacros en formación",()=>{
  const slugs=groups.flatMap(g=>g.slugs);
- assert.equal(defined.length,18);
- assert.equal(slugs.length,18);
- assert.equal(new Set(slugs).size,18);
+ assert.equal(defined.length,20);
+ assert.equal(slugs.length,20);
+ assert.equal(new Set(slugs).size,20);
  assert.deepEqual([...slugs].sort(),[...defined].sort());
  assert.match(nav,/slugs\.filter\(slug=>canAccess\(role,slug\)\)/);
  assert.match(layout,/navigationForRole\(rolesActivos\(user\)\)/);

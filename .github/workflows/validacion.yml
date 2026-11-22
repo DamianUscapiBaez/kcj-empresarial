@@ -43,6 +43,10 @@ jobs:
         env:
           KCJ_INTEGRATION_TEST_DB: "1"
         run: npm run db:integration
+      - name: Ensayo de creación de usuarios, roles y sesiones en PostgreSQL
+        env:
+          KCJ_INTEGRATION_TEST_DB: "1"
+        run: npm run db:integration:cuentas
       - name: Reglas unitarias
         run: npm test
       - name: Tipado estricto y compilación Next.js
