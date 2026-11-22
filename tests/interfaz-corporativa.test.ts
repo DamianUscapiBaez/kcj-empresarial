@@ -17,9 +17,9 @@ test('La interfaz usa el logo KCJ original sin sustituirlo por un logo nuevo',()
 
 test('Se aplica identidad grafito, rojo y blanco y se retira el azul dorado generico',()=>{
  const palette=source('tailwind.config.ts');
- assert.match(palette,/#AC1830/);
- assert.match(palette,/#25282D/);
- assert.match(palette,/#F5F6F8/);
+ assert.match(palette,/#A6263A/);
+ assert.match(palette,/#2A323A/);
+ assert.match(palette,/#F3F5F7/);
  assert.doesNotMatch(palette,/#D69C3A/);
 });
 
@@ -27,7 +27,7 @@ test('Login y panel muestran identidad corporativa sin alterar Server Actions',(
  assert.match(source('app/login/page.tsx'),/<KcjLogo/);
  assert.match(source('app/login/page.tsx'),/form action=\{login\}/);
  assert.match(source('app/dashboard/layout.tsx'),/<KcjLogo/);
- assert.match(source('app/dashboard/layout.tsx'),/navigationForRole\(user\.role\)/);
+ assert.match(source('app/dashboard/layout.tsx'),/navigationForRole\(rolesActivos\(user\)\)/);
  assert.match(source('app/dashboard/page.tsx'),/prisma\.worker\.count\(\)/);
 });
 

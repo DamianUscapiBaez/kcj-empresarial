@@ -18,13 +18,14 @@ test('Los flujos CI no requieren package-lock inexistente para cachear npm',()=>
 });
 test('La navegación agrupa procesos por responsabilidades sin perder los 17 módulos',()=>{
  const nav=read('lib/navegacion-kcj.ts');
- assert.match(nav,/title:"Operaciones"/);
- assert.match(nav,/"roster","tareo","flota","homologacion"/);
- assert.match(nav,/title:"Herramientas compartidas"/);
+ assert.match(nav,/title:"Servicios y jornadas"/);
+ assert.match(nav,/"operaciones","roster","tareo"/);
+ assert.match(nav,/"flota","mantenimiento","homologacion","custodia","propietarios"/);
+ assert.match(nav,/title:"Recursos corporativos"/);
 });
 
 test('La exportación comprueba permisos específicos por reporte',()=>{
  const src=read('app/api/reportes/exportar/route.ts');
  assert.ok(src.includes("autorizaciones:Record<string,readonly string[]>"));
- assert.ok(src.includes("!autorizaciones[tipo]?.includes(u.role)"));
+ assert.ok(src.includes("!rolesActivos(u).some(r=>autorizaciones[tipo]?.includes(r))"));
 });

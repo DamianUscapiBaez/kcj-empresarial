@@ -1,7 +1,7 @@
 import type { Role } from "@prisma/client";
 export const modules = [
  {slug:"acceso",title:"Acceso y usuarios",description:"Cuentas, permisos y auditoría"},
- {slug:"personal",title:"Personal",description:"Ficha laboral única"},
+ {slug:"personal",title:"Colaboradores",description:"Ficha laboral única y áreas de trabajo"},
  {slug:"operaciones",title:"Operaciones",description:"Servicios y asignaciones"},
  {slug:"roster",title:"ROSTER",description:"Guardias y descansos"},
  {slug:"connect",title:"KCJ CONNECT",description:"Portal de conductores"},

@@ -2,12 +2,12 @@ import {rolesActivos,tieneRol} from "@/lib/permisos-kcj";
 import Link from "next/link";
 import {prisma} from "@/lib/prisma";
 import {modules,canAccess,type ModuleSlug} from "@/lib/modulos";
-import {navigationForRole} from "@/lib/navegacion-kcj";
+import {navigationForRole,labelsNavegacion} from "@/lib/navegacion-kcj";
 import {requireUser} from "@/lib/auth";
 import {UIIcon,moduleIcon} from "@/components/ui/ModuleIcon";
 
 const highlights:Record<ModuleSlug,string>={
- acceso:"Perfiles y seguridad",personal:"Ficha laboral única",operaciones:"Servicios y movimientos",roster:"Programación de guardias",connect:"Mis actividades",flota:"Control de unidades",mantenimiento:"Órdenes y liberaciones",ssoma:"Hallazgos y prevención",homologacion:"Habilitaciones externas",tareo:"Horas efectivas",aula:"Formación y evaluaciones",rrhh:"Gestión laboral",salud:"Aptitud operacional",propietarios:"Mis unidades",comunicaciones:"Avisos y confirmaciones",reportes:"Indicadores e informes",custodia:"Actas y devoluciones",almacen:"Inventario compartido",
+ acceso:"Perfiles y seguridad",personal:"Áreas de trabajo y ficha única",operaciones:"Servicios y movimientos",roster:"Programación de guardias",connect:"Mis actividades",flota:"Control de unidades",mantenimiento:"Órdenes y liberaciones",ssoma:"Hallazgos y prevención",homologacion:"Habilitaciones externas",tareo:"Horas efectivas",aula:"Formación y evaluaciones",rrhh:"Gestión laboral",salud:"Aptitud operacional",propietarios:"Mis unidades",comunicaciones:"Avisos y confirmaciones",reportes:"Indicadores e informes",custodia:"Actas y devoluciones",almacen:"Inventario compartido",
 };
 export default async function Dashboard(){
  const user=await requireUser();
@@ -24,7 +24,7 @@ export default async function Dashboard(){
   return result?.status==="fulfilled"?result.value:null;
  };
  const counts=[
-  {n:metric(0),l:"Personal registrado",hint:"Fichas de trabajadores",icon:"users" as const},
+  {n:metric(0),l:"Colaboradores registrados",hint:"Fichas laborales únicas",icon:"users" as const},
   {n:metric(1),l:"Unidades registradas",hint:"Padrón de vehículos",icon:"bus" as const},
   {n:metric(2),l:"Servicios",hint:"Programados e históricos",icon:"truck" as const},
   {n:metric(3),l:"Casos SSOMA abiertos",hint:"Requieren seguimiento",icon:"shield" as const},
@@ -44,7 +44,7 @@ export default async function Dashboard(){
     <div>
      <p className="text-xs font-bold uppercase tracking-[.2em] text-[#F8D7DE]">Panel de control</p>
      <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">Bienvenido a KCJ CONTROL</h1>
-     <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Gestión integrada de KCJ PERÚ S.A.C. Consulta información y accede a los procesos autorizados para tu cargo.</p>
+     <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">Gestión integrada de KCJ PERÚ S.A.C. Consulta información y accede a los procesos autorizados para tus funciones autorizadas.</p>
     </div>
     <div className="shrink-0 rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-xs text-slate-200"><span className="block text-[10px] uppercase tracking-widest text-slate-400">Fecha de consulta</span><span className="mt-1 block font-semibold capitalize">{date}</span></div>
    </div>
@@ -58,12 +58,12 @@ export default async function Dashboard(){
     <p className="mt-1 text-xs text-slate-500">{item.hint}</p>
    </article>)}
   </section>}
-  {tieneRol(user,"ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","SALUD")&&<Link href="/dashboard/pausas-activas" className="kcj-focus flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#E6C7CE] bg-white p-5 shadow-pane transition hover:bg-kcj-redSoft/30"><div><p className="kcj-eyebrow">Línea de Mando</p><p className="mt-1 font-bold text-kcj-charcoal">Control Maestro de Pausas Activas</p><p className="text-xs text-slate-600">Consultar todos los conductores por fecha y descargar el PDF vertical.</p></div><span className="rounded-lg border border-kcj-border px-3 py-2 text-sm font-semibold text-kcj-charcoal">Abrir control</span></Link>}
+  {tieneRol(user,"ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","SALUD")&&<Link href="/dashboard/pausas-activas" className="kcj-focus flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#E6C7CE] bg-white p-5 shadow-pane transition hover:bg-kcj-redSoft/30"><div><p className="kcj-eyebrow">Servicios y jornadas</p><p className="mt-1 font-bold text-kcj-charcoal">Control Maestro de Pausas Activas</p><p className="text-xs text-slate-600">Consultar todos los conductores por fecha y descargar el PDF vertical.</p></div><span className="rounded-lg border border-kcj-border px-3 py-2 text-sm font-semibold text-kcj-charcoal">Abrir control</span></Link>}
   {shortcuts.length>0&&<section className="space-y-3">
    <div><p className="kcj-eyebrow">Accesos directos</p><h2 className="mt-1 text-xl font-bold text-kcj-charcoal">Procesos de uso frecuente</h2></div>
    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
     {shortcuts.map(slug=>{const meta=modules.find(m=>m.slug===slug)!;return <Link key={slug} href={`/dashboard/${slug}`} className="kcj-focus group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-pane transition hover:border-[#E6C7CE] hover:bg-kcj-redSoft/50">
-     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-kcj-redSoft text-kcj-red"><UIIcon name={moduleIcon[slug]} size={21}/></span><span className="min-w-0 flex-1 text-xs font-bold text-slate-800">{meta.title}</span><UIIcon name="arrow" size={14} className="text-slate-400 group-hover:text-kcj-red"/>
+     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-kcj-redSoft text-kcj-red"><UIIcon name={moduleIcon[slug]} size={21}/></span><span className="min-w-0 flex-1 text-xs font-bold text-slate-800">{labelsNavegacion[slug]??meta.title}</span><UIIcon name="arrow" size={14} className="text-slate-400 group-hover:text-kcj-red"/>
     </Link>})}
    </div>
   </section>}

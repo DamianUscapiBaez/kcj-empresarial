@@ -13,7 +13,7 @@ check(existsSync(path.join(root,'app/dashboard/[modulo]/page.tsx')),'Falta panta
 check(existsSync(path.join(root,'app/dashboard/pausas-activas/page.tsx')),'Falta pantalla de Pausas Activas');
 check(existsSync(path.join(root,'app/api/pausas-activas/pdf/route.ts')),'Falta exportación PDF');
 check(existsSync(path.join(root,'app/api/pausas-activas/evidencia/route.ts')),'Falta descarga restringida de fotos');
-check(dashboard.includes('PausasNavigationLink'),'Falta enlace Línea de Mando en barra lateral');
+check(dashboard.includes('NavigationGroup')&&get('components/ui/NavigationGroup.tsx').includes('PausasNavigationLink'),'Falta enlace de Pausas Activas en grupo Servicios y jornadas');
 check(get('app/dashboard/pausas-activas/page.tsx').includes('tieneRol'),'Falta control de acceso en ficha');
 check(get('app/api/pausas-activas/pdf/route.ts').includes('tieneRol'),'Falta control de acceso en PDF');
 check(get('app/api/pausas-activas/pdf/route.ts').includes('EXPORTAR_PDF'),'Falta trazabilidad de descarga');

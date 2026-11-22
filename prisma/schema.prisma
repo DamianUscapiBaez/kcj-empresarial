@@ -71,6 +71,7 @@ model Worker {
   name String
   job String
   area String
+  secondaryArea String?
   active Boolean @default(true)
   license String?
   licenseExpires DateTime?
@@ -163,12 +164,18 @@ model Vehicle {
   make String?
   model String?
   year Int?
+  color String?
+  vin String?
+  engineNumber String?
+  mineCode String?
   ownerId String?
   owner Owner? @relation(fields:[ownerId],references:[id])
   active Boolean @default(true)
   createdAt DateTime @default(now())
   documents VehicleDocument[]
   readings OdometerReading[]
+  equipment VehicleEquipment[]
+  checklists VehicleChecklist[]
   workOrders WorkOrder[]
   clearances Clearance[]
   custody CustodyEvent[]
@@ -177,6 +184,45 @@ model Vehicle {
   inspections Inspection[]
   pauses ActivePause[]
   @@index([ownerId])
+}
+
+// Inventario vivo por unidad; no se debe confundir con el stock central de Almacén.
+model VehicleEquipment {
+  id String @id @default(cuid())
+  vehicleId String
+  vehicle Vehicle @relation(fields:[vehicleId],references:[id],onDelete:Restrict)
+  itemCode String
+  category String
+  label String
+  expectedQuantity Int
+  actualQuantity Int
+  condition String // CONFORME, OBSERVADO, NO_CONFORME
+  functionalStatus String // OPERATIVO, NO_OPERATIVO, NO_PROBADO
+  serial String?
+  evidenceKey String?
+  remarks String?
+  updatedBy String
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  @@unique([vehicleId,itemCode])
+  @@index([vehicleId,category])
+}
+
+// Cada inspección genera una instantánea histórica; nunca sobrescribe otra inspección.
+model VehicleChecklist {
+  id String @id @default(cuid())
+  vehicleId String
+  vehicle Vehicle @relation(fields:[vehicleId],references:[id],onDelete:Restrict)
+  clientEventId String @unique
+  context String // FICHA_INICIAL o REVISION_PROGRAMADA
+  templateVersion Int
+  vehicleType String
+  status String // CONFORME, OBSERVADO, CRITICO
+  items Json
+  overallEvidenceKey String?
+  performedBy String
+  performedAt DateTime @default(now())
+  @@index([vehicleId,performedAt])
 }
 
 model VehicleDocument {
@@ -224,6 +270,8 @@ model Clearance {
   vehicle Vehicle? @relation(fields:[vehicleId],references:[id])
   kind String
   scope String @default("MINA")
+  reference String?
+  issuedAt DateTime?
   validUntil DateTime
   verified Boolean @default(false)
   evidenceKey String?
@@ -277,6 +325,7 @@ model Service {
   endedAt DateTime?
   createdAt DateTime @default(now())
   events ServiceEvent[]
+  inspections Inspection[]
   timesheets Timesheet[]
   pauses ActivePause[]
   @@index([workerId,startsAt,endsAt])
@@ -297,6 +346,9 @@ model ServiceEvent {
 
 model Inspection {
   id String @id @default(cuid())
+  serviceId String?
+  service Service? @relation(fields:[serviceId],references:[id])
+  templateVersion Int?
   clientEventId String @unique
   workerId String
   worker Worker @relation(fields:[workerId],references:[id])
@@ -512,20 +564,87 @@ model StockMovement {
   createdAt DateTime @default(now())
 }
 
+// Actas de custodia: salida y devolución independientes con inventarios históricos.
+// Los campos nuevos son opcionales para preservar las actas anteriores a la Fase 02.
 model CustodyEvent {
   id String @id @default(cuid())
   vehicleId String
   vehicle Vehicle @relation(fields:[vehicleId],references:[id])
+  clientEventId String? @unique
   kind String
   party String
   condition String
   evidenceKey String?
+  location String?
+  senderName String?
+  receiverName String?
+  odometerKm Int?
+  fuelPercent Int?
+  relatedDeliveryId String?
+  items CustodyInventoryLine[]
+  signatures CustodySignature[]
+  contentVersion Int @default(1) // v1/v2 históricos; v3 también fija evidencia general y entrega relacionada
   technicalVerifiedAt DateTime?
   technicalVerifiedBy String?
   safetyVerifiedAt DateTime?
   safetyVerifiedBy String?
   at DateTime @default(now())
   recordedBy String
+  @@index([vehicleId,at])
+  @@index([relatedDeliveryId])
+}
+
+// Cada evento contiene su propia instantánea inmutable: no se recalcula a partir
+// del inventario vivo y una devolución no reemplaza los datos de salida.
+model CustodyInventoryLine {
+  id String @id @default(cuid())
+  custodyEventId String
+  custodyEvent CustodyEvent @relation(fields:[custodyEventId],references:[id],onDelete:Restrict)
+  itemCode String
+  label String
+  serial String?
+  expectedQuantity Int
+  actualQuantity Int
+  damagedQuantity Int @default(0)
+  condition String
+  notes String?
+  discrepancy Boolean @default(false)
+  resolvedAt DateTime?
+  resolvedBy String?
+  resolutionReason String?
+  resolutionEvidenceKey String?
+  photos CustodyItemPhoto[]
+  @@unique([custodyEventId,itemCode])
+  @@index([custodyEventId,discrepancy,resolvedAt])
+}
+
+// Evidencias fotográficas originales por elemento al registrar un acta (no reemplazables).
+// Los anexos de resolución usan resolutionEvidenceKey, y no alteran esta instantánea.
+model CustodyItemPhoto {
+  id String @id @default(cuid())
+  custodyLineId String
+  custodyLine CustodyInventoryLine @relation(fields:[custodyLineId],references:[id],onDelete:Restrict)
+  evidenceKey String @unique
+  uploadedById String
+  createdAt DateTime @default(now())
+  @@index([custodyLineId,createdAt])
+}
+
+// Firma manuscrita capturada en pantalla: evidencia privada, no firma digital certificada.
+// Ningún firmante puede reemplazar la firma original de su lado en la misma acta.
+model CustodySignature {
+  id String @id @default(cuid())
+  custodyEventId String
+  custodyEvent CustodyEvent @relation(fields:[custodyEventId],references:[id],onDelete:Restrict)
+  side String
+  signerName String
+  evidenceKey String @unique
+  documentHash String
+  capturedById String
+  witnessedInPerson Boolean @default(false)
+  signedAt DateTime @default(now())
+  @@unique([custodyEventId,side])
+  @@index([custodyEventId,signedAt])
 }
 
 enum TrainingModality {
@@ -555,6 +674,7 @@ model EvidenceAsset {
   uploadedBy String
   filename String
   contentType String
+  expectedBytes Int? // tamaño solicitado al generar URL; nulo para evidencias legadas
   purpose EvidencePurpose
   verifiedAt DateTime?
   createdAt DateTime @default(now())
@@ -587,4 +707,11 @@ model ActivePause {
   createdAt DateTime @default(now())
   @@index([workerId,createdAt])
   @@index([serviceId,createdAt])
+}
+
+// Catálogo administrativo; no confundir áreas laborales con roles RBAC.
+model WorkArea {
+  name String @id
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
 }

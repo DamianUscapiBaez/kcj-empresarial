@@ -3,7 +3,7 @@
 import {useState} from "react";
 import {UIIcon} from "@/components/ui/ModuleIcon";
 
-type Trabajador = {id:string; name:string; document:string; area:string};
+type Trabajador = {id:string; name:string; document:string; area:string; secondaryArea:string|null};
 type Servicio = {id:string; code:string; route:string; workerId:string|null; status:string};
 
 /** El navegador muestra el área; el servidor siempre la vuelve a consultar en PostgreSQL. */
@@ -29,8 +29,14 @@ export function TareoRegistroForm({action,trabajadores,servicios}:{
           <option value="">Seleccionar trabajador</option>{trabajadores.map(t=><option value={t.id} key={t.id}>{t.name} · {t.document}</option>)}
         </select>
       </label>
-      <label className="block min-w-0 space-y-1.5 text-sm font-medium text-slate-700"><span className="block">Área (de la ficha del trabajador)</span>
-        <input className="input bg-slate-100 text-slate-600" value={persona?.area??"Seleccione un trabajador"} readOnly aria-label="Área obtenida automáticamente de la ficha laboral"/>
+      <label className="block min-w-0 space-y-1.5 text-sm font-medium text-slate-700"><span className="block">Área donde realizó el trabajo *</span>
+        <select className="input" name="areaAtEntry" key={workerId} required disabled={!persona} defaultValue={persona?.area??""}>
+          {!persona?<option value="">Seleccione primero un colaborador</option>:<>
+           <option value={persona.area}>{persona.area} (principal)</option>
+           {persona.secondaryArea&&<option value={persona.secondaryArea}>{persona.secondaryArea} (segunda área)</option>}
+          </>}
+        </select>
+        <span className="text-xs font-normal text-slate-600">Solo muestra las áreas asignadas en la ficha. Si tiene una sola área, quedará seleccionada automáticamente.</span>
       </label>
       <label className="block min-w-0 space-y-1.5 text-sm font-medium text-slate-700"><span className="block">Inicio real (hora Perú) <span className="text-kcj-red">*</span></span><input className="input" type="datetime-local" name="startsAt" required/></label>
       <label className="block min-w-0 space-y-1.5 text-sm font-medium text-slate-700"><span className="block">Fin real (hora Perú) <span className="text-kcj-red">*</span></span><input className="input" type="datetime-local" name="endsAt" required/></label>
@@ -49,8 +55,8 @@ export function TareoRegistroForm({action,trabajadores,servicios}:{
       </label>:<label className="block min-w-0 space-y-1.5 text-sm font-medium text-slate-700 sm:col-span-2"><span className="block">Motivo y respaldo del registro interno <span className="text-kcj-red">*</span></span>
         <textarea name="reason" className="input min-h-[95px]" required minLength={12} maxLength={500} placeholder="Describa la actividad, documento o control que acredita las horas reales; RR. HH. verificará el registro."/>
       </label>}
-      {trabajadores.length===0&&<p role="status" className="text-sm text-amber-800 sm:col-span-2">No hay trabajadores activos. Primero registra el personal en Personal.</p>}
-      <p className="text-xs leading-5 text-kcj-muted sm:col-span-2">El registro queda pendiente de validación por RR. HH. y no puede solaparse con otro tareo del trabajador. La fuente y el área se validan nuevamente en el servidor.</p>
+      {trabajadores.length===0&&<p role="status" className="text-sm text-amber-800 sm:col-span-2">No hay colaboradores activos. Primero regístralos en Colaboradores.</p>}
+      <p className="text-xs leading-5 text-kcj-muted sm:col-span-2">El registro queda pendiente de validación por RR. HH.; el área seleccionada debe estar asignada al colaborador. La fuente y las horas se validan nuevamente en el servidor.</p>
     </div>
     <div className="flex flex-wrap items-center justify-between gap-3 border-t border-kcj-border bg-[#F8F9FA] px-5 py-4 sm:px-6"><p className="text-xs text-kcj-muted">Los campos marcados con * son obligatorios.</p><button type="submit" className="btn" disabled={!workerId||(isService&&!serviceId)}><UIIcon name="check" size={17}/>Registrar horas trabajadas</button></div>
   </form>;

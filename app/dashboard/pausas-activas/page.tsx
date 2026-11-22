@@ -14,9 +14,9 @@ export default async function PausasActivas({searchParams}:{searchParams:Promise
  let valid=true;try{parseDayInLima(date);}catch{valid=false;}
  const data=valid?await dailyPauseReport(date):null;
  return <div className="space-y-5">
-  <nav aria-label="Ruta de navegación" className="text-xs text-slate-500"><Link href="/dashboard" className="underline">Inicio</Link> / Línea de Mando / Pausas Activas</nav>
+  <nav aria-label="Ruta de navegación" className="text-xs text-slate-500"><Link href="/dashboard" className="underline">Inicio</Link> / Servicios y jornadas / Pausas Activas</nav>
   <header className="rounded-2xl border border-kcj-border bg-white p-5 shadow-pane sm:p-6">
-   <p className="kcj-eyebrow">Línea de Mando · Fatiga y Somnolencia</p>
+   <p className="kcj-eyebrow">Servicios y jornadas · Fatiga y Somnolencia</p>
    <h1 className="mt-2 text-2xl font-black text-kcj-charcoal">Control Maestro de Pausas Activas</h1>
    <p className="mt-2 text-sm text-slate-600">Ficha consolidada de todos los conductores por fecha, con situación del ROSTER y fotografías registradas. Los descansos no se contabilizan como incumplimientos.</p>
   </header>

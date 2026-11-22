@@ -13,7 +13,7 @@ async function run():Promise<void> {
   if (!login || !name || !password || password.length < 16) throw new Error("Configure KCJ_ADMIN_DOCUMENT, KCJ_ADMIN_NAME y KCJ_ADMIN_PASSWORD (mínimo 16 caracteres).");
   const existing=await prisma.user.findUnique({where:{login}});
   if (existing) {
-    if (existing.role !== Role.ADMIN) throw new Error("El login ya existe con otro cargo: intervención manual requerida.");
+    if (existing.role !== Role.ADMIN) throw new Error("El usuario ya existe con otra función: intervención manual requerida.");
     console.log("Administrador ya existe; no se sobrescribe su contraseña ni la información.");
   } else {
     await prisma.user.create({data:{login,displayName:name,passwordHash:hash(password),role:Role.ADMIN,active:true,mustChangePassword:false}});

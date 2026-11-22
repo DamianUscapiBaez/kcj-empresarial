@@ -1,0 +1,7 @@
+KCJ CONTROL — Resultado local de pruebas (21-11-2026)
+Comando: npm test
+Resultado: 155 pruebas aprobadas, 0 fallidas.
+Incluye 10 pruebas nuevas específicas de administración de cuentas.
+Análisis sintáctico con TypeScript createSourceFile: 78 archivos TS/TSX, 0 errores.
+No equivale a compilación Next.js, typecheck de dependencias ni prueba integrada de PostgreSQL.
+No se realizó conexión a Vercel ni alteración de datos productivos.

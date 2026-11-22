@@ -4,32 +4,24 @@ import {requireUser} from "@/lib/auth";
 import {navigationForRole} from "@/lib/navegacion-kcj";
 import {logout} from "@/app/actions-auth";
 import {KcjLogo} from "@/components/ui/KcjLogo";
-import {NavigationLink} from "@/components/ui/NavigationLink";
-import {PausasNavigationLink} from "@/components/ui/PausasNavigationLink";
+import {NavigationGroup} from "@/components/ui/NavigationGroup";
+import {MobileNavigation} from "@/components/ui/MobileNavigation";
 import {UIIcon} from "@/components/ui/ModuleIcon";
-import {tieneRol} from "@/lib/permisos-kcj";
 
 type Sections = ReturnType<typeof navigationForRole>;
-function Navigation({sections,canSeePauses}:{sections:Sections;canSeePauses:boolean}){
- return <nav aria-label="Navegación de procesos KCJ" className="space-y-5">
-  <Link href="/dashboard" className="kcj-focus flex items-center gap-3 rounded-xl border border-kcj-border bg-white/70 px-3 py-3 text-sm font-semibold text-kcj-charcoal transition hover:bg-white/80">
+function Navigation({sections}:{sections:Sections}){
+ return <nav aria-label="Navegación de procesos KCJ" className="space-y-2">
+  <Link href="/dashboard" className="kcj-focus flex items-center gap-3 rounded-xl border border-kcj-border bg-white/70 px-3 py-3 text-sm font-semibold text-kcj-charcoal transition hover:bg-white/90">
    <UIIcon name="dashboard" size={19}/><span className="flex-1">Panel general</span><UIIcon name="arrow" size={14} className="text-kcj-muted"/>
   </Link>
-  {canSeePauses&&<section aria-label="Línea de Mando">
-    <h2 className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[.19em] text-[#596774]">Línea de Mando</h2>
-    <PausasNavigationLink/>
-   </section>}
-  {sections.map(section=><section key={section.title} aria-label={section.title}>
-   <h2 className="mb-2 px-3 text-[10px] font-bold uppercase tracking-[.19em] text-[#596774]">{section.title}</h2>
-   <div className="space-y-0.5">{section.modules.map(m=><NavigationLink key={m.slug} slug={m.slug} label={m.title}/>)}</div>
-  </section>)}
+  {sections.map((section,index)=><NavigationGroup key={section.title} title={section.title}
+   modules={section.modules} showPausas={section.showPausas} initiallyOpen={index===0}/>)}
  </nav>;
 }
 function SignOut(){return <form action={logout}><button type="submit" className="kcj-focus flex items-center gap-2 rounded-xl border border-kcj-border px-3.5 py-2 text-xs font-semibold text-kcj-charcoal transition hover:border-kcj-red hover:text-kcj-red"><UIIcon name="logout" size={16}/>Cerrar sesión</button></form>;}
 export default async function DashboardLayout({children}:{children:React.ReactNode}){
  const user=await requireUser();
  const sections=navigationForRole(rolesActivos(user));
- const canSeePauses=tieneRol(user,"ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","SALUD");
  const initials=user.displayName.trim().split(/\s+/).map(w=>w.charAt(0)).slice(0,2).join("").toUpperCase();
  return <div className="min-h-screen lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
   <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:overflow-y-auto border-r border-kcj-border bg-kcj-sidebar text-kcj-charcoal">
@@ -38,7 +30,7 @@ export default async function DashboardLayout({children}:{children:React.ReactNo
     <p className="mt-4 text-[15px] font-black tracking-[.09em] text-kcj-charcoal">KCJ CONTROL</p>
     <p className="mt-1 text-[11px] tracking-wide text-[#596774]">PLATAFORMA EMPRESARIAL</p>
    </div>
-   <div className="flex-1 px-3 py-5"><Navigation sections={sections} canSeePauses={canSeePauses}/></div>
+   <div className="flex-1 px-3 py-5"><Navigation sections={sections}/></div>
    <div className="border-t border-kcj-border px-5 py-4">
     <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-700"/><p className="text-xs font-medium text-[#46545F]">Entorno de trabajo KCJ</p></div>
     <p className="mt-2 text-[11px] text-[#596774]">Acceso y funciones según permisos</p>
@@ -55,17 +47,14 @@ export default async function DashboardLayout({children}:{children:React.ReactNo
       </div>
      </div>
      <div className="flex min-w-0 items-center gap-3">
-      <div className="hidden min-w-0 text-right sm:block"><p className="truncate text-sm font-semibold text-slate-800">{user.displayName}</p><p className="text-xs text-[#56636F]">{user.role.replaceAll("_"," ")}</p></div>
+      <div className="hidden min-w-0 text-right sm:block"><p className="truncate text-sm font-semibold text-slate-800">{user.role==="ADMIN"?"Centro de Control":user.displayName}</p><p className="text-xs text-[#56636F]">{user.role==="ADMIN"?`Administración principal · ${user.displayName}`:user.role.replaceAll("_"," ")}</p></div>
       <div title={user.displayName} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-kcj-charcoal text-xs font-bold text-white">{initials||"KC"}</div>
       <Link href="/cambiar-clave" className="kcj-focus hidden rounded-lg border border-kcj-border px-3 py-2 text-xs font-semibold text-kcj-charcoal hover:bg-kcj-redSoft sm:inline-flex">Cambiar mi contraseña</Link><div className="hidden sm:block"><SignOut/></div>
-      <details className="relative lg:hidden">
-       <summary className="kcj-focus flex h-10 w-10 cursor-pointer list-none items-center justify-center rounded-xl border border-kcj-border text-kcj-charcoal [&::-webkit-details-marker]:hidden" aria-label="Abrir menú"><UIIcon name="menu"/></summary>
-       <div className="absolute right-0 top-12 max-h-[75vh] w-[min(88vw,340px)] overflow-y-auto rounded-2xl border border-kcj-border bg-kcj-sidebar p-3 text-kcj-charcoal shadow-xl">
-        <Navigation sections={sections} canSeePauses={canSeePauses}/>
-        <Link href="/cambiar-clave" className="mt-4 block rounded-lg border border-kcj-border bg-white p-2 text-sm font-medium text-kcj-charcoal">Cambiar mi contraseña</Link>
-        <form action={logout} className="mt-4 border-t border-kcj-border pt-3"><button type="submit" className="w-full rounded-lg bg-white p-2 text-sm font-medium text-kcj-charcoal">Cerrar sesión</button></form>
-       </div>
-      </details>
+      <MobileNavigation>
+       <Navigation sections={sections}/>
+       <Link href="/cambiar-clave" className="mt-4 block rounded-lg border border-kcj-border bg-white p-2 text-sm font-medium text-kcj-charcoal">Cambiar mi contraseña</Link>
+       <form action={logout} className="mt-4 border-t border-kcj-border pt-3"><button type="submit" className="w-full rounded-lg bg-white p-2 text-sm font-medium text-kcj-charcoal">Cerrar sesión</button></form>
+      </MobileNavigation>
      </div>
     </div>
    </header>
