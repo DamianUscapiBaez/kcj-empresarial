@@ -27,7 +27,8 @@ test('Login y panel muestran identidad corporativa sin alterar Server Actions',(
  assert.match(source('app/login/page.tsx'),/<KcjLogo/);
  assert.match(source('app/login/page.tsx'),/form action=\{login\}/);
  assert.match(source('app/dashboard/layout.tsx'),/<KcjLogo/);
- assert.match(source('app/dashboard/layout.tsx'),/navigationForRole\(rolesActivos\(user\)\)/);
+ assert.match(source('app/dashboard/layout.tsx'),/navigationForRole\(rolesParaPanel\(user,panel\)\)/);
+ assert.doesNotMatch(source('app/dashboard/layout.tsx'),/navigationForRole\(rolesActivos\(user\)\)/);
  assert.match(source('app/dashboard/page.tsx'),/prisma\.worker\.count\(\)/);
 });
 

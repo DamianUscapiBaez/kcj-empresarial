@@ -1,7 +1,7 @@
 /** Áreas laborales: datos de la ficha, NO roles ni autorizaciones del sistema. */
 export const AREAS_INICIALES_KCJ = [
  "Operaciones", "SSOMA", "Salud Ocupacional", "Recursos Humanos",
- "Mantenimiento", "Gerencia", "Tecnología de la Información",
+ "Mantenimiento", "Gerencia", "Tecnología de la Información", "Conductor",
 ] as const;
 
 export function validarAreasTrabajo(

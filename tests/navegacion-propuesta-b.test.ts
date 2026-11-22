@@ -22,7 +22,8 @@ test("Se mantienen los módulos anteriores y se agregan dos simulacros en formac
  assert.equal(new Set(slugs).size,20);
  assert.deepEqual([...slugs].sort(),[...defined].sort());
  assert.match(nav,/slugs\.filter\(slug=>canAccess\(role,slug\)\)/);
- assert.match(layout,/navigationForRole\(rolesActivos\(user\)\)/);
+ assert.match(layout,/navigationForRole\(rolesParaPanel\(user,panel\)\)/);
+ assert.doesNotMatch(layout,/navigationForRole\(rolesActivos\(user\)\)/);
 });
 test("Pausas Activas se consulta una vez dentro de Servicios y jornadas y mantiene permisos",()=>{
  assert.equal(groups.filter(g=>g.pausas).length,1);
@@ -42,7 +43,7 @@ test("Menú desplegable accesible y coherente en escritorio y móvil",()=>{
  assert.match(layout,/MobileNavigation/);
  assert.match(read("components/ui/MobileNavigation.tsx"),/setOpen\(false\)/);
  assert.equal((layout.match(/<Navigation sections=\{sections\}\/>/g)??[]).length,2);
- assert.match(panel,/navigationForRole\(rolesActivos\(user\)\)/);
+ assert.match(panel,/navigationForRole\(rolesParaPanel\(user,panel\)\)/);
 });
 test("Etiquetas más claras sin cambiar los identificadores de negocio",()=>{
  assert.match(nav,/operaciones:"Servicios y asignaciones"/);

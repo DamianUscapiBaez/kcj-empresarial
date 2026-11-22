@@ -1,6 +1,6 @@
 import {rolesActivos} from "@/lib/permisos-kcj";
 import {panelActual} from "@/lib/panel-sesion";
-import {panelesDisponibles} from "@/lib/paneles-kcj";
+import {panelesDisponibles,rolesParaPanel} from "@/lib/paneles-kcj";
 import {redirect} from "next/navigation";
 import Link from "next/link";
 import {requireUser} from "@/lib/auth";
@@ -27,7 +27,7 @@ export default async function DashboardLayout({children}:{children:React.ReactNo
  const panel=await panelActual(user);
  if(!panel)redirect("/seleccionar-panel");
  const dual=panelesDisponibles(user).length===2;
- const baseSections=navigationForRole(rolesActivos(user));
+ const baseSections=navigationForRole(rolesParaPanel(user,panel));
  const sections=(panel==="conductor"?navigationForRole(["CONDUCTOR"]):baseSections)
   .map(s=>({...s,modules:panel==="administrativo"&&dual?s.modules.filter(m=>m.slug!=="connect"):s.modules}))
   .filter(s=>s.modules.length>0||s.showPausas);

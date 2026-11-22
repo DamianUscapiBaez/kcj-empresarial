@@ -38,12 +38,12 @@ export default async function Dashboard(){
  ];
  const failedMetrics=results.filter(result=>result.status==="rejected").length;
  if(failedMetrics>0)console.error(`[KCJ] Fallaron ${failedMetrics} indicadores del dashboard. Verificar migraciones y conexión de PostgreSQL.`);
- const sections=navigationForRole(rolesActivos(user))
+ const sections=navigationForRole(rolesParaPanel(user,panel))
   .map(s=>({...s,modules:panelesDisponibles(user).length===2?s.modules.filter(m=>m.slug!=="connect"):s.modules}))
   .filter(s=>s.modules.length>0||s.showPausas);
  const date=new Intl.DateTimeFormat("es-PE",{timeZone:"America/Lima",weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(new Date());
  const favorite:ModuleSlug[]=["operaciones","roster","tareo","flota","ssoma","aula"];
- const shortcuts=favorite.filter(slug=>canAccess(rolesActivos(user),slug));
+ const shortcuts=favorite.filter(slug=>canAccess(rolesParaPanel(user,panel),slug));
  return <>
   <section className="relative overflow-hidden rounded-3xl bg-kcj-charcoal p-6 text-white shadow-soft sm:p-8">
    <div className="pointer-events-none absolute -right-20 -top-28 h-72 w-72 rounded-full border-[42px] border-white/[.035]"/>

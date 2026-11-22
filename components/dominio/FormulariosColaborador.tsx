@@ -30,15 +30,15 @@ export function RegistrarColaboradorForm({action,areas,puedeCrearAcceso=false}:{
   </div>
   {puedeCrearAcceso&&<div className="mx-5 mb-5 rounded-xl border border-blue-200 bg-blue-50 p-4 sm:mx-6">
    <label className="flex items-center gap-3 text-sm font-semibold text-slate-800"><input type="checkbox" name="crearAcceso" checked={crearAcceso} onChange={e=>setCrearAcceso(e.target.checked)} className="h-4 w-4 accent-kcj-red"/>Crear también su cuenta para ingresar al sistema (ADMIN)</label>
-   <p className="mt-2 text-xs text-slate-700">La ficha y la cuenta se registran juntas o no se registra ninguna. El área laboral no otorga permisos automáticamente: selecciona expresamente la función principal del usuario.</p>
+   <p className="mt-2 text-xs text-slate-700">La ficha y la cuenta se registran juntas o no se registra ninguna. Si tiene el área Conductor, se habilitará además su panel de Conductor al crear la cuenta, conservando separadas las funciones administrativas.</p>
    {crearAcceso&&<div className="mt-4 grid gap-4 sm:grid-cols-2">
     <label className={label}>Nombre de usuario *<input className={input} name="login" minLength={6} maxLength={32} required autoComplete="off" placeholder="Ej. kcj.conductor01"/></label>
-    <label className={label}>Función principal *<select className={input} name="role" required defaultValue=""><option value="">Selecciona el cargo autorizado</option>{["CONDUCTOR","OPERACIONES","JEFE_OPERACIONES","SSOMA","MANTENIMIENTO","RRHH","SALUD","GERENCIA","HOMOLOGACION","INSTRUCTOR","ALMACEN","ADMIN"].map(r=><option key={r} value={r}>{r}</option>)}</select></label>
+    <label className={label}>Función principal *<select className={input} name="role" required defaultValue=""><option value="">Selecciona la función administrativa o Conductor</option>{["OPERACIONES","CONDUCTOR","JEFE_OPERACIONES","SSOMA","MANTENIMIENTO","RRHH","SALUD","GERENCIA","HOMOLOGACION","INSTRUCTOR","ALMACEN","ADMIN"].map(r=><option key={r} value={r}>{r}</option>)}</select></label>
     <label className={label}>Contraseña inicial (mín. 16 caracteres) *<input className={input} type="password" name="password" minLength={16} maxLength={256} autoComplete="new-password" required/></label>
     <label className={label}>Confirmar contraseña *<input className={input} type="password" name="confirmPassword" minLength={16} maxLength={256} autoComplete="new-password" required/></label>
    </div>}
   </div>}
-  <p className="px-5 pb-4 text-xs text-slate-600">Las áreas de trabajo no asignan permisos automáticamente. Centro de Control gestiona los accesos desde Usuarios.</p>
+  <p className="px-5 pb-4 text-xs text-slate-600">El área Conductor habilita su acceso específico al crear la cuenta; el resto de los permisos administrativos se gestiona en Centro de Control.</p>
   <Submit text={crearAcceso?"Registrar colaborador y crear cuenta":"Registrar colaborador"} disabled={!areas.length}/>
  </form>;
 }
@@ -62,7 +62,7 @@ export function ActualizarColaboradorForm({action,areas,people}:{action:Action;a
    <label className={label}>Estado laboral *<select name="status" className={input} required value={estado} onChange={e=>setEstado(e.target.value)}><option value="ACTIVO">Activo</option><option value="INACTIVO">Inactivo (revoca acceso)</option></select></label>
    <label className={label}>Motivo del cambio *<input className={input} name="reason" minLength={5} maxLength={500} required placeholder="Ej.: Actualización de asignación laboral"/></label>
   </div>
-  <p className="px-5 pb-4 text-xs text-slate-600">Si solo cambia el estado, las dos áreas se mantienen. Los cambios se registran en auditoría; no alteran automáticamente los permisos.</p>
+  <p className="px-5 pb-4 text-xs text-slate-600">Si solo cambia el estado, las dos áreas se mantienen. Los cambios se registran en auditoría; al agregar o retirar el área Conductor se actualiza su acceso y se revocan las sesiones anteriores.</p>
   <Submit text="Guardar cambios del colaborador" disabled={!id||!areas.length}/>
  </form>;
 }

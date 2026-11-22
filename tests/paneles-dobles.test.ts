@@ -57,3 +57,9 @@ test("Centro de Control permite asignar Conductor solo con ficha laboral vincula
  assert.match(ops,/tx\.session\.updateMany\(\{where:\{userId\},data:\{revokedAt:new Date\(\)\}\}\)/);
  assert.match(read("components/dominio/ContenidoModulo.tsx"),/CONDUCTOR \(requiere ficha laboral\)/);
 });
+
+test("Un colaborador de doble área reporta solo su propio caso desde Conductor",()=>{
+ const src=read("app/actions-operativas.ts");
+ assert.match(src,/panel==="conductor"&&\(!u\.workerId\|\|w!==u\.workerId\)/);
+ assert.doesNotMatch(src,/u\.role==="CONDUCTOR"&&w!==u\.workerId/);
+});

@@ -15,6 +15,7 @@ import {validarTipoUnidadKCJ} from "@/lib/tipos-unidad";
 import {validarUnidadMedidaKCJ} from "@/lib/unidades-medida";
 import {severidadSSOMA,deltaInventario,rolAltaColaborador,validarAltaConAcceso,enteroOperativo} from "@/lib/validaciones-prepiloto";
 import {validarAreasTrabajo,nombreNuevaArea} from "@/lib/areas-trabajo";
+import {tieneAreaConductor,validarRolConductorEnFicha} from "@/lib/acceso-conductor-laboral";
 import {validarOrigenTareo,validarVinculoServicioTareo,motivoRegistroInterno} from "@/lib/tareo-kcj";
 import {Prisma,type Role} from "@prisma/client";
 import {panelActual} from "@/lib/panel-sesion";
@@ -38,13 +39,17 @@ export async function crearTrabajador(form:FormData){
  await prisma.$transaction(async tx=>{
   const catalog=await tx.workArea.findMany({where:{active:true},select:{name:true}});
   const areas=validarAreasTrabajo(field(form,"area",2,100),optionalField(form,"secondaryArea"),catalog.map(x=>x.name));
+  if(cuenta)validarRolConductorEnFicha(cuenta.role,areas);
   // "job" se conserva únicamente para compatibilidad histórica; no es un área ni concede permisos.
   const p=await tx.worker.create({data:{document,name,job:"Sin especificar",...areas,license,licenseExpires}});
   await tx.auditLog.create({data:{userId:u.id,entity:"Worker",entityId:p.id,action:"REGISTRAR_COLABORADOR",payload:{areaPrincipal:areas.area,areaSecundaria:areas.secondaryArea}}});
   if(cuenta){
    if(await tx.user.findUnique({where:{login:cuenta.login},select:{id:true}}))throw new Error("El usuario ya existe. Ningún registro fue guardado; elija un identificador distinto.");
    const nuevo=await tx.user.create({data:{workerId:p.id,login:cuenta.login,displayName:name,role:cuenta.role,passwordHash:passwordHash(cuenta.password),mustChangePassword:false}});
-   await tx.auditLog.create({data:{userId:u.id,entity:"User",entityId:nuevo.id,action:"ALTA_INTEGRADA_CUENTA",payload:{workerId:p.id,role:cuenta.role}}});
+   if(tieneAreaConductor(areas)&&cuenta.role!=="CONDUCTOR"){
+    await tx.userRoleGrant.create({data:{userId:nuevo.id,role:"CONDUCTOR",grantedBy:u.id}});
+   }
+   await tx.auditLog.create({data:{userId:u.id,entity:"User",entityId:nuevo.id,action:"ALTA_INTEGRADA_CUENTA",payload:{workerId:p.id,role:cuenta.role,accesoConductor:tieneAreaConductor(areas)}}});
   }
  },{isolationLevel:"Serializable"});
  change();
@@ -73,13 +78,18 @@ export async function crearCuenta(form:FormData){
  await prisma.$transaction(async tx=>{
   if(await tx.user.findUnique({where:{login},select:{id:true}}))throw new Error("Ese usuario ya está registrado. Busca la cuenta existente en lugar de duplicarla.");
   if(workerId){
-   const worker=await tx.worker.findUnique({where:{id:workerId},select:{active:true,user:{select:{id:true}}}});
+   const worker=await tx.worker.findUnique({where:{id:workerId},select:{active:true,area:true,secondaryArea:true,user:{select:{id:true}}}});
    if(!worker)throw new Error("La ficha laboral seleccionada no existe.");
    if(!worker.active)throw new Error("No se puede crear acceso para una ficha laboral inactiva.");
    if(worker.user)throw new Error("El colaborador ya tiene una cuenta. Usa la gestión de funciones adicionales o restablecimiento de contraseña.");
+   validarRolConductorEnFicha(role,worker);
   }
   if(ownerId&&!await tx.owner.findUnique({where:{id:ownerId},select:{id:true}}))throw new Error("El propietario seleccionado no existe.");
   const a=await tx.user.create({data:{login,displayName,role,passwordHash:passwordHash(password),workerId,ownerId,mustChangePassword:false}});
+  if(workerId&&role!=="CONDUCTOR"){
+   const ficha=await tx.worker.findUniqueOrThrow({where:{id:workerId},select:{area:true,secondaryArea:true}});
+   if(tieneAreaConductor(ficha))await tx.userRoleGrant.create({data:{userId:a.id,role:"CONDUCTOR",grantedBy:actor.id}});
+  }
   await tx.auditLog.create({data:{userId:actor.id,entity:"User",entityId:a.id,action:"CREAR_CUENTA_CLAVE_ASIGNADA"}});
  });change();
 }
@@ -256,7 +266,7 @@ export async function registrarCustodia(_form:FormData):Promise<void>{
  throw new Error("Registra las actas desde la ficha de Entrega y recepción de la unidad, con inventario comparativo");
 }
 
-export async function crearCaso(form:FormData){const u=await requireRole("SSOMA","OPERACIONES","JEFE_OPERACIONES","CONDUCTOR");const v=optionalField(form,"vehicleId"),w=optionalField(form,"workerId");if(u.role==="CONDUCTOR"&&w!==u.workerId)throw new Error("El conductor solo reporta su propio caso");const evidenceKey=optionalField(form,"evidenceKey",400);if(evidenceKey)await requireEvidenceOwnedAny(evidenceKey,["CONNECT","SSOMA"],u.id);const category=field(form,"category");if(!["Incidente","Accidente","Condición insegura","Inspección","IPERC","Observación"].includes(category))throw new Error("Categoría no válida");const c=await prisma.safetyCase.create({data:{evidenceKey,reference:`SSO-${Date.now()}-${Math.floor(Math.random()*10000)}`,category,severity:severidadSSOMA(field(form,"severity")),title:field(form,"title",5,150),details:field(form,"details",10,3000),workerId:w,vehicleId:v}});await log(u.id,"SafetyCase",c.id,"REPORTAR");change();}
+export async function crearCaso(form:FormData){const u=await requireRole("SSOMA","OPERACIONES","JEFE_OPERACIONES","CONDUCTOR"),panel=await panelActual(u);const v=optionalField(form,"vehicleId"),w=optionalField(form,"workerId");if(panel==="conductor"&&(!u.workerId||w!==u.workerId))throw new Error("El conductor solo reporta su propio caso");const evidenceKey=optionalField(form,"evidenceKey",400);if(evidenceKey)await requireEvidenceOwnedAny(evidenceKey,["CONNECT","SSOMA"],u.id);const category=field(form,"category");if(!["Incidente","Accidente","Condición insegura","Inspección","IPERC","Observación"].includes(category))throw new Error("Categoría no válida");const c=await prisma.safetyCase.create({data:{evidenceKey,reference:`SSO-${Date.now()}-${Math.floor(Math.random()*10000)}`,category,severity:severidadSSOMA(field(form,"severity")),title:field(form,"title",5,150),details:field(form,"details",10,3000),workerId:w,vehicleId:v}});await log(u.id,"SafetyCase",c.id,"REPORTAR");change();}
 export async function agregarAccion(form:FormData){const u=await requireRole("SSOMA");const caseId=field(form,"caseId");const c=await prisma.safetyCase.findUniqueOrThrow({where:{id:caseId}});if(c.status==="CERRADO")throw new Error("Caso cerrado");const a=await prisma.safetyAction.create({data:{caseId,description:field(form,"description",5,1000),responsible:field(form,"responsible",3,150),dueAt:instant(form,"dueAt")}});await log(u.id,"SafetyAction",a.id,"CREAR");change();}
 export async function verificarAccion(form:FormData){const u=await requireRole("SSOMA");const id=field(form,"id"),evidenceKey=field(form,"evidenceKey",8,400);await requireEvidence(evidenceKey,["SSOMA","CONNECT"]);await prisma.$transaction(async tx=>{const a=await tx.safetyAction.findUniqueOrThrow({where:{id}});if(a.status==="VERIFICADA")throw new Error("Acción ya verificada");await tx.safetyAction.update({where:{id},data:{status:"VERIFICADA",evidenceKey,verifiedBy:u.id,verifiedAt:new Date()}});await tx.auditLog.create({data:{userId:u.id,entity:"SafetyAction",entityId:id,action:"VERIFICAR",payload:{evidenceKey}}});});change();}
 export async function cerrarCaso(form:FormData){const u=await requireRole("SSOMA");const id=field(form,"id");const closureReason=optionalField(form,"closureReason",1000)??"";await prisma.$transaction(async tx=>{const c=await tx.safetyCase.findUniqueOrThrow({where:{id},include:{actions:true}});if(c.status==="CERRADO")throw new Error("Ya está cerrado");if(!mayCloseSafetyCase(c.actions,closureReason))throw new Error("Existen acciones sin evidencia/verificación o falta justificación técnica");await tx.safetyCase.update({where:{id},data:{status:"CERRADO",closureReason,closedAt:new Date(),closedBy:u.id}});await tx.auditLog.create({data:{userId:u.id,entity:"SafetyCase",entityId:id,action:"CERRAR",payload:{closureReason}}});});change();}
@@ -306,7 +316,20 @@ export async function actualizarTrabajador(form:FormData){
   const available=[...new Set([...catalog.map(x=>x.name),before.area,...(before.secondaryArea?[before.secondaryArea]:[])])];
   const areas=validarAreasTrabajo(field(form,"area",2,100),optionalField(form,"secondaryArea"),available);
   if(before.area===areas.area&&before.secondaryArea===areas.secondaryArea&&before.active===active)throw new Error("No se detectaron cambios en la ficha.");
+  const accAntes=await tx.user.findUnique({where:{workerId:id},select:{id:true,role:true}});
+  if(accAntes?.role==="CONDUCTOR"&&active&&!tieneAreaConductor(areas)){
+   throw new Error("Primero actualiza la función principal Conductor de la cuenta antes de retirar el área Conductor.");
+  }
   await tx.worker.update({where:{id},data:{...areas,active}});
+  if(accAntes){
+   if(active&&tieneAreaConductor(areas)&&accAntes.role!=="CONDUCTOR"){
+    await tx.userRoleGrant.upsert({where:{userId_role:{userId:accAntes.id,role:"CONDUCTOR"}},create:{userId:accAntes.id,role:"CONDUCTOR",grantedBy:u.id},update:{revokedAt:null,grantedAt:new Date(),grantedBy:u.id}});
+   }else if(!tieneAreaConductor(areas)){
+    await tx.userRoleGrant.updateMany({where:{userId:accAntes.id,role:"CONDUCTOR",revokedAt:null},data:{revokedAt:new Date()}});
+   }
+   // La próxima entrada debe volver a seleccionar el panel válido con permisos actualizados.
+   await tx.session.updateMany({where:{userId:accAntes.id},data:{revokedAt:new Date()}});
+  }
   if(!active){
    const acc=await tx.user.findUnique({where:{workerId:id}});
    if(acc){
@@ -329,6 +352,10 @@ export async function otorgarRol(form:FormData){
  await prisma.$transaction(async tx=>{
   const target=await tx.user.findUniqueOrThrow({where:{id:userId}});if(!target.active)throw new Error("Cuenta inactiva");if(target.role===role)throw new Error("La cuenta ya tiene ese rol principal");
   if(role==="CONDUCTOR"&&!target.workerId)throw new Error("Para asignar Conductor, primero vincule la cuenta con una ficha laboral única.");
+  if(role==="CONDUCTOR"){
+   const ficha=await tx.worker.findUniqueOrThrow({where:{id:target.workerId!},select:{area:true,secondaryArea:true}});
+   validarRolConductorEnFicha(role,ficha);
+  }
   await tx.userRoleGrant.upsert({where:{userId_role:{userId,role}},create:{userId,role,grantedBy:actor.id},update:{grantedBy:actor.id,grantedAt:new Date(),revokedAt:null}});
   await tx.session.updateMany({where:{userId},data:{revokedAt:new Date()}});
   await tx.auditLog.create({data:{userId:actor.id,entity:"User",entityId:userId,action:"AUTORIZAR_FUNCION",payload:{role,reason}}});
