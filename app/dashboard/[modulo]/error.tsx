@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import {usePathname} from "next/navigation";
 
 /** Límite de error del módulo, separado de la navegación y del dashboard. */
 export default function ModuleError({error,reset}:{error:Error&{digest?:string};reset:()=>void}){
+ const pathname=usePathname();
  return <section role="alert" className="rounded-2xl border border-amber-300 bg-amber-50 p-6 text-amber-950">
   <p className="text-xs font-bold uppercase tracking-wide">KCJ CONTROL · Carga de módulo</p>
   <h2 className="mt-2 text-xl font-bold">No fue posible cargar los registros de este módulo</h2>
@@ -12,6 +14,7 @@ export default function ModuleError({error,reset}:{error:Error&{digest?:string};
   <div className="mt-5 flex flex-wrap gap-3">
    <button type="button" onClick={reset} className="rounded-lg bg-kcj-red px-4 py-2 text-sm font-semibold text-white">Reintentar la carga</button>
    <Link href="/dashboard" className="rounded-lg border border-amber-400 px-4 py-2 text-sm font-semibold">Volver al panel</Link>
+   {pathname==="/dashboard/personal"&&<Link href="/api/diagnostico/colaboradores" target="_blank" rel="noopener noreferrer" className="rounded-lg border border-amber-500 px-4 py-2 text-sm font-semibold">Diagnóstico Colaboradores (solo ADMIN)</Link>}
   </div>
  </section>;
 }

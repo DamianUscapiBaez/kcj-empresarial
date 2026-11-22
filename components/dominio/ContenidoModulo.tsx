@@ -12,6 +12,7 @@ import {PausaConductor} from "@/components/dominio/PausaConductor";
 import {TareoRegistroForm} from "@/components/dominio/TareoRegistroForm";
 import {AdminEditarCuentaForm} from "@/components/dominio/AdminEditarCuentaForm";
 import {RegistrarColaboradorForm,ActualizarColaboradorForm} from "@/components/dominio/FormulariosColaborador";
+import {cargarColaboradoresCompat} from "@/lib/colaboradores-compat";
 import {ChecklistUnidadForm} from "@/components/dominio/ChecklistUnidadForm";
 import {catalogoChecklist} from "@/lib/vehiculos-integrados";
 import {eligibilityVehicle,hhcAccredited,tapeColor} from "@/lib/dominio-kcj";
@@ -59,18 +60,27 @@ export async function ContenidoModulo({modulo,user}:{modulo:ModuleSlug;user:Curr
   </div>;
  }
  case "personal": {
-  const [people,catalog]=await Promise.all([
-   prisma.worker.findMany({orderBy:{name:"asc"},take:300}),
-   prisma.workArea.findMany({where:{active:true},select:{name:true},orderBy:{name:"asc"}}),
-  ]);
+  // Consultas selectivas: la tabla Worker puede existir aun si falta la
+  // migración de segunda área y catálogo. Se muestra el padrón en solo lectura
+  // en ese caso, sin permitir altas ni cambios que requieren la migración.
+  const {people,catalog,soloLectura,workerPendiente,catalogoPendiente}=await cargarColaboradoresCompat({
+   listarVigentes:()=>prisma.worker.findMany({select:{id:true,document:true,name:true,area:true,secondaryArea:true,active:true,license:true,licenseExpires:true},orderBy:{name:"asc"},take:300}),
+   listarBase:()=>prisma.worker.findMany({select:{id:true,document:true,name:true,area:true,active:true,license:true,licenseExpires:true},orderBy:{name:"asc"},take:300}),
+   listarAreas:()=>prisma.workArea.findMany({where:{active:true},select:{name:true},orderBy:{name:"asc"}}),
+  });
   const areas=catalog.map(x=>({value:x.name,label:x.name}));
   return <div className="space-y-5">
-   <div className="grid gap-5 lg:grid-cols-2">
+   {soloLectura&&<section role="status" className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-950">
+    <p className="font-bold">Colaboradores disponible temporalmente en modo consulta</p>
+    <p className="mt-2">La base de datos aún no tiene toda la estructura que necesita este módulo ({workerPendiente?"columna de segunda área":""}{workerPendiente&&catalogoPendiente?" y ":""}{catalogoPendiente?"catálogo de áreas":""}). Los colaboradores existentes se muestran sin modificarlos. El alta y la edición permanecerán bloqueadas hasta que TI aplique y verifique la migración pendiente.</p>
+    {tieneRol(user,"ADMIN")&&<a className="mt-2 inline-block font-semibold underline" href="/api/diagnostico/colaboradores" target="_blank" rel="noopener noreferrer">Abrir diagnóstico de Colaboradores para TI</a>}
+   </section>}
+   {!soloLectura&&<div className="grid gap-5 lg:grid-cols-2">
     {tieneRol(user,"ADMIN","RRHH")&&<RegistrarColaboradorForm action={op.crearTrabajador} areas={areas}/>}
     {tieneRol(user,"ADMIN","RRHH")&&<ActualizarColaboradorForm action={op.actualizarTrabajador} areas={areas} people={people.map(p=>({id:p.id,name:p.name,document:p.document,area:p.area,secondaryArea:p.secondaryArea,active:p.active}))}/>}
-   </div>
-   <DataTable title="Padrón de colaboradores" emptyMessage="Aún no hay colaboradores. Registra primero su ficha laboral única." rows={rows(people,x=>({id:x.id,data:{Documento:x.document,Colaborador:x.name,"Área principal":x.area,"Segunda área":x.secondaryArea??"—",Licencia:x.license??"—",Vence:fmt(x.licenseExpires),Estado:x.active?"Activo":"Inactivo"}}))}/>
-   {tieneRol(user,"ADMIN")&&<div className="space-y-3">
+   </div>}
+   <DataTable title="Padrón de colaboradores" emptyMessage="Aún no hay colaboradores. Registra primero su ficha laboral única." rows={rows(people,x=>({id:x.id,data:{Documento:x.document,Colaborador:x.name,"Área principal":x.area,"Segunda área":workerPendiente?"No disponible (migración pendiente)":x.secondaryArea??"—",Licencia:x.license??"—",Vence:fmt(x.licenseExpires),Estado:x.active?"Activo":"Inactivo"}}))}/>
+   {tieneRol(user,"ADMIN")&&!soloLectura&&<div className="space-y-3">
     <Note><strong>Centro de Control · Catálogo de áreas.</strong> Las áreas de trabajo son asignaciones laborales; no son roles de acceso. Crea únicamente áreas reales de KCJ. Homologación, Flota, ROSTER y Tareo siguen siendo procesos, no áreas.</Note>
     <RecordForm title="Agregar área de trabajo al catálogo" submit="Agregar área" action={op.crearAreaTrabajo} fields={[field("name","Nombre del área de trabajo")]}/>
     <DataTable title="Áreas de trabajo disponibles" rows={rows(catalog,x=>({id:x.name,data:{"Área de trabajo":x.name,Estado:"Disponible"}}))}/>

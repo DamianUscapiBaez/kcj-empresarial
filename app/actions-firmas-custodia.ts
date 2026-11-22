@@ -1,3 +1,4 @@
+
 "use server";
 
 import { prisma } from "@/lib/prisma";
@@ -10,14 +11,14 @@ import {
 } from "@/lib/custodia-firmas";
 import { revalidatePath } from "next/cache";
 
-// Obtenemos el tipo exacto esperado por nombreFirmante.
+// Tipo exacto que requiere nombreFirmante.
 type LadoFirmaCustodia = Parameters<typeof nombreFirmante>[1];
 
 /**
  * Registra una firma manuscrita de custodia.
  *
- * La firma debe capturarse en presencia de un
- * operador autorizado.
+ * La firma debe ser capturada por un operador
+ * autorizado en presencia del firmante.
  *
  * El trazo no acredita por sí solo identidad
  * ni constituye una firma digital certificada.
@@ -28,7 +29,13 @@ export async function registrarFirmaCustodia(data: {
   evidenceKey: string;
   witnessedInPerson: boolean;
 }): Promise<void> {
-  const actor = await requireRole("ADMIN", "OPERACIONES", "JEFE_OPERACIONES");
+
+  // Verificar permisos del operador.
+  const actor = await requireRole(
+    "ADMIN",
+    "OPERACIONES",
+    "JEFE_OPERACIONES"
+  );
 
   // Validar identificador del acta.
   if (
@@ -39,124 +46,154 @@ export async function registrarFirmaCustodia(data: {
     throw new Error("Acta inválida");
   }
 
-  // Validar el lado de la firma.
+  // Validar lado de firma.
   validarLadoFirma(data.side);
 
-  // Conservar el tipo requerido por nombreFirmante.
-  // La conversión depende de la validación anterior.
+  // Corregir incompatibilidad de tipos.
   const side = data.side as LadoFirmaCustodia;
 
-  // La persona debe firmar presencialmente.
+  // Confirmar presencia física del firmante.
   if (data.witnessedInPerson !== true) {
     throw new Error(
-      "Debe confirmar que la persona firmó en presencia del operador",
+      "Debe confirmar que la persona firmó en presencia del operador"
     );
   }
 
-  // Validar evidencia.
-  if (typeof data.evidenceKey !== "string" || data.evidenceKey.length > 400) {
+  // Validar referencia de evidencia.
+  if (
+    typeof data.evidenceKey !== "string" ||
+    data.evidenceKey.length > 400
+  ) {
     throw new Error("Evidencia de firma inválida");
   }
 
-  await requireEvidenceOwned(data.evidenceKey, "CUSTODIA", actor.id);
+  // Verificar propiedad y propósito de la evidencia.
+  await requireEvidenceOwned(
+    data.evidenceKey,
+    "CUSTODIA",
+    actor.id
+  );
 
-  const evidence = await prisma.evidenceAsset.findUniqueOrThrow({
-    where: {
-      key: data.evidenceKey,
-    },
-    select: {
-      contentType: true,
-      filename: true,
-    },
-  });
+  // Consultar metadatos de la evidencia.
+  const evidence =
+    await prisma.evidenceAsset.findUniqueOrThrow({
+      where: {
+        key: data.evidenceKey
+      },
+      select: {
+        contentType: true,
+        filename: true
+      }
+    });
 
-  // Solo se permite una imagen PNG capturada
-  // en el formulario correspondiente.
+  // La evidencia debe ser un PNG generado
+  // desde el formulario de firmas.
   if (
     evidence.contentType !== "image/png" ||
     !evidence.filename.startsWith("firma-custodia-")
   ) {
     throw new Error(
-      "La firma debe ser una imagen PNG capturada en el formulario",
+      "La firma debe ser una imagen PNG capturada en el formulario"
     );
   }
 
   let vehicleId = "";
 
+  // Registrar firma y auditoría en una transacción.
   await prisma.$transaction(
     async (tx) => {
-      // Recuperar acta, inventario y firmas.
-      const event = await tx.custodyEvent.findUniqueOrThrow({
-        where: {
-          id: data.eventId,
-        },
-        include: {
-          items: {
-            include: {
-              photos: true,
-            },
+
+      // Obtener acta, inventario y firmas existentes.
+      const event =
+        await tx.custodyEvent.findUniqueOrThrow({
+          where: {
+            id: data.eventId
           },
-          signatures: true,
-        },
-      });
+          include: {
+            items: {
+              include: {
+                photos: true
+              }
+            },
+            signatures: true
+          }
+        });
 
       vehicleId = event.vehicleId;
 
-      // Solo se admiten movimientos de
-      // entrega y recepción.
-      if (event.kind !== "ENTREGA" && event.kind !== "RECEPCION") {
-        throw new Error("El movimiento no admite firmas de custodia");
-      }
-
-      // Impedir firmas duplicadas.
-      if (event.signatures.some((signature) => signature.side === side)) {
+      // Verificar movimiento admitido.
+      if (
+        event.kind !== "ENTREGA" &&
+        event.kind !== "RECEPCION"
+      ) {
         throw new Error(
-          "Esta persona ya tiene una firma registrada en el acta. No se permiten reemplazos",
+          "El movimiento no admite firmas de custodia"
         );
       }
 
-      // Verificar inventario histórico.
+      // Impedir duplicación de firmas.
+      if (
+        event.signatures.some(
+          (signature) => signature.side === side
+        )
+      ) {
+        throw new Error(
+          "Esta persona ya tiene una firma registrada en el acta. No se permiten reemplazos"
+        );
+      }
+
+      // Exigir inventario histórico.
       if (!event.items.length) {
         throw new Error(
-          "El acta no tiene inventario histórico. Requiere regularización supervisada",
+          "El acta no tiene inventario histórico. Requiere regularización supervisada"
         );
       }
 
-      // Verificar que el acta sea la vigente.
-      const latest = await tx.custodyEvent.findFirst({
-        where: {
-          vehicleId: event.vehicleId,
-        },
-        orderBy: [{ at: "desc" }, { id: "desc" }],
-        select: {
-          id: true,
-        },
-      });
+      // Obtener acta vigente de la unidad.
+      const latest =
+        await tx.custodyEvent.findFirst({
+          where: {
+            vehicleId: event.vehicleId
+          },
+          orderBy: [
+            { at: "desc" },
+            { id: "desc" }
+          ],
+          select: {
+            id: true
+          }
+        });
 
+      // Impedir firmas retroactivas.
       if (latest?.id !== event.id) {
         throw new Error(
-          "Solo puede firmarse el acta vigente de la unidad; no se insertan firmas retroactivas en actas antiguas",
+          "Solo puede firmarse el acta vigente de la unidad; no se insertan firmas retroactivas en actas antiguas"
         );
       }
 
-      // Identificar al firmante.
-      const signerName = nombreFirmante(event, side);
+      // Obtener identidad del firmante.
+      const signerName = nombreFirmante(
+        event,
+        side
+      );
 
-      // Calcular huella del documento.
-      const documentHash = huellaActaCustodia(event);
+      // Generar huella del acta.
+      const documentHash =
+        huellaActaCustodia(event);
 
-      // Registrar la firma.
-      const signature = await tx.custodySignature.create({
-        data: {
-          custodyEventId: event.id,
-          side,
-          signerName,
-          evidenceKey: data.evidenceKey,
-          documentHash,
-          capturedById: actor.id,
-          witnessedInPerson: true,
-        },
-      });
+      // Registrar firma.
+      const signature =
+        await tx.custodySignature.create({
+          data: {
+            custodyEventId: event.id,
+            side,
+            signerName,
+            evidenceKey: data.evidenceKey,
+            documentHash,
+            capturedById: actor.id,
+            witnessedInPerson: true
+          }
+        });
 
       // Registrar auditoría.
       await tx.auditLog.create({
@@ -171,18 +208,23 @@ export async function registrarFirmaCustodia(data: {
             signerName,
             documentHash,
             evidenceKey: data.evidenceKey,
-            presencial: true,
-          },
-        },
+            presencial: true
+          }
+        }
       });
+
     },
     {
-      isolationLevel: "Serializable",
-    },
+      isolationLevel: "Serializable"
+    }
   );
 
-  // Actualizar las páginas afectadas.
-  revalidatePath(`/actas/custodia/${data.eventId}`);
+  // Actualizar páginas afectadas.
+  revalidatePath(
+    `/actas/custodia/${data.eventId}`
+  );
 
-  revalidatePath(`/dashboard/custodia/${vehicleId}`);
+  revalidatePath(
+    `/dashboard/custodia/${vehicleId}`
+  );
 }

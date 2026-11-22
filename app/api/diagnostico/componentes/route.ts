@@ -11,7 +11,15 @@ export async function GET(){
  if(!user)return NextResponse.json({error:"Autenticación requerida"},{status:401,headers:{"Cache-Control":"no-store"}});
  if(user.role!=="ADMIN")return NextResponse.json({error:"Permiso denegado"},{status:403,headers:{"Cache-Control":"no-store"}});
  const checks=[
-  {name:"Personal",run:()=>prisma.worker.count()},
+  {name:"Personal",run:async()=>{
+   // Un count() puede aprobar aunque falte la columna Worker.secondaryArea
+   // o la tabla WorkArea, requeridas por la pantalla Colaboradores.
+   await Promise.all([
+    prisma.worker.findMany({select:{id:true,secondaryArea:true},take:1}),
+    prisma.workArea.findMany({select:{name:true},take:1}),
+   ]);
+   return prisma.worker.count();
+  }},
   {name:"Flota",run:()=>prisma.vehicle.count()},
   {name:"Servicios",run:()=>prisma.service.count()},
   {name:"SSOMA",run:()=>prisma.safetyCase.count()},
