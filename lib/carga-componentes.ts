@@ -7,7 +7,7 @@ const MODULOS_CON_TRABAJADORES: ReadonlySet<ModuleSlug> = new Set<ModuleSlug>([
   "acceso", "homologacion", "salud", "roster", "operaciones", "tareo", "rrhh", "ssoma", "aula",
 ]);
 const MODULOS_CON_VEHICULOS: ReadonlySet<ModuleSlug> = new Set<ModuleSlug>([
-  "flota", "mantenimiento", "homologacion", "operaciones", "ssoma", "custodia",
+  "flota", "mantenimiento", "operaciones", "ssoma", "custodia",
 ]);
 
 export function requiereCatalogoPersonal(modulo: ModuleSlug): boolean {

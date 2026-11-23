@@ -30,7 +30,7 @@ export function AdminEditarCuentaForm({cuentas,action}:{cuentas:CuentaEditable[]
     <textarea className="input" name="reason" required minLength={10} maxLength={500} rows={2} placeholder="Indica por qué se actualizan estos datos"/>
    </label>
    <label className="block min-w-0 space-y-1.5 text-sm font-medium text-slate-700 sm:col-span-2">Contraseña actual de ADMIN *
-    <input className="input" type="password" name="adminPassword" autoComplete="current-password" required minLength={16}/>
+    <input className="input" type="password" name="adminPassword" autoComplete="current-password" required minLength={8}/>
    </label>
   </div>
   <div className="flex flex-wrap items-center justify-between gap-3 border-t border-kcj-border pt-4"><p className="text-xs text-kcj-muted">Cambiar el usuario cierra las sesiones anteriores del colaborador.</p><button type="submit" className="btn" disabled={!cambiado}>Guardar cambios de acceso</button></div>

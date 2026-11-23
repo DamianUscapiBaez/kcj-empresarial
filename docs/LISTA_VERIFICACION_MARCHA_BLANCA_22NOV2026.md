@@ -12,7 +12,7 @@
 
 **Cuenta y acceso — ADMIN / TI:**
 - [ ] Crear colaborador ficticio con DNI ficticio, nombre y área
-- [ ] Crear cuenta vinculada con contraseña robusta (mín. 16 caracteres)
+- [ ] Crear cuenta vinculada con contraseña robusta (mín. 8 caracteres)
 - [ ] Comprobar rechazo de cuenta duplicada para misma ficha
 - [ ] Iniciar y cerrar sesión con cuenta nueva
 - [ ] Conceder rol adicional CONDUCTOR a OPERACIONES y verificar selector «1. Administrativo», «2. Conductor»

@@ -9,6 +9,7 @@ datasource db {
 
 enum Role {
   ADMIN
+  COLABORADOR
   GERENCIA
   OPERACIONES
   JEFE_OPERACIONES
@@ -111,6 +112,14 @@ model User {
   receipts Receipt[]
   audit AuditLog[]
   createdAt DateTime @default(now())
+  primaryAdminProtection PrimaryAdminProtection?
+}
+
+model PrimaryAdminProtection {
+  id String @id
+  userId String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+  protectedAt DateTime @default(now())
 }
 
 model UserRoleGrant {
@@ -174,6 +183,7 @@ model Vehicle {
   active Boolean @default(true)
   createdAt DateTime @default(now())
   documents VehicleDocument[]
+  miningDocuments VehicleMiningDocument[]
   readings OdometerReading[]
   equipment VehicleEquipment[]
   checklists VehicleChecklist[]
@@ -232,11 +242,30 @@ model VehicleDocument {
   vehicle Vehicle @relation(fields:[vehicleId],references:[id])
   kind String
   reference String?
-  expiresAt DateTime
+  expiresAt DateTime?
   evidenceKey String?
   verifiedAt DateTime?
   createdAt DateTime @default(now())
   @@index([vehicleId,kind,expiresAt])
+}
+
+// Requisitos documentales mineros: una versión por registro, sin sobrescribir resultados previos.
+// El resultado APROBADO/RECHAZADO procede de una entidad EXTERNA; KCJ solo lo transcribe.
+model VehicleMiningDocument {
+  id String @id @default(cuid())
+  vehicleId String
+  vehicle Vehicle @relation(fields:[vehicleId],references:[id],onDelete:Restrict)
+  kind String
+  mineScope String @default("LAS_BAMBAS")
+  externalStatus String @default("PENDIENTE")
+  reference String?
+  issuedAt DateTime?
+  validUntil DateTime?
+  evidenceKey String?
+  remarks String?
+  recordedBy String
+  createdAt DateTime @default(now())
+  @@index([vehicleId,mineScope,kind,createdAt])
 }
 
 model OdometerReading {

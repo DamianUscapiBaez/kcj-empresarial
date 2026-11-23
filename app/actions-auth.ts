@@ -7,6 +7,7 @@ import { COOKIE, requireUser } from "@/lib/auth";
 import {COOKIE_PANEL} from "@/lib/panel-sesion";
 import {panelesDisponibles,destinoPanel} from "@/lib/paneles-kcj";
 import { z } from "zod";
+import {MIN_LONGITUD_CLAVE,MAX_LONGITUD_CLAVE} from "@/lib/politica-contrasenas";
 const credentials=z.object({login:z.string().trim().min(4).max(32),password:z.string().min(1).max(256)});
 export async function login(form:FormData){
  const params=credentials.safeParse({login:form.get("login"),password:form.get("password")});
@@ -23,14 +24,14 @@ export async function login(form:FormData){
  jar.set(COOKIE,secret,{httpOnly:true,secure:process.env.NODE_ENV==="production",sameSite:"lax",path:"/",maxAge:8*60*60});
  jar.delete(COOKIE_PANEL); // No conservar una selección de otro usuario o sesión.
  const disponibles=panelesDisponibles(u);
- redirect(disponibles.length===2?"/seleccionar-panel":destinoPanel(disponibles[0]??"administrativo"));
+ redirect(u.role==="PROPIETARIO"&&u.mustChangePassword?"/cambiar-clave":disponibles.length===2?"/seleccionar-panel":destinoPanel(disponibles[0]??"administrativo"));
 }
 export async function logout(){const raw=(await cookies()).get(COOKIE)?.value;if(raw)await prisma.session.updateMany({where:{tokenHash:tokenHash(raw)},data:{revokedAt:new Date()}});const jar=await cookies();jar.delete(COOKIE);jar.delete(COOKIE_PANEL);redirect("/login");}
 export async function changePassword(form:FormData){
  const user=await (async()=>{const {currentUser}=await import("@/lib/auth");return currentUser()})();
  if(!user)redirect("/login");
  const prev=String(form.get("actual")??"");const next=String(form.get("nueva")??"");const confirm=String(form.get("confirmar")??"");
- if(!passwordMatches(prev,user.passwordHash)||next.length<16||next.length>256||next!==confirm||next===prev)redirect("/cambiar-clave?error=1");
+ if(!passwordMatches(prev,user.passwordHash)||next.length<MIN_LONGITUD_CLAVE||next.length>MAX_LONGITUD_CLAVE||next!==confirm||next===prev)redirect("/cambiar-clave?error=1");
  await prisma.$transaction(async tx=>{await tx.user.update({where:{id:user.id},data:{passwordHash:passwordHash(next),mustChangePassword:false,failedLogins:0}});await tx.auditLog.create({data:{userId:user.id,entity:"User",entityId:user.id,action:"CAMBIO_CLAVE"}});const raw=(await cookies()).get(COOKIE)?.value;if(raw)await tx.session.updateMany({where:{userId:user.id,tokenHash:{not:tokenHash(raw)}},data:{revokedAt:new Date()}});});
  redirect("/dashboard");
 }

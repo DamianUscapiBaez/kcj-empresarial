@@ -2,7 +2,7 @@
 export type Fitness = "APTO"|"RESTRINGIDO"|"NO_APTO"|"PENDIENTE";
 export type DutyKind = "GUARDIA"|"DESCANSO";
 export interface Interval { startsAt:Date; endsAt:Date }
-export interface VehicleEligibility { active:boolean; documents:{kind:string;expiresAt:Date;verifiedAt:Date|null}[]; hasOpenWorkOrder:boolean; hasCriticalSafetyCase:boolean; withThirdParty:boolean; custodyUnderReview?:boolean; mineRequired:boolean; mineCardExpiresAt:Date|null; until:Date; }
+export interface VehicleEligibility { active:boolean; documents:{kind:string;expiresAt:Date|null;verifiedAt:Date|null}[]; hasOpenWorkOrder:boolean; hasCriticalSafetyCase:boolean; withThirdParty:boolean; custodyUnderReview?:boolean; mineRequired:boolean; mineCardExpiresAt:Date|null; until:Date; }
 export interface DriverEligibility { active:boolean; licenseExpires:Date|null; fitness:Fitness|null; fitnessExpires:Date|null; requiredClearancesValid:boolean; dutyKind:DutyKind|null; }
 export function validInterval(interval:Interval):boolean { return Number.isFinite(interval.startsAt.getTime()) && Number.isFinite(interval.endsAt.getTime()) && interval.endsAt.getTime()>interval.startsAt.getTime(); }
 export function overlaps(a:Interval,b:Interval):boolean { return a.startsAt<b.endsAt && b.startsAt<a.endsAt; }
@@ -10,7 +10,7 @@ export function eligibilityVehicle(x:VehicleEligibility):string[] {
  const reasons:string[]=[];
  if(!x.active)reasons.push("La unidad está inactiva");
  const docs=["SOAT","REVISION_TECNICA"];
- for(const kind of docs){if(!x.documents.some(d=>d.kind===kind&&d.verifiedAt!==null&&d.expiresAt>=x.until))reasons.push(`Documento ${kind} no vigente o sin validar`);}
+ for(const kind of docs){if(!x.documents.some(d=>d.kind===kind&&d.verifiedAt!==null&&d.expiresAt!==null&&d.expiresAt>=x.until))reasons.push(`Documento ${kind} no vigente o sin validar`);}
  if(x.hasOpenWorkOrder)reasons.push("Mantenimiento pendiente de liberación");
  if(x.hasCriticalSafetyCase)reasons.push("Restricción SSOMA crítica abierta");
  if(x.withThirdParty)reasons.push("Unidad bajo custodia de tercero");

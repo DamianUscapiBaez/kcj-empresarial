@@ -5,7 +5,10 @@ import path from 'node:path';
 const read=(p:string)=>readFileSync(path.join(process.cwd(),p),'utf8');
 test('Operaciones controla homologación y flota sin inventar un departamento separado',()=>{
  const actions=read('app/actions-operativas.ts');
- assert.match(actions,/crearHabilitacion[\s\S]*?requireRole\("HOMOLOGACION","ADMIN","OPERACIONES","JEFE_OPERACIONES"\)/);
+ assert.match(actions,/registrarHomologacionPersonal/);
+ assert.match(actions,/kind==="TARJETA_AMARILLA"/);
+ assert.match(read('app/actions-vehiculos.ts'),/registrarPaseMineroUnidad/);
+ assert.match(read('app/dashboard/ficha-vehicular/[id]/page.tsx'),/Habilitación minera/);
 });
 test('Almacén permite operaciones y consulta para RRHH y Gerencia',()=>{
  const routes=read('lib/modulos.ts');
@@ -20,8 +23,9 @@ test('La navegación agrupa procesos por responsabilidades sin perder los 17 mó
  const nav=read('lib/navegacion-kcj.ts');
  assert.match(nav,/title:"Servicios y jornadas"/);
  assert.match(nav,/"operaciones","roster","tareo"/);
- assert.match(nav,/"flota","mantenimiento","homologacion","custodia","propietarios"/);
+ assert.match(nav,/"flota","mantenimiento","custodia","propietarios"/);
  assert.match(nav,/title:"Recursos corporativos"/);
+ assert.match(nav,/"personal","homologacion","rrhh"/);
 });
 
 test('La exportación comprueba permisos específicos por reporte',()=>{

@@ -1,8 +1,8 @@
 /** Política de acceso KCJ: clave asignada hasta cambio voluntario o restablecimiento autorizado. */
-export const MIN_LONGITUD_CLAVE=16;
+export const MIN_LONGITUD_CLAVE=8;
 export const MAX_LONGITUD_CLAVE=256;
 export function validarClaveAsignada(clave:string, confirmacion:string):string {
- if(clave.length<MIN_LONGITUD_CLAVE||clave.length>MAX_LONGITUD_CLAVE)throw new Error("La contraseña debe tener entre 16 y 256 caracteres.");
+ if(clave.length<MIN_LONGITUD_CLAVE||clave.length>MAX_LONGITUD_CLAVE)throw new Error("La contraseña debe tener entre 8 y 256 caracteres.");
  if(clave!==confirmacion)throw new Error("La confirmación de la contraseña no coincide.");
  return clave;
 }

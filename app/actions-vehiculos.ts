@@ -3,8 +3,9 @@ import {randomUUID} from "node:crypto";
 import {revalidatePath} from "next/cache";
 import {prisma} from "@/lib/prisma";
 import {requireRole} from "@/lib/auth";
-import {field,optionalField,numberField} from "@/lib/form";
+import {field,optionalField,numberField,optionalDate,instant,flag} from "@/lib/form";
 import {requireEvidenceOwned} from "@/lib/evidencias";
+import {validarPaseMineroVehicular,requisitoMineroValido,validarResultadoExterno} from "@/lib/requisitos-mineros-kcj";
 import {catalogItem,validarInventario,validarChecklist,catalogoChecklist,VERSION_CHECKLIST_VEHICULO,type RespuestaChecklist} from "@/lib/vehiculos-integrados";
 
 const refresh=(id:string)=>{revalidatePath(`/dashboard/ficha-vehicular/${id}`);revalidatePath("/dashboard/flota");};
@@ -65,5 +66,37 @@ export async function registrarChecklistVehiculo(form:FormData):Promise<void>{
   }
   await tx.auditLog.create({data:{userId:user.id,entity:"VehicleChecklist",entityId:checklist.id,action:"INSPECCION_ESTRUCTURADA",payload:{vehicleId,context,status:checked.status,version:VERSION_CHECKLIST_VEHICULO,items:checked.items.length}}});
  },{isolationLevel:"Serializable"});
+ refresh(vehicleId);
+}
+
+/** Tarjeta Amarilla = PASE MINERO de una unidad, nunca homologación de una persona. */
+export async function registrarPaseMineroUnidad(form:FormData):Promise<void>{
+ const u=await requireRole("ADMIN","OPERACIONES","JEFE_OPERACIONES");
+ const vehicleId=field(form,"vehicleId"),evidenceKey=optionalField(form,"evidenceKey",400);
+ validarPaseMineroVehicular("TARJETA_AMARILLA",vehicleId,optionalField(form,"workerId"));
+ if(!await prisma.vehicle.findUnique({where:{id:vehicleId},select:{id:true}}))throw new Error("Unidad no registrada en Flota.");
+ if(flag(form,"verified")&&!evidenceKey)throw new Error("Para registrar el pase como verificado, adjunta su evidencia.");
+ if(evidenceKey)await requireEvidenceOwned(evidenceKey,"HOMOLOGACION",u.id);
+ const issuedAt=optionalDate(form,"issuedAt"),validUntil=instant(form,"validUntil");
+ if(issuedAt&&issuedAt>validUntil)throw new Error("Fecha de emisión posterior al vencimiento.");
+ const c=await prisma.clearance.create({data:{vehicleId,workerId:null,kind:"TARJETA_AMARILLA",scope:field(form,"scope"),reference:optionalField(form,"reference",120),issuedAt,validUntil,verified:flag(form,"verified"),evidenceKey}});
+ await prisma.auditLog.create({data:{userId:u.id,entity:"Clearance",entityId:c.id,action:"REGISTRAR_PASE_MINERO_VEHICULAR",payload:{vehicleId,scope:c.scope}}});
+ refresh(vehicleId);
+}
+
+/** Registro por versión del expediente minero VEHICULAR. El estado es emitido fuera de KCJ. */
+export async function registrarRequisitoMineroUnidad(form:FormData):Promise<void>{
+ const u=await requireRole("ADMIN","OPERACIONES","JEFE_OPERACIONES");
+ const vehicleId=field(form,"vehicleId"),kind=field(form,"kind"),mineScope=field(form,"mineScope",2,100);
+ if(!requisitoMineroValido(kind))throw new Error("Seleccione un requisito del catálogo minero vehicular.");
+ if(!await prisma.vehicle.findUnique({where:{id:vehicleId},select:{id:true}}))throw new Error("La unidad no está registrada en Flota.");
+ const externalStatus=field(form,"externalStatus"),reference=optionalField(form,"reference",120);
+ const evidenceKey=optionalField(form,"evidenceKey",400),remarks=optionalField(form,"remarks",1000);
+ validarResultadoExterno(externalStatus,reference,evidenceKey,remarks);
+ if(evidenceKey)await requireEvidenceOwned(evidenceKey,"HOMOLOGACION",u.id);
+ const issuedAt=optionalDate(form,"issuedAt"),validUntil=optionalDate(form,"validUntil");
+ if(issuedAt&&validUntil&&issuedAt>validUntil)throw new Error("Vencimiento anterior a la fecha de emisión.");
+ const v=await prisma.vehicleMiningDocument.create({data:{vehicleId,kind,mineScope,externalStatus,reference,issuedAt,validUntil,evidenceKey,remarks,recordedBy:u.id}});
+ await prisma.auditLog.create({data:{userId:u.id,entity:"VehicleMiningDocument",entityId:v.id,action:"REGISTRAR_VERSION_RESULTADO_EXTERNO",payload:{vehicleId,kind,mineScope,externalStatus}}});
  refresh(vehicleId);
 }

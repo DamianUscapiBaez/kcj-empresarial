@@ -29,16 +29,11 @@ export function RegistrarColaboradorForm({action,areas,puedeCrearAcceso=false}:{
    <label className={label}>Vencimiento de licencia<input className={input} type="date" name="licenseExpires"/></label>
   </div>
   {puedeCrearAcceso&&<div className="mx-5 mb-5 rounded-xl border border-blue-200 bg-blue-50 p-4 sm:mx-6">
-   <label className="flex items-center gap-3 text-sm font-semibold text-slate-800"><input type="checkbox" name="crearAcceso" checked={crearAcceso} onChange={e=>setCrearAcceso(e.target.checked)} className="h-4 w-4 accent-kcj-red"/>Crear también su cuenta para ingresar al sistema (ADMIN)</label>
-   <p className="mt-2 text-xs text-slate-700">La ficha y la cuenta se registran juntas o no se registra ninguna. Si tiene el área Conductor, se habilitará además su panel de Conductor al crear la cuenta, conservando separadas las funciones administrativas.</p>
-   {crearAcceso&&<div className="mt-4 grid gap-4 sm:grid-cols-2">
-    <label className={label}>Nombre de usuario *<input className={input} name="login" minLength={6} maxLength={32} required autoComplete="off" placeholder="Ej. kcj.conductor01"/></label>
-    <label className={label}>Función principal *<select className={input} name="role" required defaultValue=""><option value="">Selecciona la función administrativa o Conductor</option>{["OPERACIONES","CONDUCTOR","JEFE_OPERACIONES","SSOMA","MANTENIMIENTO","RRHH","SALUD","GERENCIA","HOMOLOGACION","INSTRUCTOR","ALMACEN","ADMIN"].map(r=><option key={r} value={r}>{r}</option>)}</select></label>
-    <label className={label}>Contraseña inicial (mín. 16 caracteres) *<input className={input} type="password" name="password" minLength={16} maxLength={256} autoComplete="new-password" required/></label>
-    <label className={label}>Confirmar contraseña *<input className={input} type="password" name="confirmPassword" minLength={16} maxLength={256} autoComplete="new-password" required/></label>
-   </div>}
+   <label className="flex items-center gap-3 text-sm font-semibold text-slate-800"><input type="checkbox" name="crearAcceso" checked={crearAcceso} onChange={e=>setCrearAcceso(e.target.checked)} className="h-4 w-4 accent-kcj-red"/>Crear cuenta de acceso para este colaborador</label>
+   <p className="mt-2 text-xs text-slate-700">Una sola cuenta: el DNI de 8 dígitos será el usuario y la contraseña inicial. El sistema toma las áreas de trabajo seleccionadas; no es necesario volver a elegir funciones. Quien tenga Administrativo y Conductor seleccionará su panel después de iniciar sesión, sin ingresar otra contraseña.</p>
+   <p className="mt-2 text-xs text-amber-900">Seguridad: el DNI como contraseña inicial es predecible. Se recomienda cambiarla inmediatamente al primer ingreso.</p>
   </div>}
-  <p className="px-5 pb-4 text-xs text-slate-600">El área Conductor habilita su acceso específico al crear la cuenta; el resto de los permisos administrativos se gestiona en Centro de Control.</p>
+  <p className="px-5 pb-4 text-xs text-slate-600">Las áreas determinan el trabajo; los privilegios especiales (como ADMIN o Jefatura) se autorizan por separado en Centro de Control, no por este formulario.</p>
   <Submit text={crearAcceso?"Registrar colaborador y crear cuenta":"Registrar colaborador"} disabled={!areas.length}/>
  </form>;
 }

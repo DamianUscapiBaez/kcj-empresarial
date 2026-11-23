@@ -10,50 +10,56 @@ import {field,optionalField,optionalDate,numberField,instant,flag} from "@/lib/f
 import {validInterval,overlaps,hoursBetween,mayCloseSafetyCase} from "@/lib/dominio-kcj";
 import {comprobarAsignacion} from "@/lib/operaciones";
 import {passwordHash,passwordMatches} from "@/lib/crypto";
-import {validarClaveAsignada,validarRestablecimientoAdmin} from "@/lib/politica-contrasenas";
+import {validarClaveAsignada,validarRestablecimientoAdmin,MIN_LONGITUD_CLAVE,MAX_LONGITUD_CLAVE} from "@/lib/politica-contrasenas";
 import {validarTipoUnidadKCJ} from "@/lib/tipos-unidad";
 import {validarUnidadMedidaKCJ} from "@/lib/unidades-medida";
 import {severidadSSOMA,deltaInventario,rolAltaColaborador,validarAltaConAcceso,enteroOperativo} from "@/lib/validaciones-prepiloto";
 import {validarAreasTrabajo,nombreNuevaArea} from "@/lib/areas-trabajo";
 import {tieneAreaConductor,validarRolConductorEnFicha} from "@/lib/acceso-conductor-laboral";
+import {dniCuentaInicial,rolesDesdeAreas,nombreNormalizado,nombreEsPosibleDuplicado} from "@/lib/cuentas-por-area";
+import {permitirVinculacion} from "@/lib/propietarios-kcj";
 import {validarOrigenTareo,validarVinculoServicioTareo,motivoRegistroInterno} from "@/lib/tareo-kcj";
+import {validarHomologacionPersonal,validarPaseMineroVehicular,documentoGeneralValido} from "@/lib/requisitos-mineros-kcj";
 import {Prisma,type Role} from "@prisma/client";
 import {panelActual} from "@/lib/panel-sesion";
 import {autorizarOperacionServicio} from "@/lib/validaciones-prepiloto";
 import {esRolKCJ,validarCambioRolPrincipal,validarBajaAdministrativa,validarVinculosRol,validacionReactivacion,motivoAdmin} from "@/lib/superadmin-policy";
+import {ADMIN_PRINCIPAL_SINGLETON,bloquearCambioCuentaPrincipal} from "@/lib/administrador-principal";
 const change=()=>revalidatePath("/dashboard", "layout");
+/** Guardia transaccional: comprueba la protección persistida antes de cada mutación administrativa. */
+async function exigirNoProtegida(tx:Prisma.TransactionClient,targetUserId:string){
+ const p=await tx.primaryAdminProtection.findUnique({where:{id:ADMIN_PRINCIPAL_SINGLETON},select:{userId:true}});
+ bloquearCambioCuentaPrincipal(p?.userId,targetUserId);
+}
+
 async function log(userId:string,entity:string,entityId:string,action:string,payload?:object){await prisma.auditLog.create({data:{userId,entity,entityId,action,payload}});}
 /** Personal: una sola ficha laboral; una segunda área es opcional. Los permisos se asignan aparte. */
 export async function crearTrabajador(form:FormData){
  const u=await requireRole("ADMIN","RRHH");
- const document=field(form,"document",6,16),name=field(form,"name",3,150);
+ const document=field(form,"document",6,16),name=nombreNormalizado(field(form,"name",3,150));
  const license=optionalField(form,"license"),licenseExpires=optionalDate(form,"licenseExpires");
- // ADMIN puede crear trabajador y acceso en una sola transacción: nunca queda una cuenta huérfana.
  const crearAcceso=flag(form,"crearAcceso");
  validarAltaConAcceso(crearAcceso,u.role==="ADMIN");
- const cuenta=crearAcceso?{
-  login:field(form,"login",6,32),
-  role:rolAltaColaborador(field(form,"role",3,30)) as Role,
-  password:validarClaveAsignada(field(form,"password",16,256),field(form,"confirmPassword",16,256)),
- }:null;
+ if(crearAcceso)dniCuentaInicial(document);
  await prisma.$transaction(async tx=>{
   const catalog=await tx.workArea.findMany({where:{active:true},select:{name:true}});
   const areas=validarAreasTrabajo(field(form,"area",2,100),optionalField(form,"secondaryArea"),catalog.map(x=>x.name));
-  if(cuenta)validarRolConductorEnFicha(cuenta.role,areas);
-  // "job" se conserva únicamente para compatibilidad histórica; no es un área ni concede permisos.
+  if(await tx.worker.findUnique({where:{document},select:{id:true}}))throw new Error("El DNI/documento ya está registrado. Busca la ficha existente: no se permiten duplicados.");
+  // Un mismo nombre con otro documento puede ser un homónimo legítimo; se solicita revisión, nunca se fusionan fichas automáticamente.
+  const semejantes=await tx.worker.findMany({where:{name:{equals:name,mode:"insensitive"}},select:{document:true,name:true},take:10});
+  if(semejantes.some(x=>x.document!==document&&nombreEsPosibleDuplicado(x.name,name)))throw new Error("Ya existe un colaborador con el mismo nombre y otro documento. Verifica la identidad antes de continuar para evitar duplicados.");
   const p=await tx.worker.create({data:{document,name,job:"Sin especificar",...areas,license,licenseExpires}});
   await tx.auditLog.create({data:{userId:u.id,entity:"Worker",entityId:p.id,action:"REGISTRAR_COLABORADOR",payload:{areaPrincipal:areas.area,areaSecundaria:areas.secondaryArea}}});
-  if(cuenta){
-   if(await tx.user.findUnique({where:{login:cuenta.login},select:{id:true}}))throw new Error("El usuario ya existe. Ningún registro fue guardado; elija un identificador distinto.");
-   const nuevo=await tx.user.create({data:{workerId:p.id,login:cuenta.login,displayName:name,role:cuenta.role,passwordHash:passwordHash(cuenta.password),mustChangePassword:false}});
-   if(tieneAreaConductor(areas)&&cuenta.role!=="CONDUCTOR"){
-    await tx.userRoleGrant.create({data:{userId:nuevo.id,role:"CONDUCTOR",grantedBy:u.id}});
-   }
-   await tx.auditLog.create({data:{userId:u.id,entity:"User",entityId:nuevo.id,action:"ALTA_INTEGRADA_CUENTA",payload:{workerId:p.id,role:cuenta.role,accesoConductor:tieneAreaConductor(areas)}}});
+  if(crearAcceso){
+   const dni=dniCuentaInicial(document);
+   if(await tx.user.findUnique({where:{login:dni},select:{id:true}}))throw new Error("Ya existe una cuenta con ese DNI. No se creó otra cuenta.");
+   const acceso=rolesDesdeAreas(areas);
+   const nuevo=await tx.user.create({data:{workerId:p.id,login:dni,displayName:name,role:acceso.principal as Role,passwordHash:passwordHash(dni),mustChangePassword:false}});
+   for(const rol of acceso.adicionales)await tx.userRoleGrant.create({data:{userId:nuevo.id,role:rol as Role,grantedBy:u.id}});
+   await tx.auditLog.create({data:{userId:u.id,entity:"User",entityId:nuevo.id,action:"ALTA_INTEGRADA_DNI",payload:{workerId:p.id,areaPrincipal:areas.area,areaSecundaria:areas.secondaryArea,rolInicial:acceso.principal,rolesAdicionales:acceso.adicionales}}});
   }
- },{isolationLevel:"Serializable"});
- change();
- redirect(cuenta?"/dashboard/personal?registro=cuenta":"/dashboard/personal?registro=ficha");
+ },{isolationLevel:Prisma.TransactionIsolationLevel.Serializable});
+ change();redirect(crearAcceso?"/dashboard/personal?registro=cuenta":"/dashboard/personal?registro=ficha");
 }
 /** Centro de Control configura los nombres de las áreas sin crear nuevos roles del sistema. */
 export async function crearAreaTrabajo(form:FormData){
@@ -67,41 +73,97 @@ export async function crearAreaTrabajo(form:FormData){
  });change();
 }
 
+/** Desactivar sin borrar historial. No permitir ocultar un área usada por personas activas. */
+export async function desactivarAreaTrabajo(form:FormData){
+ const u=await requireRole("ADMIN");const name=field(form,"name",3,100),reason=field(form,"reason",5,500);
+ await prisma.$transaction(async tx=>{
+  const area=await tx.workArea.findUniqueOrThrow({where:{name}});
+  if(!area.active)throw new Error("El área ya está desactivada.");
+  const used=await tx.worker.count({where:{active:true,OR:[{area:name},{secondaryArea:name}]}});
+  if(used)throw new Error("No puedes desactivar esta área mientras tenga colaboradores activos. Reasígnalos primero.");
+  await tx.workArea.update({where:{name},data:{active:false}});
+  await tx.auditLog.create({data:{userId:u.id,entity:"WorkArea",entityId:name,action:"DESACTIVAR_AREA",payload:{reason}}});
+ },{isolationLevel:"Serializable"});change();
+}
+export async function reactivarAreaTrabajo(form:FormData){
+ const u=await requireRole("ADMIN"),name=field(form,"name",3,100),reason=field(form,"reason",5,500);
+ await prisma.$transaction(async tx=>{
+  const area=await tx.workArea.findUniqueOrThrow({where:{name}});
+  if(area.active)throw new Error("Esta área ya está activa.");
+  await tx.workArea.update({where:{name},data:{active:true}});
+  await tx.auditLog.create({data:{userId:u.id,entity:"WorkArea",entityId:name,action:"REACTIVAR_AREA",payload:{reason}}});
+ });change();
+}
+export async function eliminarAreaSinUso(form:FormData){
+ const u=await requireRole("ADMIN"),name=field(form,"name",3,100),reason=field(form,"reason",5,500);
+ await prisma.$transaction(async tx=>{
+  const area=await tx.workArea.findUniqueOrThrow({where:{name}});
+  const used=await tx.worker.count({where:{OR:[{area:name},{secondaryArea:name}]}});
+  if(used)throw new Error("El área tiene colaboradores actuales o históricos. No se elimina; utiliza la desactivación cuando corresponda.");
+  if(["Conductor","Operaciones","Gerencia","Mantenimiento","Recursos Humanos","SSOMA","Salud Ocupacional","Tecnología de la Información"].includes(name))throw new Error("El área institucional no puede eliminarse.");
+  await tx.workArea.delete({where:{name}});
+  await tx.auditLog.create({data:{userId:u.id,entity:"WorkArea",entityId:name,action:"ELIMINAR_AREA_SIN_USO",payload:{reason,wasActive:area.active}}});
+ },{isolationLevel:"Serializable"});change();
+}
+/** Corrige fichas creadas por error, solo si no tienen cuenta ni referencias operativas. */
+export async function eliminarColaboradorSinHistorial(form:FormData){
+ const u=await requireRole("ADMIN"),id=field(form,"id"),reason=field(form,"reason",5,500);
+ await prisma.$transaction(async tx=>{
+  const worker=await tx.worker.findUniqueOrThrow({where:{id},select:{document:true,name:true}});
+  if(await tx.user.findUnique({where:{workerId:id},select:{id:true}}))throw new Error("El colaborador tiene una cuenta. Desactiva su ficha en lugar de eliminarla.");
+  // No crear eliminaciones en cascada de servicios, tareos, certificados, evidencias o expedientes.
+  try{await tx.worker.delete({where:{id}});}catch(e){if(e instanceof Prisma.PrismaClientKnownRequestError&&e.code==="P2003")throw new Error("No se puede eliminar: el colaborador tiene historial relacionado. Desactiva la ficha.");throw e;}
+  await tx.auditLog.create({data:{userId:u.id,entity:"Worker",entityId:id,action:"ELIMINAR_FICHA_ERRONEA_SIN_HISTORIAL",payload:{documentoUltimos4:worker.document.slice(-4),reason}}});
+ },{isolationLevel:"Serializable"});change();
+}
+
+/** Alta de cuenta para ficha existente: DNI, áreas y una sola contraseña inicial derivada. */
+export async function crearCuentaDesdeFicha(form:FormData){
+ const actor=await requireRole("ADMIN"),workerId=field(form,"workerId");
+ await prisma.$transaction(async tx=>{
+  const w=await tx.worker.findUniqueOrThrow({where:{id:workerId},select:{document:true,name:true,active:true,area:true,secondaryArea:true,user:{select:{id:true}}}});
+  if(!w.active)throw new Error("No se puede crear acceso para una ficha laboral inactiva.");
+  if(w.user)throw new Error("El colaborador ya tiene cuenta. No la dupliques.");
+  const dni=dniCuentaInicial(w.document);
+  if(await tx.user.findUnique({where:{login:dni},select:{id:true}}))throw new Error("Ya existe una cuenta con este DNI.");
+  const roles=rolesDesdeAreas(w);
+  const nuevo=await tx.user.create({data:{workerId,login:dni,displayName:w.name,role:roles.principal as Role,passwordHash:passwordHash(dni),mustChangePassword:false}});
+  for(const r of roles.adicionales)await tx.userRoleGrant.create({data:{userId:nuevo.id,role:r as Role,grantedBy:actor.id}});
+  await tx.auditLog.create({data:{userId:actor.id,entity:"User",entityId:nuevo.id,action:"ALTA_CUENTA_DNI_DESDE_FICHA",payload:{workerId,roles}}});
+ },{isolationLevel:Prisma.TransactionIsolationLevel.Serializable});change();
+}
+/** Solo cuentas especiales no vinculadas a ficha laboral: ADMIN y PROPIETARIO. */
 export async function crearCuenta(form:FormData){
  const actor=await requireRole("ADMIN");
  const role=field(form,"role") as Role;
- if(!esRolKCJ(role))throw new Error("Rol inválido");
- const password=validarClaveAsignada(field(form,"password",16,256),field(form,"confirmPassword",16,256));
- const workerId=optionalField(form,"workerId");const ownerId=optionalField(form,"ownerId");
+ if(role!=="ADMIN"&&role!=="PROPIETARIO")throw new Error("Las cuentas de colaboradores se crean desde su ficha laboral y áreas de trabajo.");
+ const password=validarClaveAsignada(field(form,"password",MIN_LONGITUD_CLAVE,MAX_LONGITUD_CLAVE),field(form,"confirmPassword",MIN_LONGITUD_CLAVE,MAX_LONGITUD_CLAVE));
+ const workerId=null,ownerId=optionalField(form,"ownerId");
  validarVinculosRol(role,workerId,ownerId);
  const login=field(form,"login",6,32),displayName=field(form,"displayName",3,120);
  await prisma.$transaction(async tx=>{
-  if(await tx.user.findUnique({where:{login},select:{id:true}}))throw new Error("Ese usuario ya está registrado. Busca la cuenta existente en lugar de duplicarla.");
-  if(workerId){
-   const worker=await tx.worker.findUnique({where:{id:workerId},select:{active:true,area:true,secondaryArea:true,user:{select:{id:true}}}});
-   if(!worker)throw new Error("La ficha laboral seleccionada no existe.");
-   if(!worker.active)throw new Error("No se puede crear acceso para una ficha laboral inactiva.");
-   if(worker.user)throw new Error("El colaborador ya tiene una cuenta. Usa la gestión de funciones adicionales o restablecimiento de contraseña.");
-   validarRolConductorEnFicha(role,worker);
+  if(await tx.user.findUnique({where:{login},select:{id:true}}))throw new Error("Ese usuario ya existe. Busca la cuenta existente en lugar de duplicarla.");
+  if(ownerId){
+   const owner=await tx.owner.findUnique({where:{id:ownerId},select:{id:true,contact:true}});
+   if(!owner)throw new Error("El propietario seleccionado no existe.");
+   // Compatibilidad con el alta directa desde Propietarios: ambos formularios comparten el candado.
+   await tx.owner.update({where:{id:ownerId},data:{contact:owner.contact}});
+   if(await tx.user.count({where:{ownerId}}))throw new Error("El propietario ya dispone de una cuenta. No se creará otra.");
   }
-  if(ownerId&&!await tx.owner.findUnique({where:{id:ownerId},select:{id:true}}))throw new Error("El propietario seleccionado no existe.");
   const a=await tx.user.create({data:{login,displayName,role,passwordHash:passwordHash(password),workerId,ownerId,mustChangePassword:false}});
-  if(workerId&&role!=="CONDUCTOR"){
-   const ficha=await tx.worker.findUniqueOrThrow({where:{id:workerId},select:{area:true,secondaryArea:true}});
-   if(tieneAreaConductor(ficha))await tx.userRoleGrant.create({data:{userId:a.id,role:"CONDUCTOR",grantedBy:actor.id}});
-  }
-  await tx.auditLog.create({data:{userId:actor.id,entity:"User",entityId:a.id,action:"CREAR_CUENTA_CLAVE_ASIGNADA"}});
- });change();
+  await tx.auditLog.create({data:{userId:actor.id,entity:"User",entityId:a.id,action:"CREAR_CUENTA_ESPECIAL"}});
+ },{isolationLevel:Prisma.TransactionIsolationLevel.Serializable});change();
 }
 /** ADMIN establece una nueva clave para otra cuenta; no ve ni recupera la anterior. */
 export async function restablecerContrasena(form:FormData){
  const actor=await requireRole("ADMIN");
  if(!passwordMatches(field(form,"adminPassword",1,256),actor.passwordHash))throw new Error("La contraseña actual de ADMIN no coincide. No se efectuó ningún cambio.");
  const userId=field(form,"userId");
- const nueva=validarClaveAsignada(field(form,"password",16,256),field(form,"confirmPassword",16,256));
+ const nueva=validarClaveAsignada(field(form,"password",MIN_LONGITUD_CLAVE,MAX_LONGITUD_CLAVE),field(form,"confirmPassword",MIN_LONGITUD_CLAVE,MAX_LONGITUD_CLAVE));
  await prisma.$transaction(async tx=>{
   const target=await tx.user.findUnique({where:{id:userId},select:{id:true,active:true}});
   if(!target)throw new Error("Cuenta de usuario no encontrada.");
+  await exigirNoProtegida(tx,userId);
   validarRestablecimientoAdmin(actor.id,target.id,target.active);
   await tx.user.update({where:{id:userId},data:{passwordHash:passwordHash(nueva),mustChangePassword:false,failedLogins:0,lockedUntil:null}});
   // La contraseña anterior no debe permitir usar sesiones ya iniciadas.
@@ -117,7 +179,9 @@ export async function editarCuentaAdmin(form:FormData){
  if(!passwordMatches(field(form,"adminPassword",1,256),actor.passwordHash))throw new Error("Confirma tu contraseña de ADMIN");
  const id=field(form,"userId"),login=field(form,"login",6,32),displayName=field(form,"displayName",3,120),reason=motivoAdmin(field(form,"reason",10,500));
  await prisma.$transaction(async tx=>{
-  const old=await tx.user.findUniqueOrThrow({where:{id},select:{id:true,login:true,displayName:true}});
+  const old=await tx.user.findUniqueOrThrow({where:{id},select:{id:true,login:true,displayName:true,workerId:true}});
+  await exigirNoProtegida(tx,id);
+  if(old.workerId){const worker=await tx.worker.findUniqueOrThrow({where:{id:old.workerId},select:{document:true}});if(login!==worker.document)throw new Error("El usuario del colaborador debe ser su DNI. No se puede cambiar por otro identificador.");}
   if(old.login===login&&old.displayName===displayName)throw new Error("No se ha cambiado ningún dato de la cuenta");
   await tx.user.update({where:{id},data:{login,displayName}});
   if(old.login!==login)await tx.session.updateMany({where:{userId:id},data:{revokedAt:new Date()}});
@@ -131,6 +195,7 @@ export async function cambiarRolPrincipalAdmin(form:FormData){
  const id=field(form,"userId"),newRole=field(form,"role"),reason=motivoAdmin(field(form,"reason",10,500));
  await prisma.$transaction(async tx=>{
   const target=await tx.user.findUniqueOrThrow({where:{id}});
+  await exigirNoProtegida(tx,id);
   const adminCount=await tx.user.count({where:{role:"ADMIN",active:true}});
   const allowed=validarCambioRolPrincipal(actor.id,id,target.role,newRole,adminCount);
   if(target.role===allowed)throw new Error("La cuenta ya tiene ese rol principal");
@@ -150,6 +215,7 @@ export async function desactivarCuenta(form:FormData){
  await prisma.$transaction(async tx=>{
   const target=await tx.user.findUniqueOrThrow({where:{id}});
   if(!target.active)throw new Error("Cuenta ya desactivada");
+  await exigirNoProtegida(tx,id);
   const adminCount=await tx.user.count({where:{role:"ADMIN",active:true}});
   validarBajaAdministrativa(actor.id,id,target.role,adminCount);
   await tx.user.update({where:{id},data:{active:false}});
@@ -164,19 +230,95 @@ export async function reactivarCuentaAdmin(form:FormData){
  const id=field(form,"userId"),reason=motivoAdmin(field(form,"reason",10,500));
  await prisma.$transaction(async tx=>{
   const target=await tx.user.findUniqueOrThrow({where:{id},include:{worker:{select:{active:true}}}});
+  await exigirNoProtegida(tx,id);
   validacionReactivacion(Boolean(target.workerId),target.worker?.active??false,target.active);
   await tx.user.update({where:{id},data:{active:true,failedLogins:0,lockedUntil:null}});
   await tx.session.updateMany({where:{userId:id},data:{revokedAt:new Date()}});
   await tx.auditLog.create({data:{userId:actor.id,entity:"User",entityId:id,action:"ADMIN_REACTIVAR_CUENTA",payload:{previous:false,next:true,reason}}});
  },{isolationLevel:"Serializable"});change();
 }
-export async function crearPropietario(form:FormData){const u=await requireRole("ADMIN","OPERACIONES","JEFE_OPERACIONES");const p=await prisma.owner.create({data:{document:field(form,"document",6,20),name:field(form,"name",3,120),contact:optionalField(form,"contact")}});await log(u.id,"Owner",p.id,"CREAR");change();}
+/** Propietarios es un catálogo único; la cuenta especial se crea aparte, en la misma pantalla. */
+export async function crearPropietario(form:FormData){
+ const u=await requireRole("ADMIN","OPERACIONES","JEFE_OPERACIONES");
+ const document=field(form,"document",6,20).toUpperCase().replace(/\s+/g,"");
+ const name=field(form,"name",3,120),contact=optionalField(form,"contact",120);
+ await prisma.$transaction(async tx=>{
+  if(await tx.owner.findUnique({where:{document},select:{id:true}}))throw new Error("Ya existe un propietario con ese documento. Busca su ficha y vincula la unidad existente.");
+  const p=await tx.owner.create({data:{document,name,contact}});
+  await tx.auditLog.create({data:{userId:u.id,entity:"Owner",entityId:p.id,action:"CREAR_PROPIETARIO",payload:{document}}});
+ });change();
+}
+/** Corrección auditada de la ficha; el documento legal no se edita desde este formulario simple. */
+export async function actualizarPropietario(form:FormData){
+ const u=await requireRole("ADMIN","OPERACIONES","JEFE_OPERACIONES");
+ const ownerId=field(form,"ownerId"),name=field(form,"name",3,120),contact=optionalField(form,"contact",120),reason=field(form,"reason",5,500);
+ await prisma.$transaction(async tx=>{
+  const old=await tx.owner.findUniqueOrThrow({where:{id:ownerId},select:{name:true,contact:true}});
+  await tx.owner.update({where:{id:ownerId},data:{name,contact}});
+  await tx.user.updateMany({where:{ownerId,role:"PROPIETARIO"},data:{displayName:name}});
+  await tx.auditLog.create({data:{userId:u.id,entity:"Owner",entityId:ownerId,action:"ACTUALIZAR_PROPIETARIO",payload:{reason,anterior:old,posterior:{name,contact}}}});
+ });change();
+}
+/** Vincula vehículos ya registrados; jamás modifica código ni crea otra ficha de unidad. */
+export async function vincularUnidadPropietario(form:FormData){
+ const u=await requireRole("ADMIN","OPERACIONES","JEFE_OPERACIONES");
+ const ownerId=field(form,"ownerId"),vehicleId=field(form,"vehicleId"),reason=field(form,"reason",5,500);
+ await prisma.$transaction(async tx=>{
+  const owner=await tx.owner.findUnique({where:{id:ownerId},select:{id:true}});
+  if(!owner)throw new Error("El propietario no existe.");
+  const vehiculo=await tx.vehicle.findUnique({where:{id:vehicleId},select:{id:true,ownerId:true}});
+  if(!vehiculo)throw new Error("Selecciona una unidad registrada en Flota.");
+  permitirVinculacion(vehiculo.ownerId,ownerId);
+  const changed=await tx.vehicle.updateMany({where:{id:vehicleId,ownerId:null},data:{ownerId}});
+  if(changed.count!==1)throw new Error("La unidad cambió de propietario durante el registro. Recarga y verifica antes de continuar.");
+  await tx.auditLog.create({data:{userId:u.id,entity:"Vehicle",entityId:vehicleId,action:"VINCULAR_PROPIETARIO",payload:{ownerId,reason}}});
+ },{isolationLevel:Prisma.TransactionIsolationLevel.Serializable});change();
+}
+export async function desvincularUnidadPropietario(form:FormData){
+ const u=await requireRole("ADMIN","OPERACIONES","JEFE_OPERACIONES");
+ const ownerId=field(form,"ownerId"),vehicleId=field(form,"vehicleId"),reason=field(form,"reason",5,500);
+ await prisma.$transaction(async tx=>{
+  const result=await tx.vehicle.updateMany({where:{id:vehicleId,ownerId},data:{ownerId:null}});
+  if(result.count!==1)throw new Error("La unidad no está vinculada a este propietario. Comprueba su ficha.");
+  await tx.auditLog.create({data:{userId:u.id,entity:"Vehicle",entityId:vehicleId,action:"DESVINCULAR_PROPIETARIO",payload:{ownerId,reason}}});
+ },{isolationLevel:Prisma.TransactionIsolationLevel.Serializable});change();
+}
 export async function crearVehiculo(form:FormData){const u=await requireRole("ADMIN","OPERACIONES","JEFE_OPERACIONES");const ownerId=optionalField(form,"ownerId");const v=await prisma.vehicle.create({data:{code:field(form,"code",2,30),plate:field(form,"plate",5,12).toUpperCase(),type:validarTipoUnidadKCJ(field(form,"type",3,50)),make:optionalField(form,"make"),model:optionalField(form,"model"),year:form.get("year")?enteroOperativo(numberField(form,"year",1980,2100),1980,2100):null,color:optionalField(form,"color",50),vin:optionalField(form,"vin",50),engineNumber:optionalField(form,"engineNumber",50),mineCode:optionalField(form,"mineCode",50),ownerId}});await log(u.id,"Vehicle",v.id,"CREAR");change();}
-export async function registrarDocumento(form:FormData){const u=await requireRole("ADMIN","OPERACIONES","JEFE_OPERACIONES","HOMOLOGACION");if(flag(form,"verified")){const key=field(form,"evidenceKey",8,400);await requireEvidence(key,"FLOTA")}const d=await prisma.vehicleDocument.create({data:{vehicleId:field(form,"vehicleId"),kind:field(form,"kind"),expiresAt:instant(form,"expiresAt"),reference:optionalField(form,"reference"),evidenceKey:optionalField(form,"evidenceKey",400),verifiedAt:flag(form,"verified")?new Date():null}});await log(u.id,"VehicleDocument",d.id,"REGISTRAR_VERSION");change();}
+export async function registrarDocumento(form:FormData){
+ const u=await requireRole("ADMIN","OPERACIONES","JEFE_OPERACIONES");
+ const kind=field(form,"kind"),vehicleId=field(form,"vehicleId"),evidenceKey=optionalField(form,"evidenceKey",400);
+ if(!documentoGeneralValido(kind))throw new Error("Documento no incluido en el catálogo vehicular general de KCJ.");
+ if(!await prisma.vehicle.findUnique({where:{id:vehicleId},select:{id:true}}))throw new Error("Unidad no registrada en Flota.");
+ if(flag(form,"verified")&&!evidenceKey)throw new Error("Para validar el documento se requiere evidencia.");
+ if(evidenceKey)await requireEvidence(evidenceKey,"FLOTA");
+ const expiresAt=optionalDate(form,"expiresAt");
+ if(["SOAT","REVISION_TECNICA","POLIZA"].includes(kind)&&!expiresAt)throw new Error("Este documento requiere fecha de vencimiento.");
+ const d=await prisma.vehicleDocument.create({data:{vehicleId,kind,expiresAt,reference:optionalField(form,"reference"),evidenceKey,verifiedAt:flag(form,"verified")?new Date():null}});
+ await log(u.id,"VehicleDocument",d.id,"REGISTRAR_VERSION");change();
+}
 export async function registrarOdometro(form:FormData){const u=await requireRole("ADMIN","OPERACIONES","MANTENIMIENTO","JEFE_OPERACIONES");const vehicleId=field(form,"vehicleId");const kilometers=enteroOperativo(numberField(form,"kilometers",0,10000000),0,10000000);const last=await prisma.odometerReading.findFirst({where:{vehicleId},orderBy:{at:"desc"}});if(last&&kilometers<last.kilometers)throw new Error("Odómetro menor al anterior: requiere revisión antes de registrar");await requireEvidence(field(form,"evidenceKey",8,400),"FLOTA");const r=await prisma.odometerReading.create({data:{vehicleId,kilometers,evidenceKey:optionalField(form,"evidenceKey",400)}});await log(u.id,"OdometerReading",r.id,"REGISTRAR");change();}
 export async function crearMantenimiento(form:FormData){const u=await requireRole("MANTENIMIENTO","ADMIN");const o=await prisma.workOrder.create({data:{vehicleId:field(form,"vehicleId"),issue:field(form,"issue",5,1000),critical:flag(form,"critical")}});await log(u.id,"WorkOrder",o.id,"ABRIR");change();}
 export async function liberarMantenimiento(form:FormData){const u=await requireRole("MANTENIMIENTO");const id=field(form,"id");const evidenceKey=field(form,"evidenceKey",8,400);await requireEvidence(evidenceKey,"MANTENIMIENTO");await prisma.$transaction(async tx=>{const row=await tx.workOrder.findUniqueOrThrow({where:{id}});if(row.status==="LIBERADA")throw new Error("Orden ya liberada");await tx.workOrder.update({where:{id},data:{status:"LIBERADA",releasedAt:new Date(),releasedBy:u.id,evidenceKey}});await tx.auditLog.create({data:{userId:u.id,entity:"WorkOrder",entityId:id,action:"LIBERACION_TECNICA",payload:{evidenceKey}}});});change();}
-export async function crearHabilitacion(form:FormData){const u=await requireRole("HOMOLOGACION","ADMIN","OPERACIONES","JEFE_OPERACIONES");const workerId=optionalField(form,"workerId");const vehicleId=optionalField(form,"vehicleId");if(!workerId&&!vehicleId||workerId&&vehicleId)throw new Error("Seleccione una única entidad: trabajador o vehículo");const kind=field(form,"kind");if(!["TARJETA_AMARILLA","CONDUCTOR_MINA","CURSO_EXTERNO"].includes(kind))throw new Error("Tipo de habilitación inválido");if(kind==="TARJETA_AMARILLA"&&!vehicleId||kind!=="TARJETA_AMARILLA"&&!workerId)throw new Error("Tarjeta Amarilla requiere unidad; habilitación personal requiere colaborador");if(flag(form,"verified")){await requireEvidence(field(form,"evidenceKey",8,400),"HOMOLOGACION")}const c=await prisma.clearance.create({data:{workerId,vehicleId,kind,scope:field(form,"scope"),reference:optionalField(form,"reference",120),issuedAt:optionalDate(form,"issuedAt"),validUntil:instant(form,"validUntil"),verified:flag(form,"verified"),evidenceKey:optionalField(form,"evidenceKey",400)}});await log(u.id,"Clearance",c.id,"REGISTRAR_VERSION");change();}
+/** Certificaciones externas de PERSONAS. Nunca recibe vehicleId ni Tarjeta Amarilla. */
+export async function registrarHomologacionPersonal(form:FormData){
+ const u=await requireRole("ADMIN","OPERACIONES","JEFE_OPERACIONES","HOMOLOGACION");
+ const workerId=field(form,"workerId"),kind=field(form,"kind"),evidenceKey=optionalField(form,"evidenceKey",400);
+ validarHomologacionPersonal(kind,workerId,optionalField(form,"vehicleId"));
+ const worker=await prisma.worker.findUnique({where:{id:workerId},select:{active:true}});
+ if(!worker?.active)throw new Error("Selecciona un colaborador activo registrado en KCJ.");
+ if(flag(form,"verified")&&!evidenceKey)throw new Error("Se requiere evidencia documental para verificar un resultado externo.");
+ if(evidenceKey)await requireEvidence(evidenceKey,"HOMOLOGACION");
+ const issuedAt=optionalDate(form,"issuedAt"),validUntil=instant(form,"validUntil");
+ if(issuedAt&&issuedAt>validUntil)throw new Error("El vencimiento no puede ser anterior a la emisión.");
+ const c=await prisma.clearance.create({data:{workerId,vehicleId:null,kind,scope:field(form,"scope"),reference:optionalField(form,"reference",120),issuedAt,validUntil,verified:flag(form,"verified"),evidenceKey}});
+ await log(u.id,"Clearance",c.id,"REGISTRAR_HOMOLOGACION_PERSONAL_EXTERNA");change();
+}
+/** Compatibilidad: impedir que código antiguo cree certificaciones mixtas. */
+export async function crearHabilitacion(form:FormData){
+ const kind=field(form,"kind");
+ if(kind==="TARJETA_AMARILLA")throw new Error("El pase minero se registra desde Flota → Ficha de unidad → Habilitación minera.");
+ return registrarHomologacionPersonal(form);
+}
 export async function registrarAptitud(form:FormData){const u=await requireRole("SALUD");const status=field(form,"status") as "APTO"|"RESTRINGIDO"|"NO_APTO"|"PENDIENTE";if(!["APTO","RESTRINGIDO","NO_APTO","PENDIENTE"].includes(status))throw new Error("Estado inválido");const workerId=field(form,"workerId");const v=await prisma.medicalFitness.upsert({where:{workerId},create:{workerId,status,validUntil:instant(form,"validUntil"),reviewedBy:u.id},update:{status,validUntil:instant(form,"validUntil"),reviewedBy:u.id,reviewedAt:new Date()}});await log(u.id,"MedicalFitness",v.id,"ACTUALIZAR_APTITUD",{status,validUntil:v.validUntil.toISOString()});change();}
 export async function crearRoster(form:FormData){
  const u=await requireRole("OPERACIONES","JEFE_OPERACIONES"),workerId=field(form,"workerId");
@@ -316,18 +458,34 @@ export async function actualizarTrabajador(form:FormData){
   const available=[...new Set([...catalog.map(x=>x.name),before.area,...(before.secondaryArea?[before.secondaryArea]:[])])];
   const areas=validarAreasTrabajo(field(form,"area",2,100),optionalField(form,"secondaryArea"),available);
   if(before.area===areas.area&&before.secondaryArea===areas.secondaryArea&&before.active===active)throw new Error("No se detectaron cambios en la ficha.");
-  const accAntes=await tx.user.findUnique({where:{workerId:id},select:{id:true,role:true}});
-  if(accAntes?.role==="CONDUCTOR"&&active&&!tieneAreaConductor(areas)){
-   throw new Error("Primero actualiza la función principal Conductor de la cuenta antes de retirar el área Conductor.");
-  }
+  const accAntes=await tx.user.findUnique({where:{workerId:id},select:{id:true,role:true,active:true,grants:{where:{revokedAt:null},select:{role:true}}}});
+  if(accAntes)await exigirNoProtegida(tx,accAntes.id);
+  const oldDerived=rolesDesdeAreas(before);
+  const newDerived=rolesDesdeAreas(areas);
   await tx.worker.update({where:{id},data:{...areas,active}});
   if(accAntes){
-   if(active&&tieneAreaConductor(areas)&&accAntes.role!=="CONDUCTOR"){
-    await tx.userRoleGrant.upsert({where:{userId_role:{userId:accAntes.id,role:"CONDUCTOR"}},create:{userId:accAntes.id,role:"CONDUCTOR",grantedBy:u.id},update:{revokedAt:null,grantedAt:new Date(),grantedBy:u.id}});
-   }else if(!tieneAreaConductor(areas)){
-    await tx.userRoleGrant.updateMany({where:{userId:accAntes.id,role:"CONDUCTOR",revokedAt:null},data:{revokedAt:new Date()}});
+   const rolePrincipalAutomatico=accAntes.role===oldDerived.principal;
+   const mainRole=rolePrincipalAutomatico?newDerived.principal:accAntes.role;
+   if(rolePrincipalAutomatico&&accAntes.role!==mainRole){
+    await tx.user.update({where:{id:accAntes.id},data:{role:mainRole as Role}});
    }
-   // La próxima entrada debe volver a seleccionar el panel válido con permisos actualizados.
+   // Conservar privilegios concedidos manualmente, pero retirar los derivados de un área ya retirada.
+   const derivedBefore=new Set(oldDerived.adicionales);
+   const derivedAfter=new Set([...newDerived.adicionales,...(mainRole!==newDerived.principal?[newDerived.principal]:[])]);
+   for(const role of derivedBefore){
+    if(!derivedAfter.has(role)&&role!==mainRole)await tx.userRoleGrant.updateMany({where:{userId:accAntes.id,role:role as Role,revokedAt:null},data:{revokedAt:new Date()}});
+   }
+   if(active){
+    for(const role of derivedAfter){
+     if(role===mainRole)continue;
+     await tx.userRoleGrant.upsert({where:{userId_role:{userId:accAntes.id,role:role as Role}},create:{userId:accAntes.id,role:role as Role,grantedBy:u.id},update:{revokedAt:null,grantedAt:new Date(),grantedBy:u.id}});
+    }
+    if(!accAntes.active){
+     if(accAntes.role==="ADMIN"&&u.role!=="ADMIN")throw new Error("Solo ADMIN puede reactivar una cuenta administradora.");
+     await tx.user.update({where:{id:accAntes.id},data:{active:true}});
+    }
+   }
+   // Se revalida la autorización de cada panel a partir de la próxima sesión.
    await tx.session.updateMany({where:{userId:accAntes.id},data:{revokedAt:new Date()}});
   }
   if(!active){
@@ -350,6 +508,7 @@ export async function otorgarRol(form:FormData){
  const allowed:Role[]=["GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","MANTENIMIENTO","RRHH","SALUD","HOMOLOGACION","INSTRUCTOR","ALMACEN","CONDUCTOR"];
  if(!allowed.includes(role))throw new Error("Solo se pueden añadir funciones autorizadas; propietario vehicular requiere su vínculo independiente.");
  await prisma.$transaction(async tx=>{
+  await exigirNoProtegida(tx,userId);
   const target=await tx.user.findUniqueOrThrow({where:{id:userId}});if(!target.active)throw new Error("Cuenta inactiva");if(target.role===role)throw new Error("La cuenta ya tiene ese rol principal");
   if(role==="CONDUCTOR"&&!target.workerId)throw new Error("Para asignar Conductor, primero vincule la cuenta con una ficha laboral única.");
   if(role==="CONDUCTOR"){
@@ -364,6 +523,7 @@ export async function otorgarRol(form:FormData){
 export async function revocarRol(form:FormData){
  const actor=await requireRole("ADMIN");const userId=field(form,"userId");const role=field(form,"role") as Role;const reason=field(form,"reason",10,300);
  await prisma.$transaction(async tx=>{
+  await exigirNoProtegida(tx,userId);
   const target=await tx.user.findUniqueOrThrow({where:{id:userId}});if(target.role===role)throw new Error("No se puede revocar el rol principal aquí");
   const changed=await tx.userRoleGrant.updateMany({where:{userId,role,revokedAt:null},data:{revokedAt:new Date()}});if(!changed.count)throw new Error("La función no estaba activa para esta cuenta");
   await tx.session.updateMany({where:{userId},data:{revokedAt:new Date()}});

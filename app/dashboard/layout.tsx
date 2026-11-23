@@ -24,6 +24,7 @@ function Navigation({sections}:{sections:Sections}){
 function SignOut(){return <form action={logout}><button type="submit" className="kcj-focus flex items-center gap-2 rounded-xl border border-kcj-border px-3.5 py-2 text-xs font-semibold text-kcj-charcoal transition hover:border-kcj-red hover:text-kcj-red"><UIIcon name="logout" size={16}/>Cerrar sesión</button></form>;}
 export default async function DashboardLayout({children}:{children:React.ReactNode}){
  const user=await requireUser();
+ if(user.role==="PROPIETARIO"&&user.mustChangePassword)redirect("/cambiar-clave");
  const panel=await panelActual(user);
  if(!panel)redirect("/seleccionar-panel");
  const dual=panelesDisponibles(user).length===2;
@@ -43,6 +44,7 @@ export default async function DashboardLayout({children}:{children:React.ReactNo
    <div className="border-t border-kcj-border px-5 py-4">
     <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-700"/><p className="text-xs font-medium text-[#46545F]">Entorno de trabajo KCJ</p></div>
     <p className="mt-2 text-[11px] text-[#596774]">Acceso y funciones según permisos</p>
+    <Link href="/dashboard/acerca-del-sistema" className="kcj-focus mt-3 inline-block text-xs font-semibold text-kcj-charcoal underline decoration-kcj-red/40 underline-offset-4 hover:text-kcj-red">Acerca del sistema</Link>
    </div>
   </aside>
   <div className="flex min-w-0 flex-col">
@@ -64,13 +66,14 @@ export default async function DashboardLayout({children}:{children:React.ReactNo
        <Navigation sections={sections}/>
        {dual&&<Link href="/seleccionar-panel" className="mt-4 block rounded-lg border border-kcj-border bg-white p-2 text-sm font-semibold text-kcj-charcoal">Cambiar de panel</Link>}
        <Link href="/cambiar-clave" className="mt-4 block rounded-lg border border-kcj-border bg-white p-2 text-sm font-medium text-kcj-charcoal">Cambiar mi contraseña</Link>
+       <Link href="/dashboard/acerca-del-sistema" className="mt-4 block rounded-lg border border-kcj-border bg-white p-2 text-sm font-medium text-kcj-charcoal">Acerca del sistema</Link>
        <form action={logout} className="mt-4 border-t border-kcj-border pt-3"><button type="submit" className="w-full rounded-lg bg-white p-2 text-sm font-medium text-kcj-charcoal">Cerrar sesión</button></form>
       </MobileNavigation>
      </div>
     </div>
    </header>
    <main id="contenido" className="mx-auto w-full max-w-[1536px] flex-1 space-y-6 px-4 pb-10 pt-7 sm:px-6 lg:px-8">{children}</main>
-   <footer className="border-t border-kcj-border bg-white/70 px-4 py-3 text-center text-xs text-slate-500">KCJ CONTROL · Uso interno autorizado · KCJ PERÚ S.A.C.</footer>
+   <footer className="border-t border-kcj-border bg-white/70 px-4 py-3 text-center text-xs text-slate-500">KCJ CONTROL · Uso interno autorizado · KCJ PERÚ S.A.C. · <Link href="/dashboard/acerca-del-sistema" className="font-semibold underline underline-offset-2 hover:text-kcj-red">Acerca del sistema</Link></footer>
   </div>
  </div>;
 }

@@ -33,10 +33,11 @@ test("ADMIN: comunicación diferencia publicación y destinatarios",()=>{
  assert.match(content,/Cada nueva versión requiere una confirmación independiente/);
 });
 test("ADMIN: Flota, Almacén, Personal y Aula explican sus acciones",()=>{
- for(const title of ["Registrar unidad","Registrar artículo","Crear curso","Registrar documento"]){
+ for(const title of ["Registrar unidad","Registrar artículo","Crear curso"]){
   assert.ok(content.includes(`submit="${title}"`),title);
  }
  assert.match(read("components/dominio/FormulariosColaborador.tsx"),/Registrar colaborador/);
+ assert.match(read("app/dashboard/ficha-vehicular/[id]/page.tsx"),/Agregar nueva versión de documento vehicular/);
 });
 test("ADMIN: campos de fecha contextualizan formato y horario sin prometer formato del navegador",()=>{
  assert.match(forms,/lang="es-PE"/);

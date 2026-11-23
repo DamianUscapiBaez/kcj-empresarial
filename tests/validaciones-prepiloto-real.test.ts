@@ -22,9 +22,9 @@ test("Alta integrada: no hacer cuentas desde RRHH ni roles de propietario",()=>{
 });
 test("Alta integrada: transacción única, usuario vinculado y salida confirmada",()=>{
  const code=src("app/actions-operativas.ts"),form=src("components/dominio/FormulariosColaborador.tsx");
- assert.match(code,/workerId:p\.id/);assert.match(code,/ALTA_INTEGRADA_CUENTA/);
+ assert.match(code,/workerId:p\.id/);assert.match(code,/ALTA_INTEGRADA_DNI/);
  assert.match(code,/isolationLevel:"Serializable"/);assert.match(form,/name="crearAcceso"/);
- assert.match(form,/name="confirmPassword"/);
+ assert.doesNotMatch(form,/name="confirmPassword"/);
 });
 
 test("Conductor y cuenta dual: el panel bloquea servicios ajenos",()=>{

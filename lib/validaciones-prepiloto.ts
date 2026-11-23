@@ -1,7 +1,7 @@
 /** Reglas puras: todos los valores de formularios se validan de nuevo en servidor. */
 export const SEVERIDADES_SSOMA=["BAJA","MEDIA","ALTA","CRITICA"] as const;
 export const MOVIMIENTOS_STOCK=["INGRESO","SALIDA"] as const;
-const ROLES_PERSONAL=["ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","MANTENIMIENTO","RRHH","SALUD","HOMOLOGACION","INSTRUCTOR","ALMACEN","CONDUCTOR"] as const;
+const ROLES_PERSONAL=["COLABORADOR","ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","MANTENIMIENTO","RRHH","SALUD","HOMOLOGACION","INSTRUCTOR","ALMACEN","CONDUCTOR"] as const;
 
 export function severidadSSOMA(value:string):string {
  if(!(SEVERIDADES_SSOMA as readonly string[]).includes(value))throw new Error("La severidad SSOMA no es válida");

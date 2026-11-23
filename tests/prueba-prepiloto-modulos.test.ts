@@ -21,15 +21,15 @@ test("Aula Virtual tiene orientación visible aun sin cursos",()=>{
  assert.match(ui,/No tienes cursos publicados disponibles/);
 });
 
-test("El registro de usuario requiere vínculo de conductor, contraseña confirmada y rechaza cuentas duplicadas",()=>{
+test("El alta de cuentas laborales usa DNI, evita duplicidades y no pregunta función otra vez",()=>{
  const ui=read("components/dominio/CrearCuentaForm.tsx"),action=read("app/actions-operativas.ts");
- assert.match(ui,/needWorker=role==="CONDUCTOR"/);
+ assert.match(ui,/function ActivarCuentaTrabajadorForm/);
  assert.match(ui,/name="workerId"/);
- assert.match(ui,/required=\{needWorker\}/);
- assert.match(ui,/password!==confirm/);
- assert.match(action,/El colaborador ya tiene una cuenta/);
- assert.match(action,/tx\.worker\.findUnique/);
- assert.match(action,/tx\.auditLog\.create/);
+ assert.match(ui,/Crear cuenta desde DNI/);
+ assert.match(action,/El colaborador ya tiene cuenta/);
+ assert.match(action,/rolesDesdeAreas\(w\)/);
+ assert.match(action,/dniCuentaInicial\(w\.document\)/);
+ assert.match(action,/tx\.worker\.findUniqueOrThrow/);
  assert.match(action,/await prisma\.\$transaction\(async tx=>/);
 });
 

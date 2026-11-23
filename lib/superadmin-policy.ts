@@ -1,5 +1,5 @@
 /** Reglas del Superadministrador. La autoridad administrativa no sustituye firmas técnicas. */
-export const ROLES_KCJ = ["ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","MANTENIMIENTO","RRHH","SALUD","HOMOLOGACION","INSTRUCTOR","ALMACEN","CONDUCTOR","PROPIETARIO"] as const;
+export const ROLES_KCJ = ["COLABORADOR","ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","MANTENIMIENTO","RRHH","SALUD","HOMOLOGACION","INSTRUCTOR","ALMACEN","CONDUCTOR","PROPIETARIO"] as const;
 export type RolKCJ = typeof ROLES_KCJ[number];
 export function esRolKCJ(value:string):value is RolKCJ {return (ROLES_KCJ as readonly string[]).includes(value);}
 export function validarCambioRolPrincipal(actorId:string,targetId:string,rolAnterior:RolKCJ,nuevoRol:string,adminsActivos:number){

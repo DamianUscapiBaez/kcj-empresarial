@@ -1,7 +1,7 @@
 # KCJ CONTROL: acceso y contraseñas administradas por ADMIN
 
 ## Política aplicada
-- ADMIN asigna una contraseña individual al crear cada cuenta (mínimo 16 caracteres). No se fuerza cambio durante el primer inicio de sesión. La contraseña asignada permanece válida hasta que sea cambiada o restablecida.
+- ADMIN asigna una contraseña individual al crear cada cuenta (mínimo 8 caracteres). No se fuerza cambio durante el primer inicio de sesión. La contraseña asignada permanece válida hasta que sea cambiada o restablecida.
 - ADMIN puede restablecer la contraseña de **otro usuario activo** desde Acceso y usuarios; debe confirmarla dos veces y volver a ingresar su propia contraseña de ADMIN para autorizar el restablecimiento. La contraseña anterior no puede consultarse porque se almacena como hash scrypt con sal.
 - Restablecer una contraseña revoca las sesiones activas de esa cuenta; el colaborador tendrá que entrar otra vez con la nueva contraseña. La acción se audita sin registrar la clave.
 - ADMIN cambia su propia contraseña por el enlace **Cambiar mi contraseña**, proporcionando la contraseña actual. Un colaborador también puede cambiar voluntariamente la suya.

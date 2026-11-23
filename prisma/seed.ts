@@ -1,3 +1,4 @@
+import {MIN_LONGITUD_CLAVE} from "../lib/politica-contrasenas";
 import "dotenv/config";
 import { PrismaClient, Role } from "@prisma/client";
 import { scryptSync, randomBytes } from "node:crypto";
@@ -10,7 +11,7 @@ async function run():Promise<void> {
   const login=process.env.KCJ_ADMIN_DOCUMENT?.trim();
   const name=process.env.KCJ_ADMIN_NAME?.trim();
   const password=process.env.KCJ_ADMIN_PASSWORD;
-  if (!login || !name || !password || password.length < 16) throw new Error("Configure KCJ_ADMIN_DOCUMENT, KCJ_ADMIN_NAME y KCJ_ADMIN_PASSWORD (mínimo 16 caracteres).");
+  if (!login || !name || !password || password.length < MIN_LONGITUD_CLAVE) throw new Error("Configure KCJ_ADMIN_DOCUMENT, KCJ_ADMIN_NAME y KCJ_ADMIN_PASSWORD (mínimo 8 caracteres).");
   const existing=await prisma.user.findUnique({where:{login}});
   if (existing) {
     if (existing.role !== Role.ADMIN) throw new Error("El usuario ya existe con otra función: intervención manual requerida.");

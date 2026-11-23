@@ -5,8 +5,8 @@ import {modules, canAccess, type ModuleSlug} from "@/lib/modulos";
 // Se conservan los 18 slugs originales y dos simulacros, las rutas, los modelos de datos y las autorizaciones existentes.
 const sections = [
  {title:"Servicios y jornadas", slugs:["operaciones","roster","tareo"], pausas:true},
- {title:"Unidades y habilitaciones", slugs:["flota","mantenimiento","homologacion","custodia","propietarios"], pausas:false},
- {title:"Trabajadores y formación", slugs:["personal","rrhh","salud","aula","simulacros-tecsup","simulacros-mmg"], pausas:false},
+ {title:"Unidades y habilitaciones", slugs:["flota","mantenimiento","custodia","propietarios"], pausas:false},
+ {title:"Trabajadores y formación", slugs:["personal","homologacion","rrhh","salud","aula","simulacros-tecsup","simulacros-mmg"], pausas:false},
  {title:"Seguridad y cumplimiento", slugs:["ssoma"], pausas:false},
  {title:"Recursos corporativos", slugs:["almacen","comunicaciones"], pausas:false},
  {title:"Análisis y reportes", slugs:["reportes"], pausas:false},
@@ -19,7 +19,7 @@ export const labelsNavegacion:Partial<Record<ModuleSlug,string>>={
  operaciones:"Servicios y asignaciones",
  roster:"ROSTER · Guardias y descansos",
  tareo:"Tareo · Horas trabajadas",
- homologacion:"Homologaciones externas",
+ homologacion:"Homologación de personal",
 };
 
 const pauseRoles:readonly Role[]=["ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","SALUD"];

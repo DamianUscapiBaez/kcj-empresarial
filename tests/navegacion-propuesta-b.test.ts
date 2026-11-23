@@ -49,6 +49,6 @@ test("Etiquetas más claras sin cambiar los identificadores de negocio",()=>{
  assert.match(nav,/operaciones:"Servicios y asignaciones"/);
  assert.match(nav,/roster:"ROSTER · Guardias y descansos"/);
  assert.match(nav,/tareo:"Tareo · Horas trabajadas"/);
- assert.match(nav,/homologacion:"Homologaciones externas"/);
+ assert.match(nav,/homologacion:"Homologación de personal"/);
  assert.match(panel,/labelsNavegacion\[slug\]\?\?meta\.title/);
 });
