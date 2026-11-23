@@ -1,7 +1,7 @@
 import {redirect} from "next/navigation";
 import {requireUser} from "@/lib/auth";
 import {panelActual} from "@/lib/panel-sesion";
-import {destinoPanel,panelesDisponibles} from "@/lib/paneles-kcj";
+import {destinoPanel,panelesDisponibles,nombrePanel} from "@/lib/paneles-kcj";
 import {seleccionarPanel} from "@/app/actions-panel";
 import {logout} from "@/app/actions-auth";
 import {KcjLogo} from "@/components/ui/KcjLogo";
@@ -23,7 +23,17 @@ export default async function SeleccionarPanel(){
     <p className="kcj-eyebrow">KCJ CONTROL EMPRESARIAL</p>
     <h1 className="mt-2 text-2xl font-black text-kcj-charcoal sm:text-3xl">Bienvenido, {user.displayName}</h1>
     <p className="mt-3 text-sm leading-6 text-slate-600">Iniciaste sesión correctamente. Selecciona el panel con el que deseas trabajar. Ambos utilizan tu misma cuenta y contraseña.</p>
-    <div className="mt-7 grid gap-4 sm:grid-cols-2">
+    {disponibles.some(p=>p.startsWith("area:"))?<div className="mt-7 grid gap-4 sm:grid-cols-2">
+     {disponibles.map((p,i)=><form key={p} action={seleccionarPanel}>
+      <input type="hidden" name="panel" value={p}/>
+      <button type="submit" className="kcj-focus flex h-full min-h-[150px] w-full flex-col items-start rounded-2xl border-2 border-kcj-border bg-white p-6 text-left shadow-pane transition hover:border-kcj-red hover:bg-kcj-redSoft/30">
+       <span className="grid h-12 w-12 place-items-center rounded-2xl bg-kcj-redSoft text-kcj-red"><UIIcon name={p==="conductor"?"bus":"dashboard"} size={25}/></span>
+       <span className="mt-4 text-lg font-extrabold text-kcj-charcoal">{i+1}. {nombrePanel(p)}</span>
+       <span className="mt-1 text-sm text-slate-600">Funciones exclusivas de esta área autorizada</span>
+       {actual===p&&<span className="mt-3 text-xs font-bold text-kcj-red">Panel actual</span>}
+      </button>
+     </form>)}
+    </div>:<div className="mt-7 grid gap-4 sm:grid-cols-2">
      <form action={seleccionarPanel}>
       <input type="hidden" name="panel" value="administrativo"/>
       <button type="submit" className="kcj-focus flex h-full min-h-[205px] w-full flex-col items-start rounded-2xl border-2 border-kcj-border bg-white p-6 text-left shadow-pane transition hover:border-kcj-red hover:bg-kcj-redSoft/30">
@@ -42,7 +52,7 @@ export default async function SeleccionarPanel(){
        {actual==="conductor"&&<span className="mt-3 text-xs font-bold text-kcj-red">Panel actual</span>}
       </button>
      </form>
-    </div>
+    </div>}
     <p className="mt-6 text-xs leading-5 text-slate-600">Puedes cambiar de panel sin cerrar sesión. La selección no otorga permisos adicionales.</p>
    </section>
   </div>

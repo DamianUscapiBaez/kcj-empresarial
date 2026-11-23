@@ -28,13 +28,26 @@ export function puedeConsultarPausas(role:Role|Role[]):boolean{
  return roles.some(r=>pauseRoles.includes(r));
 }
 
+const prioridad:Partial<Record<Role,readonly ModuleSlug[]>>={
+ OPERACIONES:["operaciones","roster","flota","tareo","homologacion","personal"],
+ JEFE_OPERACIONES:["operaciones","roster","flota","tareo","reportes"],
+ GERENCIA:["reportes","operaciones","rrhh","personal","flota"],
+ RRHH:["personal","rrhh","tareo","roster","almacen"],
+ SSOMA:["ssoma","flota","aula","reportes"],
+ MANTENIMIENTO:["mantenimiento","flota","almacen"],
+ SALUD:["salud","personal","aula"],
+ ADMIN:["acceso","personal","operaciones","flota","reportes"]
+};
 export function navigationForRole(role:Role|Role[]){
+ const principal=(Array.isArray(role)?role[0]:role) as Role;
+ const favorito=prioridad[principal]??[];
+ const rank=(slug:ModuleSlug)=>{const i=favorito.indexOf(slug);return i<0?100:i;};
  return sections.map(section=>({
   title:section.title,
   showPausas:section.pausas&&puedeConsultarPausas(role),
-  modules:section.slugs.filter(slug=>canAccess(role,slug)).map(slug=>{
+  modules:section.slugs.filter(slug=>canAccess(role,slug)).sort((a,b)=>rank(a)-rank(b)).map(slug=>{
    const m=modules.find(item=>item.slug===slug)!;
    return {...m,title:labelsNavegacion[slug]??m.title};
   }),
- })).filter(section=>section.modules.length>0||section.showPausas);
+ })).filter(section=>section.modules.length>0||section.showPausas).sort((a,b)=>Math.min(...a.modules.map(m=>rank(m.slug)),101)-Math.min(...b.modules.map(m=>rank(m.slug)),101));
 }

@@ -43,7 +43,7 @@ export default async function FichaVehicular({params}:{params:Promise<{id:string
  if(!vehicle||(isOwner&&vehicle.ownerId!==user.ownerId))notFound();
  const scope=isOwner?{ownerId:user.ownerId??"__NO_OWNER__"}:undefined;
  const options=await prisma.vehicle.findMany({where:scope,select:{id:true,code:true,plate:true,type:true},orderBy:{code:"asc"},take:400});
- const canManage=tieneRol(user,"ADMIN","OPERACIONES","JEFE_OPERACIONES")&&!isOwner;
+ const canManage=rolesParaPanel(user,panel).some(r=>["ADMIN","OPERACIONES","JEFE_OPERACIONES"].includes(r))&&!isOwner;
  const equips=catalogoEquipamiento(vehicle.type),checks=catalogoChecklist(vehicle.type);
  // La ficha es empresarial: ninguna operación minera se impone a todos los vehículos.
  // Los resultados se muestran por su operación de origen, sin mezclar vigencias de minas distintas.

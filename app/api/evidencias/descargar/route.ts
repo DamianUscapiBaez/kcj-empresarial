@@ -2,16 +2,16 @@ import {NextResponse} from "next/server";
 import {GetObjectCommand} from "@aws-sdk/client-s3";
 import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
 import {currentUser} from "@/lib/auth";
-import {rolesActivos} from "@/lib/permisos-kcj";
+import {rolesSesion} from "@/lib/roles-sesion";
 import {prisma} from "@/lib/prisma";
 import {s3Config} from "@/lib/evidencias";
 import {puedePracticar,esTema,PRACTICO_TECSUP} from "@/lib/simulacros-kcj";
 export const runtime="nodejs";
-export async function GET(req:Request){const u=await currentUser();if(!u)return NextResponse.json({error:"No autorizado"},{status:401});const key=new URL(req.url).searchParams.get("key");if(!key)return NextResponse.json({error:"Falta key"},{status:400});const asset=await prisma.evidenceAsset.findUnique({where:{key}});if(!asset?.verifiedAt)return NextResponse.json({error:"No existe"},{status:404});const allowed:Record<string,string[]>={FLOTA:["ADMIN","OPERACIONES","JEFE_OPERACIONES","MANTENIMIENTO"],MANTENIMIENTO:["MANTENIMIENTO"],SSOMA:["SSOMA"],HOMOLOGACION:["HOMOLOGACION","OPERACIONES","JEFE_OPERACIONES","ADMIN"],RRHH:["RRHH"],CUSTODIA:["ADMIN","OPERACIONES","JEFE_OPERACIONES"],CONNECT:["OPERACIONES","JEFE_OPERACIONES","SSOMA"],AULA:["ADMIN","INSTRUCTOR","SSOMA","SALUD"]};let permitted=asset.uploadedBy===u.id||rolesActivos(u).some(r=>allowed[asset.purpose]?.includes(r));
+export async function GET(req:Request){const u=await currentUser();if(!u)return NextResponse.json({error:"No autorizado"},{status:401});const key=new URL(req.url).searchParams.get("key");if(!key)return NextResponse.json({error:"Falta key"},{status:400});const asset=await prisma.evidenceAsset.findUnique({where:{key}});if(!asset?.verifiedAt)return NextResponse.json({error:"No existe"},{status:404});const allowed:Record<string,string[]>={FLOTA:["ADMIN","OPERACIONES","JEFE_OPERACIONES","MANTENIMIENTO"],MANTENIMIENTO:["MANTENIMIENTO"],SSOMA:["SSOMA"],HOMOLOGACION:["HOMOLOGACION","OPERACIONES","JEFE_OPERACIONES","ADMIN"],RRHH:["RRHH"],CUSTODIA:["ADMIN","OPERACIONES","JEFE_OPERACIONES"],CONNECT:["OPERACIONES","JEFE_OPERACIONES","SSOMA"],AULA:["ADMIN","INSTRUCTOR","SSOMA","SALUD"]};let permitted=asset.uploadedBy===u.id||(await rolesSesion(u)).some(r=>allowed[asset.purpose]?.includes(r));
  if(!permitted&&asset.purpose==="AULA"&&u.workerId&&u.worker?.active){
   const material=await prisma.practiceMaterial.findFirst({where:{evidenceKey:key},select:{topicCode:true}});
-  if(material?.topicCode===PRACTICO_TECSUP){permitted=rolesActivos(u).includes("CONDUCTOR");}
-  else if(material&&esTema(material.topicCode)&&puedePracticar(rolesActivos(u),material.topicCode)){
+  if(material?.topicCode===PRACTICO_TECSUP){permitted=(await rolesSesion(u)).includes("CONDUCTOR");}
+  else if(material&&esTema(material.topicCode)&&puedePracticar((await rolesSesion(u)),material.topicCode)){
    const state=await prisma.practiceTopicState.findUnique({where:{code:material.topicCode}});
    permitted=Boolean(state?.published);
   }

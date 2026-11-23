@@ -24,7 +24,7 @@ export async function login(form:FormData){
  jar.set(COOKIE,secret,{httpOnly:true,secure:process.env.NODE_ENV==="production",sameSite:"lax",path:"/",maxAge:8*60*60});
  jar.delete(COOKIE_PANEL); // No conservar una selección de otro usuario o sesión.
  const disponibles=panelesDisponibles(u);
- redirect(u.role==="PROPIETARIO"&&u.mustChangePassword?"/cambiar-clave":disponibles.length===2?"/seleccionar-panel":destinoPanel(disponibles[0]??"administrativo"));
+ redirect(u.role==="PROPIETARIO"&&u.mustChangePassword?"/cambiar-clave":disponibles.length>1?"/seleccionar-panel":destinoPanel(disponibles[0]??"administrativo"));
 }
 export async function logout(){const raw=(await cookies()).get(COOKIE)?.value;if(raw)await prisma.session.updateMany({where:{tokenHash:tokenHash(raw)},data:{revokedAt:new Date()}});const jar=await cookies();jar.delete(COOKIE);jar.delete(COOKIE_PANEL);redirect("/login");}
 export async function changePassword(form:FormData){

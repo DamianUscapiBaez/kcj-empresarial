@@ -2,7 +2,7 @@ import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
 import {requireUser} from "@/lib/auth";
 import {panelActual} from "@/lib/panel-sesion";
-import {tieneRol} from "@/lib/permisos-kcj";
+import {rolesParaPanel} from "@/lib/paneles-kcj";
 import {dailyPauseReport} from "@/lib/consulta-pausas";
 import {durationMinutes,localDateTime,todayInLima,parseDayInLima} from "@/lib/pausas-utils";
 
@@ -12,7 +12,7 @@ export default async function PausasActivas({searchParams}:{searchParams:Promise
  const panel=await panelActual(user);
  if(!panel)redirect("/seleccionar-panel");
  if(panel==="conductor")notFound();
- if(!tieneRol(user,"ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","SALUD"))notFound();
+ if(!rolesParaPanel(user,panel).some(r=>["ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","SALUD"].includes(r)))notFound();
  const {fecha}=await searchParams;
  const date=fecha??todayInLima();
  let valid=true;try{parseDayInLima(date);}catch{valid=false;}

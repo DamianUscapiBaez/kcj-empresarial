@@ -31,5 +31,5 @@ test('La navegación agrupa procesos por responsabilidades sin perder los 17 mó
 test('La exportación comprueba permisos específicos por reporte',()=>{
  const src=read('app/api/reportes/exportar/route.ts');
  assert.ok(src.includes("autorizaciones:Record<string,readonly string[]>"));
- assert.ok(src.includes("!rolesActivos(u).some(r=>autorizaciones[tipo]?.includes(r))"));
+ assert.ok(src.includes("!(await rolesSesion(u)).some(r=>autorizaciones[tipo]?.includes(r))"));
 });

@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import {GetObjectCommand} from "@aws-sdk/client-s3";
 import {getSignedUrl} from "@aws-sdk/s3-request-presigner";
 import {currentUser} from "@/lib/auth";
-import {tieneRol} from "@/lib/permisos-kcj";
+import {rolesSesion} from "@/lib/roles-sesion";
 import {prisma} from "@/lib/prisma";
 import {s3Config} from "@/lib/evidencias";
 export const runtime="nodejs";
@@ -12,7 +12,7 @@ const mimePermitidos=new Set(["image/jpeg","image/png","image/webp"]);
 export async function GET(_req:Request,{params}:{params:Promise<{photoId:string}>}){
  const user=await currentUser();
  if(!user)return NextResponse.json({error:"No autenticado"},{status:401});
- if(!tieneRol(user,"ADMIN","OPERACIONES","JEFE_OPERACIONES","MANTENIMIENTO","SSOMA"))return NextResponse.json({error:"Sin permiso"},{status:403});
+ if(!(await rolesSesion(user)).some(r=>["ADMIN","OPERACIONES","JEFE_OPERACIONES","MANTENIMIENTO","SSOMA"].includes(r)))return NextResponse.json({error:"Sin permiso"},{status:403});
  const {photoId}=await params;
  const photo=await prisma.custodyItemPhoto.findUnique({where:{id:photoId},select:{evidenceKey:true}});
  if(!photo)return NextResponse.json({error:"Foto no encontrada"},{status:404});

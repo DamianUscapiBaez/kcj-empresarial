@@ -25,7 +25,10 @@ export function RegistrarColaboradorForm({action,areas,puedeCrearAcceso=false}:{
    <label className={label}>Nombres y apellidos *<input className={input} name="name" minLength={3} maxLength={150} required autoComplete="name"/></label>
    <label className={label}>Primera área de trabajo (principal) *<AreaSelect name="area" areas={areas} value={principal} onChange={v=>{setPrincipal(v);if(v===secundaria)setSecundaria("");}}/></label>
    <label className={label}>Segunda área de trabajo (opcional)<AreaSelect name="secondaryArea" areas={areas} value={secundaria} onChange={setSecundaria} optional excluded={principal}/></label>
-   <label className={label}>N.º de licencia (si conduce)<input className={input} name="license"/></label>
+   <label className={label}>Celular de contacto (opcional)<input className={input} name="phone" type="tel" autoComplete="tel" placeholder="Ej.: 987 654 321"/></label>
+   <label className={label}>Número de licencia (opcional para todos)<input className={input} name="license" placeholder="Número registrado en el brevete"/></label>
+   <label className={label}>Categoría de licencia<select name="licenseCategory" className={input} defaultValue=""><option value="">Sin licencia registrada</option>{["A-I","A-IIa","A-IIb","A-IIIa","A-IIIb","A-IIIc","B-I","B-IIa","B-IIb","B-IIc"].map(c=><option key={c} value={c}>{c}</option>)}</select></label>
+   <label className={label}>Emisión de licencia<input className={input} type="date" name="licenseIssuedAt"/></label>
    <label className={label}>Vencimiento de licencia<input className={input} type="date" name="licenseExpires"/></label>
   </div>
   {puedeCrearAcceso&&<div className="mx-5 mb-5 rounded-xl border border-blue-200 bg-blue-50 p-4 sm:mx-6">
@@ -33,6 +36,7 @@ export function RegistrarColaboradorForm({action,areas,puedeCrearAcceso=false}:{
    <p className="mt-2 text-xs text-slate-700">Una sola cuenta: el DNI de 8 dígitos será el usuario y la contraseña inicial. El sistema toma las áreas de trabajo seleccionadas; no es necesario volver a elegir funciones. Quien tenga Administrativo y Conductor seleccionará su panel después de iniciar sesión, sin ingresar otra contraseña.</p>
    <p className="mt-2 text-xs text-amber-900">Seguridad: el DNI como contraseña inicial es predecible. Se recomienda cambiarla inmediatamente al primer ingreso.</p>
   </div>}
+  <p className="px-5 pb-4 text-xs text-slate-600">La licencia puede registrarse incluso si el colaborador NO es conductor; no le otorga autorización para conducir vehículos de KCJ. Si la registras, completa categoría y vencimiento.</p>
   <p className="px-5 pb-4 text-xs text-slate-600">Las áreas determinan el trabajo; los privilegios especiales (como ADMIN o Jefatura) se autorizan por separado en Centro de Control, no por este formulario.</p>
   <Submit text={crearAcceso?"Registrar colaborador y crear cuenta":"Registrar colaborador"} disabled={!areas.length}/>
  </form>;

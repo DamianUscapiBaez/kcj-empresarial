@@ -32,7 +32,7 @@ test("Inicio de sesión: usa una misma sesión, borra cookie de panel anterior y
  assert.match(auth,/include:\{worker:\{select:\{active:true\}\},grants:\{where:\{revokedAt:null\}\}\}/);
  assert.match(auth,/u\.workerId&&!u\.worker\?\.active/);
  assert.match(auth,/jar\.delete\(COOKIE_PANEL\)/);
- assert.match(auth,/disponibles\.length===2\?"\/seleccionar-panel"/);
+ assert.match(auth,/disponibles\.length>1\?"\/seleccionar-panel"/);
  assert.match(auth,/destinoPanel\(disponibles\[0\]/);
  assert.match(read("lib/panel-sesion.ts"),/puedeSeleccionarPanel\(user,elegido\)/);
  assert.match(read("app/actions-panel.ts"),/if\(!puedeSeleccionarPanel\(user,panel\)\)/);
@@ -46,7 +46,7 @@ test("Interfaz: selector muestra Administrativo en primer lugar y Conductor en s
  assert.match(page,/name="panel" value="administrativo"/);
  assert.match(page,/name="panel" value="conductor"/);
  const layout=read("app/dashboard/layout.tsx");
- assert.match(layout,/Cambiar de panel/);
+ assert.match(layout,/Cambiar de área \/ panel/);
  assert.match(layout,/navigationForRole\(\["CONDUCTOR"\]\)/);
  assert.match(read("app/dashboard/[modulo]/page.tsx"),/canAccess\(rolesParaPanel\(user,panel\),modulo\)/);
 });
@@ -62,4 +62,17 @@ test("Un colaborador de doble área reporta solo su propio caso desde Conductor"
  const src=read("app/actions-operativas.ts");
  assert.match(src,/panel==="conductor"&&\(!u\.workerId\|\|w!==u\.workerId\)/);
  assert.doesNotMatch(src,/u\.role==="CONDUCTOR"&&w!==u\.workerId/);
+});
+
+test("Gerencia y RRHH tienen selector de áreas, menús y permisos independientes",()=>{
+ const k={role:"GERENCIA" as const,grants:[{role:"RRHH" as const,revokedAt:null}]};
+ assert.deepEqual(panelesDisponibles(k),["area:GERENCIA","area:RRHH"]);
+ assert.deepEqual(rolesParaPanel(k,"area:GERENCIA"),["GERENCIA"]);
+ assert.deepEqual(rolesParaPanel(k,"area:RRHH"),["RRHH"]);
+ assert.equal(puedeSeleccionarPanel(k,"area:OPERACIONES"),false);
+ assert.equal(puedeSeleccionarPanel(k,"administrativo"),false);
+});
+test("Un permiso funcional no crea departamentos ni paneles falsos",()=>{
+ const k={role:"OPERACIONES" as const,grants:[{role:"HOMOLOGACION" as const,revokedAt:null}]};
+ assert.deepEqual(panelesDisponibles(k),["administrativo"]);
 });

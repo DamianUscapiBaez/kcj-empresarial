@@ -1,6 +1,7 @@
 import {NextResponse} from "next/server";
 import {currentUser} from "@/lib/auth";
-import {tieneRol} from "@/lib/permisos-kcj";
+import {panelActual} from "@/lib/panel-sesion";
+import {rolesParaPanel} from "@/lib/paneles-kcj";
 import {dailyPauseReport} from "@/lib/consulta-pausas";
 import {parseDayInLima,todayInLima} from "@/lib/pausas-utils";
 import {generateDailyPausePdf} from "@/lib/pdf-pausas";
@@ -8,7 +9,8 @@ import {prisma} from "@/lib/prisma";
 export const runtime="nodejs";
 export async function GET(req:Request){
  const user=await currentUser();if(!user)return NextResponse.json({error:"Inicia sesión"},{status:401});
- if(!tieneRol(user,"ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","SALUD"))return NextResponse.json({error:"No autorizado"},{status:403});
+ const panel=await panelActual(user);
+ if(!panel||!rolesParaPanel(user,panel).some(r=>["ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","SALUD"].includes(r)))return NextResponse.json({error:"No autorizado"},{status:403});
  const date=new URL(req.url).searchParams.get("fecha")??todayInLima();
  try{parseDayInLima(date);}catch{return NextResponse.json({error:"Fecha inválida"},{status:400});}
  try{

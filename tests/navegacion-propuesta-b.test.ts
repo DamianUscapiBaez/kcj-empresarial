@@ -32,7 +32,7 @@ test("Pausas Activas se consulta una vez dentro de Servicios y jornadas y mantie
  assert.match(nav,/showPausas:section\.pausas&&puedeConsultarPausas\(role\)/);
  assert.match(group,/showPausas&&<PausasNavigationLink\/>/);
  assert.doesNotMatch(layout,/Línea de Mando/);
- assert.match(read("app/dashboard/pausas-activas/page.tsx"),/tieneRol\(user,"ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","SALUD"\)/);
+ assert.match(read("app/dashboard/pausas-activas/page.tsx"),/rolesParaPanel\(user,panel\)\.some/);
 });
 test("Menú desplegable accesible y coherente en escritorio y móvil",()=>{
  assert.match(group,/aria-expanded=\{open\}/);

@@ -75,7 +75,10 @@ model Worker {
   secondaryArea String?
   active Boolean @default(true)
   license String?
+  licenseCategory String?
+  licenseIssuedAt DateTime?
   licenseExpires DateTime?
+  phone String?
   entryDate DateTime?
   createdAt DateTime @default(now())
   user User?

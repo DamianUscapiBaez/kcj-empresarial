@@ -14,8 +14,8 @@ check(existsSync(path.join(root,'app/dashboard/pausas-activas/page.tsx')),'Falta
 check(existsSync(path.join(root,'app/api/pausas-activas/pdf/route.ts')),'Falta exportación PDF');
 check(existsSync(path.join(root,'app/api/pausas-activas/evidencia/route.ts')),'Falta descarga restringida de fotos');
 check(dashboard.includes('NavigationGroup')&&get('components/ui/NavigationGroup.tsx').includes('PausasNavigationLink'),'Falta enlace de Pausas Activas en grupo Servicios y jornadas');
-check(get('app/dashboard/pausas-activas/page.tsx').includes('tieneRol'),'Falta control de acceso en ficha');
-check(get('app/api/pausas-activas/pdf/route.ts').includes('tieneRol'),'Falta control de acceso en PDF');
+check(get('app/dashboard/pausas-activas/page.tsx').includes('rolesParaPanel'),'Falta control de acceso en ficha');
+check(get('app/api/pausas-activas/pdf/route.ts').includes('rolesParaPanel'),'Falta control de acceso en PDF');
 check(get('app/api/pausas-activas/pdf/route.ts').includes('EXPORTAR_PDF'),'Falta trazabilidad de descarga');
 check(get('app/actions-pausas.ts').includes('clientEventId'),'Falta identificador de idempotencia');
 check(get('prisma/schema.prisma').includes('model ActivePause'),'Falta modelo de pausas');

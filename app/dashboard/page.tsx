@@ -48,7 +48,18 @@ export default async function Dashboard(){
   .map(s=>({...s,modules:panelesDisponibles(user).length===2?s.modules.filter(m=>m.slug!=="connect"):s.modules}))
   .filter(s=>s.modules.length>0||s.showPausas);
  const date=new Intl.DateTimeFormat("es-PE",{timeZone:"America/Lima",weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(new Date());
- const favorite:ModuleSlug[]=["operaciones","roster","tareo","flota","ssoma","aula"];
+ const areaRole=rolesParaPanel(user,panel)[0];
+ const prioridades:Partial<Record<string,ModuleSlug[]>>={
+  OPERACIONES:["operaciones","roster","flota","tareo","homologacion","personal"],
+  JEFE_OPERACIONES:["operaciones","roster","flota","tareo","reportes"],
+  GERENCIA:["reportes","operaciones","personal","flota","rrhh"],
+  RRHH:["personal","rrhh","tareo","roster","almacen"],
+  SSOMA:["ssoma","flota","aula","reportes"],
+  MANTENIMIENTO:["mantenimiento","flota","almacen"],
+  SALUD:["salud","personal","aula"],
+  ADMIN:["acceso","personal","operaciones","flota","reportes"],
+ };
+ const favorite:ModuleSlug[]=prioridades[areaRole]??["operaciones","roster","tareo","flota","ssoma","aula"];
  const shortcuts=favorite.filter(slug=>canAccess(rolesParaPanel(user,panel),slug));
  return <>
   <section className="relative overflow-hidden rounded-3xl bg-kcj-charcoal p-6 text-white shadow-soft sm:p-8">
@@ -72,7 +83,7 @@ export default async function Dashboard(){
     <p className="mt-1 text-xs text-slate-500">{item.hint}</p>
    </article>)}
   </section>}
-  {tieneRol(user,"ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","SALUD")&&<Link href="/dashboard/pausas-activas" className="kcj-focus flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#E6C7CE] bg-white p-5 shadow-pane transition hover:bg-kcj-redSoft/30"><div><p className="kcj-eyebrow">Servicios y jornadas</p><p className="mt-1 font-bold text-kcj-charcoal">Control Maestro de Pausas Activas</p><p className="text-xs text-slate-600">Consultar todos los conductores por fecha y descargar el PDF vertical.</p></div><span className="rounded-lg border border-kcj-border px-3 py-2 text-sm font-semibold text-kcj-charcoal">Abrir control</span></Link>}
+  {rolesParaPanel(user,panel).some(r=>["ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","SALUD"].includes(r))&&<Link href="/dashboard/pausas-activas" className="kcj-focus flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#E6C7CE] bg-white p-5 shadow-pane transition hover:bg-kcj-redSoft/30"><div><p className="kcj-eyebrow">Servicios y jornadas</p><p className="mt-1 font-bold text-kcj-charcoal">Control Maestro de Pausas Activas</p><p className="text-xs text-slate-600">Consultar todos los conductores por fecha y descargar el PDF vertical.</p></div><span className="rounded-lg border border-kcj-border px-3 py-2 text-sm font-semibold text-kcj-charcoal">Abrir control</span></Link>}
   {shortcuts.length>0&&<section className="space-y-3">
    <div><p className="kcj-eyebrow">Accesos directos</p><h2 className="mt-1 text-xl font-bold text-kcj-charcoal">Procesos de uso frecuente</h2></div>
    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">

@@ -31,7 +31,7 @@ export async function registrarFirmaCustodia(data: {
   }
 
   validarLadoFirma(data.side);
-  // Esta conversión es segura si validarLadoFirma rechaza cualquier valor inválido.
+  // La conversión es segura si validarLadoFirma lanza un error ante valores no admitidos.
   const side = data.side as LadoFirmaCustodia;
 
   if (data.witnessedInPerson !== true) {
@@ -40,11 +40,7 @@ export async function registrarFirmaCustodia(data: {
     );
   }
 
-  if (
-    typeof data.evidenceKey !== "string" ||
-    !data.evidenceKey.trim() ||
-    data.evidenceKey.length > 400
-  ) {
+  if (typeof data.evidenceKey !== "string" || data.evidenceKey.length > 400) {
     throw new Error("Evidencia de firma inválida");
   }
 

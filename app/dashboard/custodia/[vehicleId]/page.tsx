@@ -4,7 +4,7 @@ import {notFound,redirect} from "next/navigation";
 import {prisma} from "@/lib/prisma";
 import {requireUser} from "@/lib/auth";
 import {panelActual} from "@/lib/panel-sesion";
-import {tieneRol} from "@/lib/permisos-kcj";
+import {rolesParaPanel} from "@/lib/paneles-kcj";
 import {EvidenceUploader} from "@/components/ui/EvidenceUploader";
 import {FotosCustodiaUploader} from "@/components/dominio/FotosCustodiaUploader";
 import {DataTable,InlineAction,RecordForm} from "@/components/ui/fields";
@@ -21,14 +21,14 @@ export default async function CustodiaUnidad({params}:{params:Promise<{vehicleId
  const panel=await panelActual(user);
  if(!panel)redirect("/seleccionar-panel");
  if(panel==="conductor")notFound();
- if(!tieneRol(user,"ADMIN","OPERACIONES","JEFE_OPERACIONES","MANTENIMIENTO","SSOMA"))notFound();
+ if(!rolesParaPanel(user,panel).some(r=>["ADMIN","OPERACIONES","JEFE_OPERACIONES","MANTENIMIENTO","SSOMA"].includes(r)))notFound();
  const vehicle=await prisma.vehicle.findUnique({where:{id:vehicleId},include:{
   equipment:{orderBy:[{category:"asc"},{label:"asc"}]},
   custody:{orderBy:[{at:"desc"},{id:"desc"}],include:{items:{orderBy:{label:"asc"}},signatures:true},take:25}
  }});
  if(!vehicle)notFound();
  const latest=vehicle.custody[0];
- const canRecord=tieneRol(user,"ADMIN","OPERACIONES","JEFE_OPERACIONES");
+ const canRecord=rolesParaPanel(user,panel).some(r=>["ADMIN","OPERACIONES","JEFE_OPERACIONES"].includes(r));
  const inThirdParty=latest?.kind==="ENTREGA";
  const pendingReview=latest?.kind==="RECEPCION"&&(!latest.technicalVerifiedAt||!latest.safetyVerifiedAt);
  const unresolved=latest?.kind==="RECEPCION"?latest.items.filter(i=>i.discrepancy&&!i.resolvedAt):[];
@@ -102,8 +102,8 @@ export default async function CustodiaUnidad({params}:{params:Promise<{vehicleId
     <RecordForm title="Documentar resolución" action={resolverDiferenciaCustodia} submit="Registrar resolución" fields={[{name:"lineId",label:"Línea",type:"hidden",value:i.id},{name:"reason",label:"Qué se resolvió y por qué",type:"textarea"},{name:"evidenceKey",label:"Evidencia de resolución",type:"evidence",evidencePurpose:"CUSTODIA"}]}/>
    </div>)}
    {unresolved.length===0&&<div className="flex flex-wrap gap-2">
-    {tieneRol(user,"MANTENIMIENTO")&&!latest.technicalVerifiedAt&&<InlineAction action={verificarRecepcionTecnica} label="Registrar conformidad de Mantenimiento" fields={[{name:"id",value:latest.id}]}/>}
-    {tieneRol(user,"SSOMA")&&!latest.safetyVerifiedAt&&<InlineAction action={verificarRecepcionSSOMA} label="Registrar conformidad de SSOMA" fields={[{name:"id",value:latest.id}]}/>}
+    {rolesParaPanel(user,panel).includes("MANTENIMIENTO")&&!latest.technicalVerifiedAt&&<InlineAction action={verificarRecepcionTecnica} label="Registrar conformidad de Mantenimiento" fields={[{name:"id",value:latest.id}]}/>}
+    {rolesParaPanel(user,panel).includes("SSOMA")&&!latest.safetyVerifiedAt&&<InlineAction action={verificarRecepcionSSOMA} label="Registrar conformidad de SSOMA" fields={[{name:"id",value:latest.id}]}/>}
    </div>}
    <p className="text-xs text-slate-600">Una devolución nunca habilita por sí sola la unidad. Las dos conformidades son obligatorias y las demás restricciones documentales y operativas siguen aplicando.</p>
   </section>}
