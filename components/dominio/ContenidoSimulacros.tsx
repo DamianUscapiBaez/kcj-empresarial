@@ -1,3 +1,4 @@
+import {notaVisible} from "@/lib/notas-vigesimales";
 import Link from "next/link";
 import {randomUUID} from "node:crypto";
 import {Prisma} from "@prisma/client";
@@ -98,7 +99,7 @@ export async function ContenidoSimulacros({modulo,user}:{modulo:Modulo;user:Usua
     </form>}
     {!publicado&&!editor&&<p role="status" className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">Aún no hay cuestionario publicado para este tema. KCJ cargará sus preguntas y respuestas posteriormente.</p>}
     {publicado&&!puedeResolver&&!editor&&<p className="text-sm text-slate-600">Este tema no corresponde a tu perfil o tu cuenta todavía no está vinculada a una ficha laboral activa.</p>}
-    {puedeResolver&&<DataTable title="Mis intentos de práctica" emptyMessage="Todavía no tienes intentos guardados." rows={misIntentos.map(i=>({id:i.id,data:{Fecha:formatoFecha(i.createdAt),Aciertos:`${i.correctCount} / ${i.totalQuestions}`,Nota:`${i.score}%`}}))}/>}
+    {puedeResolver&&<DataTable title="Mis intentos de práctica" emptyMessage="Todavía no tienes intentos guardados." rows={misIntentos.map(i=>({id:i.id,data:{Fecha:formatoFecha(i.createdAt),Aciertos:`${i.correctCount} / ${i.totalQuestions}`,Nota:notaVisible(i.score)}}))}/>}
    </section>;
   })}
   {esTecsup&&(roles.includes("CONDUCTOR")||editor)&&<section className="card space-y-4"><h2 className="kcj-card-heading">Preparación para examen práctico TECSUP — circuito</h2>

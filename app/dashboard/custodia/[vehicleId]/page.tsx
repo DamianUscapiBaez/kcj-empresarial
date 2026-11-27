@@ -44,7 +44,7 @@ export default async function CustodiaUnidad({params}:{params:Promise<{vehicleId
    <p className="text-xs text-slate-600">El inventario se basa en ESTA unidad, no en un listado genérico para camionetas, microbuses, minibuses u ómnibus. Las actas anteriores permanecen inalteradas.</p>
   </header>
   {!vehicle.equipment.length&&<p className="rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">Antes de realizar una entrega, <Link href={`/dashboard/ficha-vehicular/${vehicle.id}`} className="underline font-semibold">completa el inventario de equipamiento real en Flota</Link>. No se debe generar una entrega con lista vacía.</p>}
-  {canDeliver&&<form action={registrarEntregaComparativa} className="card space-y-4">
+  {canDeliver&&<form id="entrega" action={registrarEntregaComparativa} className="card space-y-4">
    <h2 className="kcj-card-heading">Acta de ENTREGA a tercero</h2>
    <p className="text-sm text-slate-600">La entrega guardará una copia histórica de los {vehicle.equipment.length} componentes actualmente registrados para esta unidad.</p>
    <input type="hidden" name="vehicleId" value={vehicle.id}/><input type="hidden" name="clientEventId" value={randomUUID()}/>
@@ -64,7 +64,7 @@ export default async function CustodiaUnidad({params}:{params:Promise<{vehicleId
    <p className="text-xs text-slate-600">Después de registrar el acta, abre «Ver acta, firmar / PDF» en el historial para que ambas partes firmen sobre el documento definitivo.</p>
   </form>}
   {canRecord&&!canDeliver&&!inThirdParty&&vehicle.equipment.length>0&&<p className="rounded-lg bg-amber-50 p-4 text-sm text-amber-900">La unidad todavía no puede entregarse porque falta la revisión posterior a una recepción o existe una restricción vigente.</p>}
-  {canReceive&&latest&&<form action={registrarRecepcionComparativa} className="card space-y-4">
+  {canReceive&&latest&&<form id="recepcion" action={registrarRecepcionComparativa} className="card space-y-4">
    <h2 className="kcj-card-heading">Acta de RECEPCIÓN — Comparación con entrega del {fecha(latest.at)}</h2>
    <p className="text-sm text-slate-600">Debes revisar cada equipo recibido y adjuntar fotografías por componente cuando esté dañado u observado. Estas fotos se fijarán en el acta antes de ambas firmas. Las cantidades originales se conservan aunque después se edite el inventario de Flota.</p>
    <input type="hidden" name="vehicleId" value={vehicle.id}/><input type="hidden" name="deliveryId" value={latest.id}/><input type="hidden" name="clientEventId" value={randomUUID()}/>

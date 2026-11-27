@@ -22,3 +22,21 @@ body { @apply bg-kcj-paper text-kcj-charcoal antialiased; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* Apariencia: contraste inicial; validar visualmente todas las pantallas antes de producción. */
+.kcj-theme-select { background: #fff; color: #2a323a; border-color:#cbd5e1; }
+html[data-theme="dark"] {color-scheme:dark;}
+html[data-theme="dark"] body {background:#171c22;color:#e5e7eb;}
+html[data-theme="dark"] :is(.card,.input,.btn-secondary,.kcj-theme-select,[class*="bg-white"],[class*="bg-kcj-paper"],[class*="bg-kcj-sidebar"],[class*="bg-slate-50"],[class*="bg-slate-100"]) {background-color:#222a33;color:#e5e7eb;}
+html[data-theme="dark"] :is([class*="text-kcj-charcoal"],[class*="text-kcj-muted"],[class*="text-slate-700"],[class*="text-slate-800"],[class*="text-slate-900"],[class*="text-slate-500"],.kcj-card-heading,.kcj-muted){color:#d5dce4;}
+html[data-theme="dark"] :is(.input,.card,[class*="border-kcj-border"],.kcj-theme-select){border-color:#475569;}
+html[data-theme="dark"] .input::placeholder{color:#aab6c4;}
+html[data-theme="dark"] .badge{background:#303b45;color:#e5e7eb;}
+html[data-theme="dark"] .kcj-eyebrow{color:#f1a9b7;}
+@media(prefers-color-scheme:dark){
+ html:not([data-theme="light"]):not([data-theme="dark"]) {color-scheme:dark;}
+ html:not([data-theme="light"]):not([data-theme="dark"]) body {background:#171c22;color:#e5e7eb;}
+ html:not([data-theme="light"]):not([data-theme="dark"]) :is(.card,.input,.btn-secondary,.kcj-theme-select,[class*="bg-white"],[class*="bg-kcj-paper"],[class*="bg-kcj-sidebar"],[class*="bg-slate-50"],[class*="bg-slate-100"]){background-color:#222a33;color:#e5e7eb;}
+ html:not([data-theme="light"]):not([data-theme="dark"]) :is([class*="text-kcj-charcoal"],[class*="text-kcj-muted"],[class*="text-slate-700"],[class*="text-slate-800"],[class*="text-slate-900"],[class*="text-slate-500"],.kcj-card-heading,.kcj-muted){color:#d5dce4;}
+}
+@media(max-width:640px){.input,.btn,.btn-secondary{min-height:44px;font-size:16px;} #contenido{min-width:0;overflow-wrap:anywhere;} #contenido table{font-size: .875rem;} }

@@ -1,4 +1,5 @@
 import {NextResponse} from "next/server";
+import pkg from "../../../package.json";
 import {prisma} from "@/lib/prisma";
 import {TABLAS_KCJ,COLUMNAS_CRITICAS_KCJ} from "@/lib/esquema-requerido-kcj";
 
@@ -7,6 +8,7 @@ export const dynamic="force-dynamic";
 /** Pública: incluye WorkArea y Worker.secondaryArea mediante el catálogo completo de tablas y columnas. Solo revela estado y cantidades, nunca datos personales. */
 export async function GET(){
  const headers={"Cache-Control":"no-store"};
+ const release={version:pkg.version,commit:process.env.VERCEL_GIT_COMMIT_SHA??null};
  try{
   await prisma.$queryRaw`SELECT 1`;
   const [tables,columns]=await Promise.all([
@@ -17,7 +19,7 @@ export async function GET(){
   const available=new Set(columns.map(x=>`${x.table_name}.${x.column_name}`));
   const missingTables=TABLAS_KCJ.filter(name=>!present.has(name));
   const missingColumns=COLUMNAS_CRITICAS_KCJ.filter(x=>!available.has(`${x.table}.${x.column}`));
-  if(missingTables.length||missingColumns.length)return NextResponse.json({status:"error",database:"reachable",schema:"incomplete",code:"KCJ_SCHEMA_PENDING",missingCount:missingTables.length+missingColumns.length,time:new Date().toISOString()},{status:503,headers});
-  return NextResponse.json({status:"ok",database:"reachable",schema:"present",note:"Estructura detectada; esto no sustituye pruebas funcionales de la marcha blanca",time:new Date().toISOString()},{headers});
- }catch{return NextResponse.json({status:"error",database:"unreachable_or_schema_invalid",code:"KCJ_DATABASE_ERROR"},{status:503,headers});}
+  if(missingTables.length||missingColumns.length)return NextResponse.json({...release,status:"error",database:"reachable",schema:"incomplete",code:"KCJ_SCHEMA_PENDING",missingCount:missingTables.length+missingColumns.length,time:new Date().toISOString()},{status:503,headers});
+  return NextResponse.json({...release,status:"ok",database:"reachable",schema:"present",note:"Estructura detectada; esto no sustituye pruebas funcionales de la marcha blanca",time:new Date().toISOString()},{headers});
+ }catch{return NextResponse.json({...release,status:"error",database:"unreachable_or_schema_invalid",code:"KCJ_DATABASE_ERROR"},{status:503,headers});}
 }

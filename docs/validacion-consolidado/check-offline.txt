@@ -1,0 +1,2560 @@
+
+> kcj-control-empresarial@1.0.16-estabilizacion-27nov check:offline
+> npm run test && npm run audit:static && npm run audit:navegacion && npm run audit:migraciones
+
+
+> kcj-control-empresarial@1.0.16-estabilizacion-27nov test
+> node --experimental-strip-types --test tests/*.test.ts
+
+TAP version 13
+# (node:4794) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4794) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/admin-revision-visual.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: ADMIN: selector requerido sin datos bloquea únicamente su formulario
+ok 1 - ADMIN: selector requerido sin datos bloquea únicamente su formulario
+  ---
+  duration_ms: 1.002265
+  type: 'test'
+  ...
+# Subtest: ADMIN: selector opcional vacío no bloquea y explica el vínculo
+ok 2 - ADMIN: selector opcional vacío no bloquea y explica el vínculo
+  ---
+  duration_ms: 0.151783
+  type: 'test'
+  ...
+# Subtest: ADMIN: tablas vacías no instruyen usar formularios no autorizados
+ok 3 - ADMIN: tablas vacías no instruyen usar formularios no autorizados
+  ---
+  duration_ms: 0.213274
+  type: 'test'
+  ...
+# Subtest: ADMIN: no se expone desactivación de la cuenta propia
+ok 4 - ADMIN: no se expone desactivación de la cuenta propia
+  ---
+  duration_ms: 0.099937
+  type: 'test'
+  ...
+# Subtest: ADMIN: comunicación diferencia publicación y destinatarios
+ok 5 - ADMIN: comunicación diferencia publicación y destinatarios
+  ---
+  duration_ms: 0.981485
+  type: 'test'
+  ...
+# Subtest: ADMIN: Flota, Almacén, Personal y Aula explican sus acciones
+ok 6 - ADMIN: Flota, Almacén, Personal y Aula explican sus acciones
+  ---
+  duration_ms: 0.399198
+  type: 'test'
+  ...
+# Subtest: ADMIN: campos de fecha contextualizan formato y horario sin prometer formato del navegador
+ok 7 - ADMIN: campos de fecha contextualizan formato y horario sin prometer formato del navegador
+  ---
+  duration_ms: 0.1016
+  type: 'test'
+  ...
+# Subtest: ADMIN: evidencia ofrece botones legibles y estado de carga, no mensaje técnico S3
+ok 8 - ADMIN: evidencia ofrece botones legibles y estado de carga, no mensaje técnico S3
+  ---
+  duration_ms: 0.080649
+  type: 'test'
+  ...
+# Subtest: ADMIN: formulario de personal ocupa toda la anchura en su padrón
+ok 9 - ADMIN: formulario de personal ocupa toda la anchura en su padrón
+  ---
+  duration_ms: 0.219874
+  type: 'test'
+  ...
+# Subtest: ADMIN: el logo original y los permisos de procesos se conservan
+ok 10 - ADMIN: el logo original y los permisos de procesos se conservan
+  ---
+  duration_ms: 0.346079
+  type: 'test'
+  ...
+# Subtest: Diagnóstico de esquema considera todas las migraciones, sin consultar ni modificar la base real
+ok 11 - Diagnóstico de esquema considera todas las migraciones, sin consultar ni modificar la base real
+  ---
+  duration_ms: 0.182879
+  type: 'test'
+  ...
+# Subtest: Verificador del ZIP acepta cabecera del manifiesto sin omitir hashes
+ok 12 - Verificador del ZIP acepta cabecera del manifiesto sin omitir hashes
+  ---
+  duration_ms: 0.121248
+  type: 'test'
+  ...
+# (node:4795) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4795) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/alcance-empresarial-kcj.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: KCJ CONTROL es empresarial: servicios diversos con ingreso a mina condicionado
+ok 13 - KCJ CONTROL es empresarial: servicios diversos con ingreso a mina condicionado
+  ---
+  duration_ms: 1.985343
+  type: 'test'
+  ...
+# Subtest: Habilitación minera aplica por operación, sin imponer Las Bambas a toda la flota
+ok 14 - Habilitación minera aplica por operación, sin imponer Las Bambas a toda la flota
+  ---
+  duration_ms: 0.286241
+  type: 'test'
+  ...
+# Subtest: Homologación personal se separa de documentos de cada unidad
+ok 15 - Homologación personal se separa de documentos de cada unidad
+  ---
+  duration_ms: 1.834581
+  type: 'test'
+  ...
+# Subtest: Los documentos sin vencimiento no se falsean con fechas inventadas
+ok 16 - Los documentos sin vencimiento no se falsean con fechas inventadas
+  ---
+  duration_ms: 0.332759
+  type: 'test'
+  ...
+# (node:4796) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4796) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/alta-colaborador-dni-unico.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: DNI de 8 dígitos es texto, se conserva cero inicial y no admite usuario alterno
+ok 17 - DNI de 8 dígitos es texto, se conserva cero inicial y no admite usuario alterno
+  ---
+  duration_ms: 1.25625
+  type: 'test'
+  ...
+# Subtest: El área Conductor asigna un panel independiente sin segunda cuenta
+ok 18 - El área Conductor asigna un panel independiente sin segunda cuenta
+  ---
+  duration_ms: 1.030116
+  type: 'test'
+  ...
+# Subtest: Las áreas sin rol operativo autorizado no se convierten en ADMIN
+ok 19 - Las áreas sin rol operativo autorizado no se convierten en ADMIN
+  ---
+  duration_ms: 1.189922
+  type: 'test'
+  ...
+# Subtest: Normalización de nombres para prevenir duplicados por espacios y mayúsculas
+ok 20 - Normalización de nombres para prevenir duplicados por espacios y mayúsculas
+  ---
+  duration_ms: 0.456772
+  type: 'test'
+  ...
+# Subtest: Formulario de alta no repite usuario, rol ni contraseña; servidor los deriva
+ok 21 - Formulario de alta no repite usuario, rol ni contraseña; servidor los deriva
+  ---
+  duration_ms: 4.95173
+  type: 'test'
+  ...
+# Subtest: Eliminar áreas y fichas requiere referencia vacía, audita el motivo y no elimina historiales
+ok 22 - Eliminar áreas y fichas requiere referencia vacía, audita el motivo y no elimina historiales
+  ---
+  duration_ms: 0.293111
+  type: 'test'
+  ...
+# (node:4827) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4827) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/areas-trabajo.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Una sola área principal y secundaria opcional
+ok 23 - Una sola área principal y secundaria opcional
+  ---
+  duration_ms: 1.445658
+  type: 'test'
+  ...
+# Subtest: No se aceptan áreas repetidas ni inventadas
+ok 24 - No se aceptan áreas repetidas ni inventadas
+  ---
+  duration_ms: 0.472295
+  type: 'test'
+  ...
+# Subtest: Centro de Control puede agregar áreas válidas
+ok 25 - Centro de Control puede agregar áreas válidas
+  ---
+  duration_ms: 0.322425
+  type: 'test'
+  ...
+# Subtest: Migración aditiva mantiene área histórica y agrega segunda
+ok 26 - Migración aditiva mantiene área histórica y agrega segunda
+  ---
+  duration_ms: 0.390064
+  type: 'test'
+  ...
+# Subtest: Formulario de colaborador usa dos áreas, no exige cargo
+ok 27 - Formulario de colaborador usa dos áreas, no exige cargo
+  ---
+  duration_ms: 0.770234
+  type: 'test'
+  ...
+# Subtest: No se alteran los roles al cambiar áreas
+ok 28 - No se alteran los roles al cambiar áreas
+  ---
+  duration_ms: 1.958433
+  type: 'test'
+  ...
+# Subtest: Tareo: se elige solo entre áreas autorizadas y se guarda la del trabajo efectivo
+ok 29 - Tareo: se elige solo entre áreas autorizadas y se guarda la del trabajo efectivo
+  ---
+  duration_ms: 0.388192
+  type: 'test'
+  ...
+# (node:4828) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4828) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/asistencia-aula.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Presencial admite asistencia y ausencia justificada con motivo
+ok 30 - Presencial admite asistencia y ausencia justificada con motivo
+  ---
+  duration_ms: 1.224092
+  type: 'test'
+  ...
+# Subtest: No admite ausencias sin motivo
+ok 31 - No admite ausencias sin motivo
+  ---
+  duration_ms: 0.462151
+  type: 'test'
+  ...
+# Subtest: Bloquea estado arbitrario
+ok 32 - Bloquea estado arbitrario
+  ---
+  duration_ms: 0.187205
+  type: 'test'
+  ...
+# Subtest: Tutor no marca asistencia virtual
+ok 33 - Tutor no marca asistencia virtual
+  ---
+  duration_ms: 0.339259
+  type: 'test'
+  ...
+# Subtest: Ausencia no revoca constancia acreditada sin rectificación
+ok 34 - Ausencia no revoca constancia acreditada sin rectificación
+  ---
+  duration_ms: 0.262847
+  type: 'test'
+  ...
+# Subtest: Participación virtual exige tiempo mínimo y material
+ok 35 - Participación virtual exige tiempo mínimo y material
+  ---
+  duration_ms: 0.206394
+  type: 'test'
+  ...
+# Subtest: No se acredita un curso sin examen por solo confirmar material
+ok 36 - No se acredita un curso sin examen por solo confirmar material
+  ---
+  duration_ms: 0.224621
+  type: 'test'
+  ...
+# Subtest: Esquema conserva convocatorias previas con migración aditiva
+ok 37 - Esquema conserva convocatorias previas con migración aditiva
+  ---
+  duration_ms: 0.450804
+  type: 'test'
+  ...
+# Subtest: Asistencia virtual depende del trabajador autenticado y registra auditoría
+ok 38 - Asistencia virtual depende del trabajador autenticado y registra auditoría
+  ---
+  duration_ms: 1.355556
+  type: 'test'
+  ...
+# Subtest: Capturas de evidencia Aula autorizadas por finalidad
+ok 39 - Capturas de evidencia Aula autorizadas por finalidad
+  ---
+  duration_ms: 0.595847
+  type: 'test'
+  ...
+# Subtest: Todo trabajador convocado puede acceder a su curso sin depender de ser conductor
+ok 40 - Todo trabajador convocado puede acceder a su curso sin depender de ser conductor
+  ---
+  duration_ms: 0.355984
+  type: 'test'
+  ...
+# Subtest: Tiempo virtual configurado debe ser entero
+ok 41 - Tiempo virtual configurado debe ser entero
+  ---
+  duration_ms: 0.172974
+  type: 'test'
+  ...
+# (node:4840) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4840) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/auditoria-correcciones.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: No acepta habilitación para una mina distinta
+ok 42 - No acepta habilitación para una mina distinta
+  ---
+  duration_ms: 0.815571
+  type: 'test'
+  ...
+# Subtest: Valida ámbito exacto sin depender de mayúsculas
+ok 43 - Valida ámbito exacto sin depender de mayúsculas
+  ---
+  duration_ms: 0.104995
+  type: 'test'
+  ...
+# Subtest: No acepta ámbito vacío
+ok 44 - No acepta ámbito vacío
+  ---
+  duration_ms: 0.08127
+  type: 'test'
+  ...
+# Subtest: Una devolución sin revisión técnica bloquea unidad
+ok 45 - Una devolución sin revisión técnica bloquea unidad
+  ---
+  duration_ms: 0.101078
+  type: 'test'
+  ...
+# Subtest: Una devolución sin revisión SSOMA bloquea unidad
+ok 46 - Una devolución sin revisión SSOMA bloquea unidad
+  ---
+  duration_ms: 0.162189
+  type: 'test'
+  ...
+# Subtest: Recepción liberada por ambas competencias no permanece en revisión
+ok 47 - Recepción liberada por ambas competencias no permanece en revisión
+  ---
+  duration_ms: 0.077714
+  type: 'test'
+  ...
+# Subtest: Entrega a tercero no se marca como recibida
+ok 48 - Entrega a tercero no se marca como recibida
+  ---
+  duration_ms: 1.104166
+  type: 'test'
+  ...
+# Subtest: El cálculo de disponibilidad bloquea devolución en revisión
+ok 49 - El cálculo de disponibilidad bloquea devolución en revisión
+  ---
+  duration_ms: 0.258631
+  type: 'test'
+  ...
+# Subtest: El esquema amplía funciones sin reemplazar cuentas
+ok 50 - El esquema amplía funciones sin reemplazar cuentas
+  ---
+  duration_ms: 0.371717
+  type: 'test'
+  ...
+# Subtest: Los cambios de permisos exigen Admin y revocan sesiones
+ok 51 - Los cambios de permisos exigen Admin y revocan sesiones
+  ---
+  duration_ms: 0.565823
+  type: 'test'
+  ...
+# Subtest: Material y refuerzo no eliminan intentos anteriores
+ok 52 - Material y refuerzo no eliminan intentos anteriores
+  ---
+  duration_ms: 0.228236
+  type: 'test'
+  ...
+# Subtest: La nueva migración no borra tablas existentes
+ok 53 - La nueva migración no borra tablas existentes
+  ---
+  duration_ms: 0.178673
+  type: 'test'
+  ...
+# Subtest: Los propietarios vehiculares se distinguen en UI sin renombrar enum destructivamente
+ok 54 - Los propietarios vehiculares se distinguen en UI sin renombrar enum destructivamente
+  ---
+  duration_ms: 0.193995
+  type: 'test'
+  ...
+# Subtest: Aula muestra material, refuerzo y versión
+ok 55 - Aula muestra material, refuerzo y versión
+  ---
+  duration_ms: 0.33981
+  type: 'test'
+  ...
+# Subtest: No se publican claves ni conexiones en el código de los nuevos controles
+ok 56 - No se publican claves ni conexiones en el código de los nuevos controles
+  ---
+  duration_ms: 1.680604
+  type: 'test'
+  ...
+# (node:4860) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4860) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/calendario-roster.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Mes peruano y febrero bisiesto
+ok 57 - Mes peruano y febrero bisiesto
+  ---
+  duration_ms: 1.169262
+  type: 'test'
+  ...
+# Subtest: Medianoche peruana e intervalos sin doble conteo en fin exacto
+ok 58 - Medianoche peruana e intervalos sin doble conteo en fin exacto
+  ---
+  duration_ms: 11.715197
+  type: 'test'
+  ...
+# (node:4866) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4866) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/carga-componentes.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Las consultas a catálogos se ejecutan por módulo y no globalmente
+ok 59 - Las consultas a catálogos se ejecutan por módulo y no globalmente
+  ---
+  duration_ms: 0.987824
+  type: 'test'
+  ...
+# Subtest: El dashboard no colapsa por un único fallo de indicador
+ok 60 - El dashboard no colapsa por un único fallo de indicador
+  ---
+  duration_ms: 0.184962
+  type: 'test'
+  ...
+# Subtest: Hay límites de error que indican fallos sin confundirlos con cero registros
+ok 61 - Hay límites de error que indican fallos sin confundirlos con cero registros
+  ---
+  duration_ms: 0.252181
+  type: 'test'
+  ...
+# Subtest: Diagnóstico separa conectividad, migración y estado de módulos sin exponer credenciales
+ok 62 - Diagnóstico separa conectividad, migración y estado de módulos sin exponer credenciales
+  ---
+  duration_ms: 0.340501
+  type: 'test'
+  ...
+# (node:4874) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4874) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/carga-masiva-hh.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: La plantilla de agosto mantiene exactamente A:AH, fechas AAAAMMDD y 34 columnas
+ok 63 - La plantilla de agosto mantiene exactamente A:AH, fechas AAAAMMDD y 34 columnas
+  ---
+  duration_ms: 1.477335
+  type: 'test'
+  ...
+# Subtest: Febrero no bisiesto y febrero bisiesto tienen 31 y 32 columnas respectivamente
+ok 64 - Febrero no bisiesto y febrero bisiesto tienen 31 y 32 columnas respectivamente
+  ---
+  duration_ms: 0.142079
+  type: 'test'
+  ...
+# Subtest: 12 diurno y 12N nocturno exportan 12 numérico; 0 permanece 0, sin perder DNI con cero
+ok 65 - 12 diurno y 12N nocturno exportan 12 numérico; 0 permanece 0, sin perder DNI con cero
+  ---
+  duration_ms: 0.765437
+  type: 'test'
+  ...
+# Subtest: No se permite la descarga si Operaciones no ha aprobado el periodo
+ok 66 - No se permite la descarga si Operaciones no ha aprobado el periodo
+  ---
+  duration_ms: 0.329204
+  type: 'test'
+  ...
+# Subtest: Bloquea DNI duplicado, días faltantes, códigos no mapeados y exceso de días
+ok 67 - Bloquea DNI duplicado, días faltantes, códigos no mapeados y exceso de días
+  ---
+  duration_ms: 0.574626
+  type: 'test'
+  ...
+# Subtest: Rechaza periodos imposibles y tipos de puesto desconocidos
+ok 68 - Rechaza periodos imposibles y tipos de puesto desconocidos
+  ---
+  duration_ms: 0.403123
+  type: 'test'
+  ...
+# Subtest: Los encabezados coinciden exactamente con la plantilla CargaMasivaHH.xlsx aportada por Operaciones
+ok 69 - Los encabezados coinciden exactamente con la plantilla CargaMasivaHH.xlsx aportada por Operaciones
+  ---
+  duration_ms: 1.291732
+  type: 'test'
+  ...
+# (node:4889) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4889) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/colaboradores-compat.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Colaboradores: esquema completo habilita lectura y formularios
+ok 70 - Colaboradores: esquema completo habilita lectura y formularios
+  ---
+  duration_ms: 1.423345
+  type: 'test'
+  ...
+# Subtest: Colaboradores: columna faltante permite ver registros históricos sin modificar
+ok 71 - Colaboradores: columna faltante permite ver registros históricos sin modificar
+  ---
+  duration_ms: 0.233384
+  type: 'test'
+  ...
+# Subtest: Colaboradores: catálogo faltante deshabilita cambios pero muestra padrón
+ok 72 - Colaboradores: catálogo faltante deshabilita cambios pero muestra padrón
+  ---
+  duration_ms: 0.200806
+  type: 'test'
+  ...
+# Subtest: Colaboradores: migración ausente para ambos elementos mantiene consulta
+ok 73 - Colaboradores: migración ausente para ambos elementos mantiene consulta
+  ---
+  duration_ms: 0.181778
+  type: 'test'
+  ...
+# Subtest: Colaboradores: falla de conexión nunca se oculta ni se muestra como padrón vacío
+ok 74 - Colaboradores: falla de conexión nunca se oculta ni se muestra como padrón vacío
+  ---
+  duration_ms: 0.459176
+  type: 'test'
+  ...
+# Subtest: Colaboradores: si tampoco existe la tabla Worker no oculta el error
+ok 75 - Colaboradores: si tampoco existe la tabla Worker no oculta el error
+  ---
+  duration_ms: 0.153607
+  type: 'test'
+  ...
+# Subtest: Colaboradores: solo se degradan P2021 y P2022
+ok 76 - Colaboradores: solo se degradan P2021 y P2022
+  ---
+  duration_ms: 0.166044
+  type: 'test'
+  ...
+# Subtest: Colaboradores: formularios solo aparecen cuando esquema completo
+ok 77 - Colaboradores: formularios solo aparecen cuando esquema completo
+  ---
+  duration_ms: 1.035775
+  type: 'test'
+  ...
+# (node:4900) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4900) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/colaboradores-sesion-segura.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: sesión selecciona exclusivamente identidad mínima, sin nueva columna
+ok 78 - sesión selecciona exclusivamente identidad mínima, sin nueva columna
+  ---
+  duration_ms: 1.54837
+  type: 'test'
+  ...
+# Subtest: la carga de sesión y las pausas conservan el nombre del trabajador
+ok 79 - la carga de sesión y las pausas conservan el nombre del trabajador
+  ---
+  duration_ms: 0.155759
+  type: 'test'
+  ...
+# Subtest: el error SQL de columna faltante no se comunica como lista vacía
+ok 80 - el error SQL de columna faltante no se comunica como lista vacía
+  ---
+  duration_ms: 0.216739
+  type: 'test'
+  ...
+# Subtest: las interrupciones y privilegios se diferencian de errores de esquema
+ok 81 - las interrupciones y privilegios se diferencian de errores de esquema
+  ---
+  duration_ms: 0.13589
+  type: 'test'
+  ...
+# Subtest: Colaboradores captura fallos de lectura sin habilitar formularios
+ok 82 - Colaboradores captura fallos de lectura sin habilitar formularios
+  ---
+  duration_ms: 0.479296
+  type: 'test'
+  ...
+# (node:4907) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4907) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/consolidacion-proveedor-rutina.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Tres perfiles conservan una cuenta y aíslan el proveedor
+ok 83 - Tres perfiles conservan una cuenta y aíslan el proveedor
+  ---
+  duration_ms: 1.210522
+  type: 'test'
+  ...
+# Subtest: Proveedor externo y conductor proveedor no reciben área administrativa ficticia
+ok 84 - Proveedor externo y conductor proveedor no reciben área administrativa ficticia
+  ---
+  duration_ms: 0.24401
+  type: 'test'
+  ...
+# Subtest: Alta de proveedor exige verificación de DNI y no sobrescribe credenciales laborales
+ok 85 - Alta de proveedor exige verificación de DNI y no sobrescribe credenciales laborales
+  ---
+  duration_ms: 0.306371
+  type: 'test'
+  ...
+# Subtest: PDF proveedor: control de rol, dueño y documento verificado en servidor
+ok 86 - PDF proveedor: control de rol, dueño y documento verificado en servidor
+  ---
+  duration_ms: 0.247704
+  type: 'test'
+  ...
+# Subtest: Distribución variable, repuesto y datos individuales
+ok 87 - Distribución variable, repuesto y datos individuales
+  ---
+  duration_ms: 0.612702
+  type: 'test'
+  ...
+# Subtest: Neumáticos quedan en instantánea histórica, no se cambia inventario automáticamente
+ok 88 - Neumáticos quedan en instantánea histórica, no se cambia inventario automáticamente
+  ---
+  duration_ms: 0.153807
+  type: 'test'
+  ...
+# Subtest: Ficha maestra permite botiquín detallado y DASH CAM en camioneta, no DVR ni EPP personal
+ok 89 - Ficha maestra permite botiquín detallado y DASH CAM en camioneta, no DVR ni EPP personal
+  ---
+  duration_ms: 1.278082
+  type: 'test'
+  ...
+# (node:4918) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4918) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/contrasenas-administradas.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Política: acepta contraseña individual de 8 o más caracteres que coincide
+ok 90 - Política: acepta contraseña individual de 8 o más caracteres que coincide
+  ---
+  duration_ms: 1.098457
+  type: 'test'
+  ...
+# Subtest: Política: acepta exactamente 8 caracteres
+ok 91 - Política: acepta exactamente 8 caracteres
+  ---
+  duration_ms: 0.179855
+  type: 'test'
+  ...
+# Subtest: Política: rechaza contraseña de 7 caracteres
+ok 92 - Política: rechaza contraseña de 7 caracteres
+  ---
+  duration_ms: 0.310106
+  type: 'test'
+  ...
+# Subtest: Política: rechaza confirmación distinta
+ok 93 - Política: rechaza confirmación distinta
+  ---
+  duration_ms: 0.153676
+  type: 'test'
+  ...
+# Subtest: Política: rechaza longitud excesiva
+ok 94 - Política: rechaza longitud excesiva
+  ---
+  duration_ms: 0.171603
+  type: 'test'
+  ...
+# Subtest: Política: ADMIN puede restablecer otra cuenta activa
+ok 95 - Política: ADMIN puede restablecer otra cuenta activa
+  ---
+  duration_ms: 0.143802
+  type: 'test'
+  ...
+# Subtest: Política: reset propio requiere contraseña actual
+ok 96 - Política: reset propio requiere contraseña actual
+  ---
+  duration_ms: 0.145905
+  type: 'test'
+  ...
+# Subtest: Política: no permite reset de cuenta inactiva
+ok 97 - Política: no permite reset de cuenta inactiva
+  ---
+  duration_ms: 0.097293
+  type: 'test'
+  ...
+# Subtest: Acceso: claves voluntarias de colaboradores y excepción segura para propietario temporal
+ok 98 - Acceso: claves voluntarias de colaboradores y excepción segura para propietario temporal
+  ---
+  duration_ms: 1.402615
+  type: 'test'
+  ...
+# Subtest: Altas y seed: contraseñas asignadas estables, no temporales
+ok 99 - Altas y seed: contraseñas asignadas estables, no temporales
+  ---
+  duration_ms: 0.499795
+  type: 'test'
+  ...
+# Subtest: ADMIN: reset verifica rol, audita cambio y revoca todas las sesiones
+ok 100 - ADMIN: reset verifica rol, audita cambio y revoca todas las sesiones
+  ---
+  duration_ms: 0.352199
+  type: 'test'
+  ...
+# Subtest: ADMIN: formularios de creación y reset con confirmación
+ok 101 - ADMIN: formularios de creación y reset con confirmación
+  ---
+  duration_ms: 0.2646
+  type: 'test'
+  ...
+# Subtest: Restablecimiento avisa al ADMIN que la contraseña se actualizó
+ok 102 - Restablecimiento avisa al ADMIN que la contraseña se actualizó
+  ---
+  duration_ms: 0.172594
+  type: 'test'
+  ...
+# Subtest: Cambio voluntario exige clave anterior y confirma nueva clave
+ok 103 - Cambio voluntario exige clave anterior y confirma nueva clave
+  ---
+  duration_ms: 0.096893
+  type: 'test'
+  ...
+# Subtest: Restablecer otra contraseña requiere comprobar la clave actual del ADMIN
+ok 104 - Restablecer otra contraseña requiere comprobar la clave actual del ADMIN
+  ---
+  duration_ms: 0.696786
+  type: 'test'
+  ...
+# (node:4933) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4933) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/contraste-paleta-kcj.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Menú lateral claro muestra texto legible con contraste mínimo 4.5:1
+ok 105 - Menú lateral claro muestra texto legible con contraste mínimo 4.5:1
+  ---
+  duration_ms: 1.192316
+  type: 'test'
+  ...
+# Subtest: Selección activa no tiene marco negro y usa rojo suave corporativo
+ok 106 - Selección activa no tiene marco negro y usa rojo suave corporativo
+  ---
+  duration_ms: 0.254715
+  type: 'test'
+  ...
+# Subtest: Texto de botones principales es legible
+ok 107 - Texto de botones principales es legible
+  ---
+  duration_ms: 0.185042
+  type: 'test'
+  ...
+# Subtest: Paleta gris rojo sin alterar esquema ni acciones
+ok 108 - Paleta gris rojo sin alterar esquema ni acciones
+  ---
+  duration_ms: 0.314703
+  type: 'test'
+  ...
+# (node:4940) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4940) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/correcciones-operativas-23nov.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: El celular es opcional y se consulta sin disparar una llamada
+ok 109 - El celular es opcional y se consulta sin disparar una llamada
+  ---
+  duration_ms: 1.116334
+  type: 'test'
+  ...
+# Subtest: Licencia particular A-I puede registrarse sin convertir al usuario en conductor
+ok 110 - Licencia particular A-I puede registrarse sin convertir al usuario en conductor
+  ---
+  duration_ms: 0.25111
+  type: 'test'
+  ...
+# Subtest: Al registrar licencia exige categoría y vencimiento, pero no exige licencia si no tiene
+ok 111 - Al registrar licencia exige categoría y vencimiento, pero no exige licencia si no tiene
+  ---
+  duration_ms: 0.3194
+  type: 'test'
+  ...
+# Subtest: Gerencia y Recursos Humanos seleccionan sus propios paneles, con la misma cuenta
+ok 112 - Gerencia y Recursos Humanos seleccionan sus propios paneles, con la misma cuenta
+  ---
+  duration_ms: 1.716187
+  type: 'test'
+  ...
+# Subtest: Homologación y Almacén permanecen funciones, no paneles administrativos inventados
+ok 113 - Homologación y Almacén permanecen funciones, no paneles administrativos inventados
+  ---
+  duration_ms: 0.187636
+  type: 'test'
+  ...
+# Subtest: Un cruce real de guardias se rechaza; guardias consecutivas no se cruzan
+ok 114 - Un cruce real de guardias se rechaza; guardias consecutivas no se cruzan
+  ---
+  duration_ms: 0.358808
+  type: 'test'
+  ...
+# Subtest: La migración de datos es aditiva y conserva las fichas y usuarios
+ok 115 - La migración de datos es aditiva y conserva las fichas y usuarios
+  ---
+  duration_ms: 0.324007
+  type: 'test'
+  ...
+# Subtest: No se elimina el 404 corregido de las fichas de colaboradores
+ok 116 - No se elimina el 404 corregido de las fichas de colaboradores
+  ---
+  duration_ms: 0.137833
+  type: 'test'
+  ...
+# (node:4955) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4955) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/creditos-creador.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Los créditos identifican al creador y la empresa sin atribución ambigua
+ok 117 - Los créditos identifican al creador y la empresa sin atribución ambigua
+  ---
+  duration_ms: 1.251813
+  type: 'test'
+  ...
+# Subtest: Los créditos se muestran en una página privada y sin edición desde la interfaz
+ok 118 - Los créditos se muestran en una página privada y sin edición desde la interfaz
+  ---
+  duration_ms: 0.373771
+  type: 'test'
+  ...
+# Subtest: Hay acceso a los créditos en escritorio, móvil y pie de página
+ok 119 - Hay acceso a los créditos en escritorio, móvil y pie de página
+  ---
+  duration_ms: 0.265671
+  type: 'test'
+  ...
+# (node:4961) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4961) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/custodia-acta-imprimible.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: cada acta imprimible se obtiene del registro histórico exacto y controla acceso
+ok 120 - cada acta imprimible se obtiene del registro histórico exacto y controla acceso
+  ---
+  duration_ms: 1.005981
+  type: 'test'
+  ...
+# Subtest: la impresión conserva cantidades, diferencias y estados de revisión sin simular firmas
+ok 121 - la impresión conserva cantidades, diferencias y estados de revisión sin simular firmas
+  ---
+  duration_ms: 0.344848
+  type: 'test'
+  ...
+# Subtest: ADMIN tiene permiso explícito a evidencia de CUSTODIA en presign y descarga
+ok 122 - ADMIN tiene permiso explícito a evidencia de CUSTODIA en presign y descarga
+  ---
+  duration_ms: 0.321934
+  type: 'test'
+  ...
+# (node:4973) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4973) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/custodia-firmas.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: hash estable al cambiar orden de inventario; detecta modificaciones de contenido
+ok 123 - hash estable al cambiar orden de inventario; detecta modificaciones de contenido
+  ---
+  duration_ms: 7.298215
+  type: 'test'
+  ...
+# Subtest: solo permite dos firmas y asigna el nombre correcto por lado
+ok 124 - solo permite dos firmas y asigna el nombre correcto por lado
+  ---
+  duration_ms: 0.257359
+  type: 'test'
+  ...
+# Subtest: trazo mínimo detecta firmas vacías, puntos falsos y coordenadas inválidas
+ok 125 - trazo mínimo detecta firmas vacías, puntos falsos y coordenadas inválidas
+  ---
+  duration_ms: 0.306201
+  type: 'test'
+  ...
+# Subtest: estructura requiere una firma por lado, evidencia privada, restricción temporal y auditoría
+ok 126 - estructura requiere una firma por lado, evidencia privada, restricción temporal y auditoría
+  ---
+  duration_ms: 0.550611
+  type: 'test'
+  ...
+# (node:4992) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4992) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/custodia-flota-variada.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: la devolución exige revisar cada componente y no admite ítems añadidos arbitrariamente
+ok 127 - la devolución exige revisar cada componente y no admite ítems añadidos arbitrariamente
+  ---
+  duration_ms: 1.027322
+  type: 'test'
+  ...
+# Subtest: compara contra instantánea de entrega individual, con faltantes y daños
+ok 128 - compara contra instantánea de entrega individual, con faltantes y daños
+  ---
+  duration_ms: 4.27254
+  type: 'test'
+  ...
+# Subtest: requiere motivo de diferencias y valida kilometraje/combustible
+ok 129 - requiere motivo de diferencias y valida kilometraje/combustible
+  ---
+  duration_ms: 0.31881
+  type: 'test'
+  ...
+# Subtest: no permite conformidades con diferencias u órdenes sin resolver
+ok 130 - no permite conformidades con diferencias u órdenes sin resolver
+  ---
+  duration_ms: 0.990108
+  type: 'test'
+  ...
+# Subtest: flota diversa usa catálogos diferenciados y no una lista única
+ok 131 - flota diversa usa catálogos diferenciados y no una lista única
+  ---
+  duration_ms: 0.918903
+  type: 'test'
+  ...
+# Subtest: el formulario de actas utiliza el inventario propio y no clona un estándar universal
+ok 132 - el formulario de actas utiliza el inventario propio y no clona un estándar universal
+  ---
+  duration_ms: 0.294564
+  type: 'test'
+  ...
+# (node:4999) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:4999) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/custodia-fotos.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: la huella v2 detecta una foto añadida, retirada o cambiada y es estable ante reordenación
+ok 133 - la huella v2 detecta una foto añadida, retirada o cambiada y es estable ante reordenación
+  ---
+  duration_ms: 2.921391
+  type: 'test'
+  ...
+# Subtest: el hash v1 conserva el esquema anterior aunque existan fotos en un objeto de test
+ok 134 - el hash v1 conserva el esquema anterior aunque existan fotos en un objeto de test
+  ---
+  duration_ms: 0.293362
+  type: 'test'
+  ...
+# Subtest: exige foto ante daño u observación y no exige foto solo por faltante
+ok 135 - exige foto ante daño u observación y no exige foto solo por faltante
+  ---
+  duration_ms: 17.548334
+  type: 'test'
+  ...
+# Subtest: rechaza claves ajenas, duplicadas, foto excesivas y campos con archivos
+ok 136 - rechaza claves ajenas, duplicadas, foto excesivas y campos con archivos
+  ---
+  duration_ms: 0.874708
+  type: 'test'
+  ...
+# Subtest: verifica propiedad, confirmación, finalidad y MIME de cada foto
+ok 137 - verifica propiedad, confirmación, finalidad y MIME de cada foto
+  ---
+  duration_ms: 0.4416
+  type: 'test'
+  ...
+# Subtest: la estructura enlaza imágenes a ítems antes de la firma, con rutas privadas
+ok 138 - la estructura enlaza imágenes a ítems antes de la firma, con rutas privadas
+  ---
+  duration_ms: 0.725788
+  type: 'test'
+  ...
+# Subtest: la huella v3 incluye evidencia principal y entrega relacionada; v1 y v2 permanecen compatibles
+ok 139 - la huella v3 incluye evidencia principal y entrega relacionada; v1 y v2 permanecen compatibles
+  ---
+  duration_ms: 0.450053
+  type: 'test'
+  ...
+# (node:5006) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5006) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/diagnostico-colaboradores.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Diagnóstico de Colaboradores restringido a ADMIN y sin filas personales en respuesta
+ok 140 - Diagnóstico de Colaboradores restringido a ADMIN y sin filas personales en respuesta
+  ---
+  duration_ms: 1.448012
+  type: 'test'
+  ...
+# Subtest: Diagnóstico de módulos valida columna nueva y catálogo WorkArea, no solo count
+ok 141 - Diagnóstico de módulos valida columna nueva y catálogo WorkArea, no solo count
+  ---
+  duration_ms: 0.299721
+  type: 'test'
+  ...
+# Subtest: Health verifica WorkArea y la columna secundaria, no solo Worker
+ok 142 - Health verifica WorkArea y la columna secundaria, no solo Worker
+  ---
+  duration_ms: 0.187847
+  type: 'test'
+  ...
+# Subtest: Error Colaboradores ofrece diagnóstico exclusivo de administrador
+ok 143 - Error Colaboradores ofrece diagnóstico exclusivo de administrador
+  ---
+  duration_ms: 0.202868
+  type: 'test'
+  ...
+# (node:5025) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5025) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/estabilizacion-27nov.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Cuenta dual: RRHH no inicia ni finaliza servicios desde su panel aunque tenga Operaciones
+ok 144 - Cuenta dual: RRHH no inicia ni finaliza servicios desde su panel aunque tenga Operaciones
+  ---
+  duration_ms: 2.140331
+  type: 'test'
+  ...
+# Subtest: Diagnóstico enumera exactamente las migraciones del paquete
+ok 145 - Diagnóstico enumera exactamente las migraciones del paquete
+  ---
+  duration_ms: 0.736634
+  type: 'test'
+  ...
+# Subtest: Propietario temporal no accede a APIs ni acciones; cambiar clave conserva acceso específico
+ok 146 - Propietario temporal no accede a APIs ni acciones; cambiar clave conserva acceso específico
+  ---
+  duration_ms: 0.194547
+  type: 'test'
+  ...
+# Subtest: SSOMA serializa agregar, verificar, cerrar y reabrir; mantiene autoría previa
+ok 147 - SSOMA serializa agregar, verificar, cerrar y reabrir; mantiene autoría previa
+  ---
+  duration_ms: 2.285475
+  type: 'test'
+  ...
+# Subtest: Aptitud: la actualización preserva estado anterior y auditoría dentro de la transacción
+ok 148 - Aptitud: la actualización preserva estado anterior y auditoría dentro de la transacción
+  ---
+  duration_ms: 0.296006
+  type: 'test'
+  ...
+# Subtest: Odómetro: lectura, validación, escritura y auditoría en una transacción serializable
+ok 149 - Odómetro: lectura, validación, escritura y auditoría en una transacción serializable
+  ---
+  duration_ms: 0.256648
+  type: 'test'
+  ...
+# Subtest: Adjuntos nuevos de expedientes comprueban el actor que los subió
+ok 150 - Adjuntos nuevos de expedientes comprueban el actor que los subió
+  ---
+  duration_ms: 1.079439
+  type: 'test'
+  ...
+# Subtest: Cambio voluntario no sobrescribe una contraseña restablecida simultáneamente
+ok 151 - Cambio voluntario no sobrescribe una contraseña restablecida simultáneamente
+  ---
+  duration_ms: 0.14267
+  type: 'test'
+  ...
+# Subtest: Inicio y cambio de unidad bloquean otro servicio que permanece EN_CURSO, sin depender del horario planificado
+ok 152 - Inicio y cambio de unidad bloquean otro servicio que permanece EN_CURSO, sin depender del horario planificado
+  ---
+  duration_ms: 0.587044
+  type: 'test'
+  ...
+# Subtest: Inspección usa el área elegida y revalida la asignación dentro de la transacción
+ok 153 - Inspección usa el área elegida y revalida la asignación dentro de la transacción
+  ---
+  duration_ms: 0.383234
+  type: 'test'
+  ...
+# Subtest: Health permite identificar la versión y commit del despliegue sin mostrar datos privados
+ok 154 - Health permite identificar la versión y commit del despliegue sin mostrar datos privados
+  ---
+  duration_ms: 0.23113
+  type: 'test'
+  ...
+# (node:5031) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5031) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/estructura.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Se conservan los 18 módulos anteriores y se añaden dos simulacros
+ok 155 - Se conservan los 18 módulos anteriores y se añaden dos simulacros
+  ---
+  duration_ms: 0.974034
+  type: 'test'
+  ...
+# Subtest: No hay archivos heredados ni scripts de sistema no autorizados
+ok 156 - No hay archivos heredados ni scripts de sistema no autorizados
+  ---
+  duration_ms: 5.697608
+  type: 'test'
+  ...
+# Subtest: Prisma define 46 modelos y 12 enumeraciones
+ok 157 - Prisma define 46 modelos y 12 enumeraciones
+  ---
+  duration_ms: 0.296787
+  type: 'test'
+  ...
+# Subtest: Migración contiene tablas base
+ok 158 - Migración contiene tablas base
+  ---
+  duration_ms: 0.23057
+  type: 'test'
+  ...
+# Subtest: Seed nunca incluye credenciales públicas
+ok 159 - Seed nunca incluye credenciales públicas
+  ---
+  duration_ms: 0.224039
+  type: 'test'
+  ...
+# Subtest: No se habilita un cierre SSOMA por cambio visual de estado
+ok 160 - No se habilita un cierre SSOMA por cambio visual de estado
+  ---
+  duration_ms: 0.206243
+  type: 'test'
+  ...
+# Subtest: Cuestionarios con dos intentos por defecto
+ok 161 - Cuestionarios con dos intentos por defecto
+  ---
+  duration_ms: 0.186295
+  type: 'test'
+  ...
+# Subtest: Existe una sola ficha maestra por trabajador
+ok 162 - Existe una sola ficha maestra por trabajador
+  ---
+  duration_ms: 0.123222
+  type: 'test'
+  ...
+# Subtest: Server Actions llevan la directiva use server al principio
+ok 163 - Server Actions llevan la directiva use server al principio
+  ---
+  duration_ms: 0.476051
+  type: 'test'
+  ...
+# Subtest: No se expone un administrador demo con clave conocida
+ok 164 - No se expone un administrador demo con clave conocida
+  ---
+  duration_ms: 0.379578
+  type: 'test'
+  ...
+# Subtest: El seed demo se restringe a una base aislada
+ok 165 - El seed demo se restringe a una base aislada
+  ---
+  duration_ms: 0.161858
+  type: 'test'
+  ...
+# Subtest: Cambios de áreas se registran y se revocan sesiones al inactivar
+ok 166 - Cambios de áreas se registran y se revocan sesiones al inactivar
+  ---
+  duration_ms: 0.221085
+  type: 'test'
+  ...
+# Subtest: No hay migraciones destructivas automáticas
+ok 167 - No hay migraciones destructivas automáticas
+  ---
+  duration_ms: 0.141879
+  type: 'test'
+  ...
+# Subtest: Evidencias privadas no se escriben en carpeta pública
+ok 168 - Evidencias privadas no se escriben en carpeta pública
+  ---
+  duration_ms: 0.098615
+  type: 'test'
+  ...
+# Subtest: La carga de evidencias se autoriza por finalidad
+ok 169 - La carga de evidencias se autoriza por finalidad
+  ---
+  duration_ms: 0.071485
+  type: 'test'
+  ...
+# Subtest: Prisma y migración incluyen activos de evidencias
+ok 170 - Prisma y migración incluyen activos de evidencias
+  ---
+  duration_ms: 0.144183
+  type: 'test'
+  ...
+# Subtest: El acceso de propietario restringe sus vehículos
+ok 171 - El acceso de propietario restringe sus vehículos
+  ---
+  duration_ms: 0.19669
+  type: 'test'
+  ...
+# Subtest: Se aplica idempotencia por identificador de evento
+ok 172 - Se aplica idempotencia por identificador de evento
+  ---
+  duration_ms: 0.186946
+  type: 'test'
+  ...
+# (node:5032) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5032) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/evidencias-inmutabilidad.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: el PUT firmado exige condición de solo creación y los clientes la envían
+ok 173 - el PUT firmado exige condición de solo creación y los clientes la envían
+  ---
+  duration_ms: 1.045089
+  type: 'test'
+  ...
+# Subtest: al confirmar el objeto se contrasta tamaño declarado y no se reescribe la confirmación
+ok 174 - al confirmar el objeto se contrasta tamaño declarado y no se reescribe la confirmación
+  ---
+  duration_ms: 0.161537
+  type: 'test'
+  ...
+# Subtest: migración aditiva permite huellas nuevas preservando actas anteriores
+ok 175 - migración aditiva permite huellas nuevas preservando actas anteriores
+  ---
+  duration_ms: 0.359098
+  type: 'test'
+  ...
+# Subtest: acta imprimible incluye fotografías también en la versión v3
+ok 176 - acta imprimible incluye fotografías también en la versión v3
+  ---
+  duration_ms: 0.217961
+  type: 'test'
+  ...
+# (node:5058) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5058) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/fechas-operaciones.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Hora Perú fija -05 al programar guardia diurna
+ok 177 - Hora Perú fija -05 al programar guardia diurna
+  ---
+  duration_ms: 1.101381
+  type: 'test'
+  ...
+# Subtest: Turno nocturno al día siguiente no se convierte a otra fecha equivocada
+ok 178 - Turno nocturno al día siguiente no se convierte a otra fecha equivocada
+  ---
+  duration_ms: 0.171052
+  type: 'test'
+  ...
+# Subtest: Vencimiento por fecha abarca fin de día Perú
+ok 179 - Vencimiento por fecha abarca fin de día Perú
+  ---
+  duration_ms: 0.206073
+  type: 'test'
+  ...
+# Subtest: Calendario bisiesto y 29 de febrero
+ok 180 - Calendario bisiesto y 29 de febrero
+  ---
+  duration_ms: 0.526845
+  type: 'test'
+  ...
+# Subtest: Acepta fechas ISO explícitamente zonificadas
+ok 181 - Acepta fechas ISO explícitamente zonificadas
+  ---
+  duration_ms: 0.179925
+  type: 'test'
+  ...
+# (node:5064) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5064) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/ficha-colaborador-ruta.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Toda ficha del padrón abre una ruta dinámica existente
+ok 182 - Toda ficha del padrón abre una ruta dinámica existente
+  ---
+  duration_ms: 0.762733
+  type: 'test'
+  ...
+# Subtest: Ficha consulta al trabajador existente, no lo crea ni duplica
+ok 183 - Ficha consulta al trabajador existente, no lo crea ni duplica
+  ---
+  duration_ms: 0.177251
+  type: 'test'
+  ...
+# Subtest: Ficha comprueba autenticación, panel y permiso en el servidor
+ok 184 - Ficha comprueba autenticación, panel y permiso en el servidor
+  ---
+  duration_ms: 0.148889
+  type: 'test'
+  ...
+# Subtest: No expone contraseñas ni contenido médico
+ok 185 - No expone contraseñas ni contenido médico
+  ---
+  duration_ms: 0.157472
+  type: 'test'
+  ...
+# Subtest: Ficha soporta lectura compatible si falta segunda área
+ok 186 - Ficha soporta lectura compatible si falta segunda área
+  ---
+  duration_ms: 0.100518
+  type: 'test'
+  ...
+# (node:5071) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5071) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/flota-integral.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Flota CAMIONETA: catálogo consistente sin ítems duplicados
+ok 187 - Flota CAMIONETA: catálogo consistente sin ítems duplicados
+  ---
+  duration_ms: 1.118287
+  type: 'test'
+  ...
+# Subtest: Flota CAMIONETA: checklist con todos conformes
+ok 188 - Flota CAMIONETA: checklist con todos conformes
+  ---
+  duration_ms: 0.464383
+  type: 'test'
+  ...
+# Subtest: Flota CAMIONETA: hallazgo crítico genera estado crítico
+ok 189 - Flota CAMIONETA: hallazgo crítico genera estado crítico
+  ---
+  duration_ms: 0.295455
+  type: 'test'
+  ...
+# Subtest: Flota CAMIONETA: no acepta checklist incompleto
+ok 190 - Flota CAMIONETA: no acepta checklist incompleto
+  ---
+  duration_ms: 0.328624
+  type: 'test'
+  ...
+# Subtest: Flota CAMIONETA: no acepta NO_APLICA en elemento obligatorio
+ok 191 - Flota CAMIONETA: no acepta NO_APLICA en elemento obligatorio
+  ---
+  duration_ms: 0.169229
+  type: 'test'
+  ...
+# Subtest: Flota CAMIONETA: inventario catálogo único y cantidades
+ok 192 - Flota CAMIONETA: inventario catálogo único y cantidades
+  ---
+  duration_ms: 0.160276
+  type: 'test'
+  ...
+# Subtest: Flota MICROBUS: catálogo consistente sin ítems duplicados
+ok 193 - Flota MICROBUS: catálogo consistente sin ítems duplicados
+  ---
+  duration_ms: 0.160486
+  type: 'test'
+  ...
+# Subtest: Flota MICROBUS: checklist con todos conformes
+ok 194 - Flota MICROBUS: checklist con todos conformes
+  ---
+  duration_ms: 0.125544
+  type: 'test'
+  ...
+# Subtest: Flota MICROBUS: hallazgo crítico genera estado crítico
+ok 195 - Flota MICROBUS: hallazgo crítico genera estado crítico
+  ---
+  duration_ms: 0.298159
+  type: 'test'
+  ...
+# Subtest: Flota MICROBUS: no acepta checklist incompleto
+ok 196 - Flota MICROBUS: no acepta checklist incompleto
+  ---
+  duration_ms: 0.277769
+  type: 'test'
+  ...
+# Subtest: Flota MICROBUS: no acepta NO_APLICA en elemento obligatorio
+ok 197 - Flota MICROBUS: no acepta NO_APLICA en elemento obligatorio
+  ---
+  duration_ms: 0.16362
+  type: 'test'
+  ...
+# Subtest: Flota MICROBUS: inventario catálogo único y cantidades
+ok 198 - Flota MICROBUS: inventario catálogo único y cantidades
+  ---
+  duration_ms: 0.064044
+  type: 'test'
+  ...
+# Subtest: Flota MINIBUS: catálogo consistente sin ítems duplicados
+ok 199 - Flota MINIBUS: catálogo consistente sin ítems duplicados
+  ---
+  duration_ms: 0.058686
+  type: 'test'
+  ...
+# Subtest: Flota MINIBUS: checklist con todos conformes
+ok 200 - Flota MINIBUS: checklist con todos conformes
+  ---
+  duration_ms: 0.088701
+  type: 'test'
+  ...
+# Subtest: Flota MINIBUS: hallazgo crítico genera estado crítico
+ok 201 - Flota MINIBUS: hallazgo crítico genera estado crítico
+  ---
+  duration_ms: 0.086817
+  type: 'test'
+  ...
+# Subtest: Flota MINIBUS: no acepta checklist incompleto
+ok 202 - Flota MINIBUS: no acepta checklist incompleto
+  ---
+  duration_ms: 0.505134
+  type: 'test'
+  ...
+# Subtest: Flota MINIBUS: no acepta NO_APLICA en elemento obligatorio
+ok 203 - Flota MINIBUS: no acepta NO_APLICA en elemento obligatorio
+  ---
+  duration_ms: 0.107057
+  type: 'test'
+  ...
+# Subtest: Flota MINIBUS: inventario catálogo único y cantidades
+ok 204 - Flota MINIBUS: inventario catálogo único y cantidades
+  ---
+  duration_ms: 0.048832
+  type: 'test'
+  ...
+# Subtest: Flota OMNIBUS: catálogo consistente sin ítems duplicados
+ok 205 - Flota OMNIBUS: catálogo consistente sin ítems duplicados
+  ---
+  duration_ms: 0.053319
+  type: 'test'
+  ...
+# Subtest: Flota OMNIBUS: checklist con todos conformes
+ok 206 - Flota OMNIBUS: checklist con todos conformes
+  ---
+  duration_ms: 0.091484
+  type: 'test'
+  ...
+# Subtest: Flota OMNIBUS: hallazgo crítico genera estado crítico
+ok 207 - Flota OMNIBUS: hallazgo crítico genera estado crítico
+  ---
+  duration_ms: 0.0886
+  type: 'test'
+  ...
+# Subtest: Flota OMNIBUS: no acepta checklist incompleto
+ok 208 - Flota OMNIBUS: no acepta checklist incompleto
+  ---
+  duration_ms: 0.0478
+  type: 'test'
+  ...
+# Subtest: Flota OMNIBUS: no acepta NO_APLICA en elemento obligatorio
+ok 209 - Flota OMNIBUS: no acepta NO_APLICA en elemento obligatorio
+  ---
+  duration_ms: 0.052948
+  type: 'test'
+  ...
+# Subtest: Flota OMNIBUS: inventario catálogo único y cantidades
+ok 210 - Flota OMNIBUS: inventario catálogo único y cantidades
+  ---
+  duration_ms: 0.038717
+  type: 'test'
+  ...
+# Subtest: No permite tipos de unidad distintos a los cuatro aprobados
+ok 211 - No permite tipos de unidad distintos a los cuatro aprobados
+  ---
+  duration_ms: 0.086177
+  type: 'test'
+  ...
+# Subtest: No permite componentes fuera del catálogo
+ok 212 - No permite componentes fuera del catálogo
+  ---
+  duration_ms: 0.073568
+  type: 'test'
+  ...
+# Subtest: No permite cantidades negativas
+ok 213 - No permite cantidades negativas
+  ---
+  duration_ms: 0.131975
+  type: 'test'
+  ...
+# Subtest: Un faltante debe estar justificado
+ok 214 - Un faltante debe estar justificado
+  ---
+  duration_ms: 0.08178
+  type: 'test'
+  ...
+# Subtest: Un faltante con explicación sí se registra
+ok 215 - Un faltante con explicación sí se registra
+  ---
+  duration_ms: 0.156931
+  type: 'test'
+  ...
+# Subtest: Checklist: la misma luz y la alarma tienen códigos distintos
+ok 216 - Checklist: la misma luz y la alarma tienen códigos distintos
+  ---
+  duration_ms: 0.151673
+  type: 'test'
+  ...
+# Subtest: Prisma incluye inventario y checklist vinculados a Vehicle
+ok 217 - Prisma incluye inventario y checklist vinculados a Vehicle
+  ---
+  duration_ms: 0.198592
+  type: 'test'
+  ...
+# Subtest: Migración 008 solo añade estructura y no borra unidades
+ok 218 - Migración 008 solo añade estructura y no borra unidades
+  ---
+  duration_ms: 0.261926
+  type: 'test'
+  ...
+# Subtest: La inspección diaria exige servicio real, valida ítems y es idempotente
+ok 219 - La inspección diaria exige servicio real, valida ítems y es idempotente
+  ---
+  duration_ms: 0.195929
+  type: 'test'
+  ...
+# Subtest: Inspecciones críticas abren caso SSOMA sin simular conformidad
+ok 220 - Inspecciones críticas abren caso SSOMA sin simular conformidad
+  ---
+  duration_ms: 0.188097
+  type: 'test'
+  ...
+# Subtest: Evidencias nuevas verifican propiedad de sesión
+ok 221 - Evidencias nuevas verifican propiedad de sesión
+  ---
+  duration_ms: 0.24469
+  type: 'test'
+  ...
+# (node:5091) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5091) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/inspeccion-rutina.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: CAMIONETA: cantidades diferenciadas y códigos únicos
+ok 222 - CAMIONETA: cantidades diferenciadas y códigos únicos
+  ---
+  duration_ms: 3.55908
+  type: 'test'
+  ...
+# Subtest: MICROBUS: cantidades diferenciadas y códigos únicos
+ok 223 - MICROBUS: cantidades diferenciadas y códigos únicos
+  ---
+  duration_ms: 0.485505
+  type: 'test'
+  ...
+# Subtest: MINIBUS: cantidades diferenciadas y códigos únicos
+ok 224 - MINIBUS: cantidades diferenciadas y códigos únicos
+  ---
+  duration_ms: 0.229648
+  type: 'test'
+  ...
+# Subtest: OMNIBUS: cantidades diferenciadas y códigos únicos
+ok 225 - OMNIBUS: cantidades diferenciadas y códigos únicos
+  ---
+  duration_ms: 0.263438
+  type: 'test'
+  ...
+# Subtest: Camioneta DASH CAM, no DVR ni chaleco de dotación
+ok 226 - Camioneta DASH CAM, no DVR ni chaleco de dotación
+  ---
+  duration_ms: 0.260062
+  type: 'test'
+  ...
+# Subtest: OFFSITE y escolta varían los requisitos
+ok 227 - OFFSITE y escolta varían los requisitos
+  ---
+  duration_ms: 0.731477
+  type: 'test'
+  ...
+# Subtest: Faltante no puede quedar conforme
+ok 228 - Faltante no puede quedar conforme
+  ---
+  duration_ms: 0.477493
+  type: 'test'
+  ...
+# Subtest: No aplica justificado no genera observado
+ok 229 - No aplica justificado no genera observado
+  ---
+  duration_ms: 0.372668
+  type: 'test'
+  ...
+# Subtest: No aplica obligatorio se rechaza
+ok 230 - No aplica obligatorio se rechaza
+  ---
+  duration_ms: 0.384776
+  type: 'test'
+  ...
+# Subtest: Hallazgo crítico y observación se distinguen
+ok 231 - Hallazgo crítico y observación se distinguen
+  ---
+  duration_ms: 0.478194
+  type: 'test'
+  ...
+# Subtest: No sobrescribe configuración ni omite ítems existentes
+ok 232 - No sobrescribe configuración ni omite ítems existentes
+  ---
+  duration_ms: 0.263187
+  type: 'test'
+  ...
+# Subtest: Registro usa cuenta, transacción, caso crítico y auditoría sin alterar custodia
+ok 233 - Registro usa cuenta, transacción, caso crítico y auditoría sin alterar custodia
+  ---
+  duration_ms: 0.463943
+  type: 'test'
+  ...
+# (node:5097) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5097) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/interfaz-corporativa.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: La interfaz usa el logo KCJ original sin sustituirlo por un logo nuevo
+ok 234 - La interfaz usa el logo KCJ original sin sustituirlo por un logo nuevo
+  ---
+  duration_ms: 1.453149
+  type: 'test'
+  ...
+# Subtest: Se aplica identidad grafito, rojo y blanco y se retira el azul dorado generico
+ok 235 - Se aplica identidad grafito, rojo y blanco y se retira el azul dorado generico
+  ---
+  duration_ms: 0.140507
+  type: 'test'
+  ...
+# Subtest: Login y panel muestran identidad corporativa sin alterar Server Actions
+ok 236 - Login y panel muestran identidad corporativa sin alterar Server Actions
+  ---
+  duration_ms: 0.283187
+  type: 'test'
+  ...
+# Subtest: Formularios y tablas conservan nombres de campos, acciones y estados vacios
+ok 237 - Formularios y tablas conservan nombres de campos, acciones y estados vacios
+  ---
+  duration_ms: 0.174708
+  type: 'test'
+  ...
+# (node:5105) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5105) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/navegacion-propuesta-b.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Propuesta B: siete categorías correctas y en orden
+ok 238 - Propuesta B: siete categorías correctas y en orden
+  ---
+  duration_ms: 1.131706
+  type: 'test'
+  ...
+# Subtest: Se mantienen los módulos anteriores y se agregan dos simulacros en formación
+ok 239 - Se mantienen los módulos anteriores y se agregan dos simulacros en formación
+  ---
+  duration_ms: 0.294113
+  type: 'test'
+  ...
+# Subtest: Pausas Activas se consulta una vez dentro de Servicios y jornadas y mantiene permisos
+ok 240 - Pausas Activas se consulta una vez dentro de Servicios y jornadas y mantiene permisos
+  ---
+  duration_ms: 0.220915
+  type: 'test'
+  ...
+# Subtest: Menú desplegable accesible y coherente en escritorio y móvil
+ok 241 - Menú desplegable accesible y coherente en escritorio y móvil
+  ---
+  duration_ms: 0.253623
+  type: 'test'
+  ...
+# Subtest: Etiquetas más claras sin cambiar los identificadores de negocio
+ok 242 - Etiquetas más claras sin cambiar los identificadores de negocio
+  ---
+  duration_ms: 0.120467
+  type: 'test'
+  ...
+# (node:5124) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5124) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/normalizacion-datos.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Nombres, tildes, Ñ, espacios y códigos
+ok 243 - Nombres, tildes, Ñ, espacios y códigos
+  ---
+  duration_ms: 1.008595
+  type: 'test'
+  ...
+# Subtest: Normalización idempotente
+ok 244 - Normalización idempotente
+  ---
+  duration_ms: 0.172795
+  type: 'test'
+  ...
+# Subtest: Migración audita cambios y bloquea colisiones antes de actualizar
+ok 245 - Migración audita cambios y bloquea colisiones antes de actualizar
+  ---
+  duration_ms: 0.388101
+  type: 'test'
+  ...
+# (node:5130) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5130) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/notas-vigesimales.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Notas históricas: conversión completa sin pérdida
+ok 246 - Notas históricas: conversión completa sin pérdida
+  ---
+  duration_ms: 0.704807
+  type: 'test'
+  ...
+# Subtest: Cero distinto de pendiente
+ok 247 - Cero distinto de pendiente
+  ---
+  duration_ms: 0.127448
+  type: 'test'
+  ...
+# Subtest: Nota máxima y decimal
+ok 248 - Nota máxima y decimal
+  ---
+  duration_ms: 0.098135
+  type: 'test'
+  ...
+# Subtest: Rechaza notas inválidas
+ok 249 - Rechaza notas inválidas
+  ---
+  duration_ms: 0.286081
+  type: 'test'
+  ...
+# Subtest: Charlas dos preguntas: 00, 10, 20
+ok 250 - Charlas dos preguntas: 00, 10, 20
+  ---
+  duration_ms: 0.714572
+  type: 'test'
+  ...
+# (node:5138) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5138) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/organizacion-kcj.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Operaciones controla homologación y flota sin inventar un departamento separado
+ok 251 - Operaciones controla homologación y flota sin inventar un departamento separado
+  ---
+  duration_ms: 1.026952
+  type: 'test'
+  ...
+# Subtest: Almacén permite operaciones y consulta para RRHH y Gerencia
+ok 252 - Almacén permite operaciones y consulta para RRHH y Gerencia
+  ---
+  duration_ms: 0.424365
+  type: 'test'
+  ...
+# Subtest: Los flujos CI no requieren package-lock inexistente para cachear npm
+ok 253 - Los flujos CI no requieren package-lock inexistente para cachear npm
+  ---
+  duration_ms: 0.206334
+  type: 'test'
+  ...
+# Subtest: La navegación agrupa procesos por responsabilidades sin perder los 17 módulos
+ok 254 - La navegación agrupa procesos por responsabilidades sin perder los 17 módulos
+  ---
+  duration_ms: 0.170171
+  type: 'test'
+  ...
+# Subtest: La exportación comprueba permisos específicos por reporte
+ok 255 - La exportación comprueba permisos específicos por reporte
+  ---
+  duration_ms: 0.239763
+  type: 'test'
+  ...
+# (node:5153) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5153) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/paneles-dobles.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Paneles: administrativo aparece antes de conductor para una cuenta dual
+ok 256 - Paneles: administrativo aparece antes de conductor para una cuenta dual
+  ---
+  duration_ms: 1.276579
+  type: 'test'
+  ...
+# Subtest: Paneles: doble rol funciona con administrativo principal y conductor adicional
+ok 257 - Paneles: doble rol funciona con administrativo principal y conductor adicional
+  ---
+  duration_ms: 0.252282
+  type: 'test'
+  ...
+# Subtest: Paneles: rol único entra directamente; rol revocado no otorga panel
+ok 258 - Paneles: rol único entra directamente; rol revocado no otorga panel
+  ---
+  duration_ms: 0.274595
+  type: 'test'
+  ...
+# Subtest: Inicio de sesión: usa una misma sesión, borra cookie de panel anterior y muestra selector solo para doble perfil
+ok 259 - Inicio de sesión: usa una misma sesión, borra cookie de panel anterior y muestra selector solo para doble perfil
+  ---
+  duration_ms: 0.493897
+  type: 'test'
+  ...
+# Subtest: Interfaz: selector muestra Administrativo en primer lugar y Conductor en segundo
+ok 260 - Interfaz: selector muestra Administrativo en primer lugar y Conductor en segundo
+  ---
+  duration_ms: 0.294804
+  type: 'test'
+  ...
+# Subtest: Centro de Control permite asignar Conductor solo con ficha laboral vinculada
+ok 261 - Centro de Control permite asignar Conductor solo con ficha laboral vinculada
+  ---
+  duration_ms: 1.184173
+  type: 'test'
+  ...
+# Subtest: Un colaborador de doble área reporta solo su propio caso desde Conductor
+ok 262 - Un colaborador de doble área reporta solo su propio caso desde Conductor
+  ---
+  duration_ms: 0.231911
+  type: 'test'
+  ...
+# Subtest: Gerencia y RRHH tienen selector de áreas, menús y permisos independientes
+ok 263 - Gerencia y RRHH tienen selector de áreas, menús y permisos independientes
+  ---
+  duration_ms: 0.247354
+  type: 'test'
+  ...
+# Subtest: Un permiso funcional no crea departamentos ni paneles falsos
+ok 264 - Un permiso funcional no crea departamentos ni paneles falsos
+  ---
+  duration_ms: 0.260723
+  type: 'test'
+  ...
+# (node:5164) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5164) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/pausas-activas.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: La ficha se filtra por día Perú y no por hora general
+ok 265 - La ficha se filtra por día Perú y no por hora general
+  ---
+  duration_ms: 1.204544
+  type: 'test'
+  ...
+# Subtest: El descanso no se marca como incumplimiento de pausa
+ok 266 - El descanso no se marca como incumplimiento de pausa
+  ---
+  duration_ms: 0.162018
+  type: 'test'
+  ...
+# Subtest: Pausas Activas figura dentro de Servicios y jornadas y conserva autorización por rol
+ok 267 - Pausas Activas figura dentro de Servicios y jornadas y conserva autorización por rol
+  ---
+  duration_ms: 0.398336
+  type: 'test'
+  ...
+# Subtest: La migración agrega pausas sin destruir datos anteriores
+ok 268 - La migración agrega pausas sin destruir datos anteriores
+  ---
+  duration_ms: 0.38724
+  type: 'test'
+  ...
+# Subtest: Exportación PDF usa el logo corporativo original y deja auditoría
+ok 269 - Exportación PDF usa el logo corporativo original y deja auditoría
+  ---
+  duration_ms: 0.230049
+  type: 'test'
+  ...
+# (node:5165) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5165) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/politica-contrasenas-8-global.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Política central: mínimo ocho y máximo 256 caracteres
+ok 270 - Política central: mínimo ocho y máximo 256 caracteres
+  ---
+  duration_ms: 1.187298
+  type: 'test'
+  ...
+# Subtest: Alta administrativa y reset usan mínimo centralizado en servidor
+ok 271 - Alta administrativa y reset usan mínimo centralizado en servidor
+  ---
+  duration_ms: 0.454969
+  type: 'test'
+  ...
+# Subtest: Cambio de clave y creación de administrador usan mínimo centralizado
+ok 272 - Cambio de clave y creación de administrador usan mínimo centralizado
+  ---
+  duration_ms: 0.403184
+  type: 'test'
+  ...
+# Subtest: Formularios de administración y cambio personal admiten 8
+ok 273 - Formularios de administración y cambio personal admiten 8
+  ---
+  duration_ms: 1.310619
+  type: 'test'
+  ...
+# Subtest: Altas de colaboradores conservan DNI y propietarios mantienen claves temporales seguras
+ok 274 - Altas de colaboradores conservan DNI y propietarios mantienen claves temporales seguras
+  ---
+  duration_ms: 0.430764
+  type: 'test'
+  ...
+# (node:5190) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5190) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/prepiloto-esquema-health.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Health comprueba todos los modelos declarados en Prisma, sin falso positivo parcial
+ok 275 - Health comprueba todos los modelos declarados en Prisma, sin falso positivo parcial
+  ---
+  duration_ms: 2.175744
+  type: 'test'
+  ...
+# Subtest: Diagnóstico de ensayo protegido para ADMIN y revisa migraciones fallidas
+ok 276 - Diagnóstico de ensayo protegido para ADMIN y revisa migraciones fallidas
+  ---
+  duration_ms: 0.23739
+  type: 'test'
+  ...
+# (node:5193) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5193) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/propietarios-amigable.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Propietario: usuario se deriva del documento sin exponer DNI de trabajador
+ok 277 - Propietario: usuario se deriva del documento sin exponer DNI de trabajador
+  ---
+  duration_ms: 1.424256
+  type: 'test'
+  ...
+# Subtest: Propietario: aislamiento por identidad, no por placa
+ok 278 - Propietario: aislamiento por identidad, no por placa
+  ---
+  duration_ms: 0.117983
+  type: 'test'
+  ...
+# Subtest: Vínculos: impide sobrescribir un dueño existente
+ok 279 - Vínculos: impide sobrescribir un dueño existente
+  ---
+  duration_ms: 0.238211
+  type: 'test'
+  ...
+# Subtest: Vencimientos: no inventa fecha cuando no existe
+ok 280 - Vencimientos: no inventa fecha cuando no existe
+  ---
+  duration_ms: 0.154517
+  type: 'test'
+  ...
+# Subtest: RBAC: propietario no accede a RRHH, SSOMA, informes internos ni cuentas
+ok 281 - RBAC: propietario no accede a RRHH, SSOMA, informes internos ni cuentas
+  ---
+  duration_ms: 0.207315
+  type: 'test'
+  ...
+# Subtest: Alta: cuenta propietaria requiere ADMIN, clave aleatoria, hash, cambio inicial y auditoría
+ok 282 - Alta: cuenta propietaria requiere ADMIN, clave aleatoria, hash, cambio inicial y auditoría
+  ---
+  duration_ms: 1.239414
+  type: 'test'
+  ...
+# Subtest: Restablecimiento: revoca sesiones y no devuelve contraseña histórica
+ok 283 - Restablecimiento: revoca sesiones y no devuelve contraseña histórica
+  ---
+  duration_ms: 0.210299
+  type: 'test'
+  ...
+# Subtest: Operaciones: vínculo y desvínculo de vehículo auditable, sin crear vehículos duplicados
+ok 284 - Operaciones: vínculo y desvínculo de vehículo auditable, sin crear vehículos duplicados
+  ---
+  duration_ms: 0.24439
+  type: 'test'
+  ...
+# Subtest: Vista de dueño: filtrado en consulta SQL y separación de expediente privado
+ok 285 - Vista de dueño: filtrado en consulta SQL y separación de expediente privado
+  ---
+  duration_ms: 0.791105
+  type: 'test'
+  ...
+# Subtest: Primera entrada: solo propietario con temporal cambia contraseña, colaborador conserva su regla
+ok 286 - Primera entrada: solo propietario con temporal cambia contraseña, colaborador conserva su regla
+  ---
+  duration_ms: 0.398226
+  type: 'test'
+  ...
+# (node:5204) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5204) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/proteccion-administrador-principal.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: ADMIN principal: cuenta marcada impide mutaciones, incluso intentos de otro ADMIN
+ok 287 - ADMIN principal: cuenta marcada impide mutaciones, incluso intentos de otro ADMIN
+  ---
+  duration_ms: 0.883822
+  type: 'test'
+  ...
+# Subtest: ADMIN principal: todas las acciones de modificación administrativa consultan protección dentro de transacción
+ok 288 - ADMIN principal: todas las acciones de modificación administrativa consultan protección dentro de transacción
+  ---
+  duration_ms: 0.419848
+  type: 'test'
+  ...
+# Subtest: ADMIN principal: alta requiere confirmación doble y no permite reasignación silenciosa
+ok 289 - ADMIN principal: alta requiere confirmación doble y no permite reasignación silenciosa
+  ---
+  duration_ms: 0.225071
+  type: 'test'
+  ...
+# Subtest: ADMIN principal: tabla singleton independiente y borrado restringido
+ok 290 - ADMIN principal: tabla singleton independiente y borrado restringido
+  ---
+  duration_ms: 0.184221
+  type: 'test'
+  ...
+# (node:5223) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5223) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/prueba-prepiloto-modulos.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: 20 módulos, incluidos dos simulacros, tienen implementación y menú
+ok 291 - 20 módulos, incluidos dos simulacros, tienen implementación y menú
+  ---
+  duration_ms: 2.08491
+  type: 'test'
+  ...
+# Subtest: Aula Virtual tiene orientación visible aun sin cursos
+ok 292 - Aula Virtual tiene orientación visible aun sin cursos
+  ---
+  duration_ms: 1.687304
+  type: 'test'
+  ...
+# Subtest: El alta de cuentas laborales usa DNI, evita duplicidades y no pregunta función otra vez
+ok 293 - El alta de cuentas laborales usa DNI, evita duplicidades y no pregunta función otra vez
+  ---
+  duration_ms: 0.457163
+  type: 'test'
+  ...
+# Subtest: Acceso y sesión rechazan un trabajador inactivo
+ok 294 - Acceso y sesión rechazan un trabajador inactivo
+  ---
+  duration_ms: 0.256117
+  type: 'test'
+  ...
+# (node:5224) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5224) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/reglas.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Unidades con documentos válidos no quedan bloqueadas
+ok 295 - Unidades con documentos válidos no quedan bloqueadas
+  ---
+  duration_ms: 2.502224
+  type: 'test'
+  ...
+# Subtest: Bloquea unidad inactiva
+ok 296 - Bloquea unidad inactiva
+  ---
+  duration_ms: 0.173255
+  type: 'test'
+  ...
+# Subtest: Bloquea SOAT vencido
+ok 297 - Bloquea SOAT vencido
+  ---
+  duration_ms: 0.113637
+  type: 'test'
+  ...
+# Subtest: Bloquea documento sin verificación
+ok 298 - Bloquea documento sin verificación
+  ---
+  duration_ms: 0.147838
+  type: 'test'
+  ...
+# Subtest: Bloquea mantenimiento
+ok 299 - Bloquea mantenimiento
+  ---
+  duration_ms: 0.091295
+  type: 'test'
+  ...
+# Subtest: Bloquea restricción crítica SSOMA
+ok 300 - Bloquea restricción crítica SSOMA
+  ---
+  duration_ms: 0.141668
+  type: 'test'
+  ...
+# Subtest: Bloquea custodia a tercero
+ok 301 - Bloquea custodia a tercero
+  ---
+  duration_ms: 0.098956
+  type: 'test'
+  ...
+# Subtest: Bloquea falta Tarjeta Amarilla solo para mina
+ok 302 - Bloquea falta Tarjeta Amarilla solo para mina
+  ---
+  duration_ms: 0.078385
+  type: 'test'
+  ...
+# Subtest: Acepta tarjeta válida para todo el servicio
+ok 303 - Acepta tarjeta válida para todo el servicio
+  ---
+  duration_ms: 0.228987
+  type: 'test'
+  ...
+# Subtest: Bloquea tarjeta que vence durante servicio
+ok 304 - Bloquea tarjeta que vence durante servicio
+  ---
+  duration_ms: 0.46876
+  type: 'test'
+  ...
+# Subtest: Conductor en guardia y apto disponible
+ok 305 - Conductor en guardia y apto disponible
+  ---
+  duration_ms: 0.171933
+  type: 'test'
+  ...
+# Subtest: Conductor en descanso bloqueado
+ok 306 - Conductor en descanso bloqueado
+  ---
+  duration_ms: 0.086337
+  type: 'test'
+  ...
+# Subtest: Conductor sin habilitación bloqueado
+ok 307 - Conductor sin habilitación bloqueado
+  ---
+  duration_ms: 0.071966
+  type: 'test'
+  ...
+# Subtest: Conductor con aptitud restringida bloqueado
+ok 308 - Conductor con aptitud restringida bloqueado
+  ---
+  duration_ms: 0.058576
+  type: 'test'
+  ...
+# Subtest: Conductor con licencia vencida bloqueado
+ok 309 - Conductor con licencia vencida bloqueado
+  ---
+  duration_ms: 0.06106
+  type: 'test'
+  ...
+# Subtest: Intervalo nocturno valido
+ok 310 - Intervalo nocturno valido
+  ---
+  duration_ms: 0.120988
+  type: 'test'
+  ...
+# Subtest: Intervalo con fin antes del inicio bloqueado
+ok 311 - Intervalo con fin antes del inicio bloqueado
+  ---
+  duration_ms: 0.057785
+  type: 'test'
+  ...
+# Subtest: Se detecta solapamiento
+ok 312 - Se detecta solapamiento
+  ---
+  duration_ms: 0.066348
+  type: 'test'
+  ...
+# Subtest: Intervalos vecinos no se solapan
+ok 313 - Intervalos vecinos no se solapan
+  ---
+  duration_ms: 0.0545
+  type: 'test'
+  ...
+# Subtest: SSOMA no cierra acciones pendientes
+ok 314 - SSOMA no cierra acciones pendientes
+  ---
+  duration_ms: 0.193185
+  type: 'test'
+  ...
+# Subtest: SSOMA no cierra acción verificada sin evidencia
+ok 315 - SSOMA no cierra acción verificada sin evidencia
+  ---
+  duration_ms: 0.077343
+  type: 'test'
+  ...
+# Subtest: SSOMA cierra acciones verificadas con evidencia
+ok 316 - SSOMA cierra acciones verificadas con evidencia
+  ---
+  duration_ms: 0.051526
+  type: 'test'
+  ...
+# Subtest: SSOMA sin acciones exige razón técnica
+ok 317 - SSOMA sin acciones exige razón técnica
+  ---
+  duration_ms: 0.045587
+  type: 'test'
+  ...
+# Subtest: SSOMA sin acciones y sin razón no puede cerrar
+ok 318 - SSOMA sin acciones y sin razón no puede cerrar
+  ---
+  duration_ms: 0.041972
+  type: 'test'
+  ...
+# Subtest: Cuestionario calcula 75 por ciento
+ok 319 - Cuestionario calcula 75 por ciento
+  ---
+  duration_ms: 0.083794
+  type: 'test'
+  ...
+# Subtest: Cuestionario completo genera 100
+ok 320 - Cuestionario completo genera 100
+  ---
+  duration_ms: 0.04801
+  type: 'test'
+  ...
+# Subtest: Cuestionario con cero preguntas rechaza
+ok 321 - Cuestionario con cero preguntas rechaza
+  ---
+  duration_ms: 0.164833
+  type: 'test'
+  ...
+# Subtest: Segundo intento permitido sin aprobar
+ok 322 - Segundo intento permitido sin aprobar
+  ---
+  duration_ms: 0.064435
+  type: 'test'
+  ...
+# Subtest: Tercer intento bloqueado
+ok 323 - Tercer intento bloqueado
+  ---
+  duration_ms: 0.047209
+  type: 'test'
+  ...
+# Subtest: Aprobado no repite
+ok 324 - Aprobado no repite
+  ---
+  duration_ms: 0.086457
+  type: 'test'
+  ...
+# Subtest: HHC calculadas por aprobados
+ok 325 - HHC calculadas por aprobados
+  ---
+  duration_ms: 0.082451
+  type: 'test'
+  ...
+# Subtest: Trimestre rojo
+ok 326 - Trimestre rojo
+  ---
+  duration_ms: 0.064135
+  type: 'test'
+  ...
+# Subtest: Trimestre verde
+ok 327 - Trimestre verde
+  ---
+  duration_ms: 0.042873
+  type: 'test'
+  ...
+# Subtest: Trimestre azul
+ok 328 - Trimestre azul
+  ---
+  duration_ms: 0.038637
+  type: 'test'
+  ...
+# Subtest: Trimestre amarillo
+ok 329 - Trimestre amarillo
+  ---
+  duration_ms: 0.036704
+  type: 'test'
+  ...
+# Subtest: Rechaza mes inexistente
+ok 330 - Rechaza mes inexistente
+  ---
+  duration_ms: 0.063163
+  type: 'test'
+  ...
+# (node:5235) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5235) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/reparacion-colaboradores-controlado.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: La reparación de Colaboradores es solo diagnóstico por defecto
+ok 331 - La reparación de Colaboradores es solo diagnóstico por defecto
+  ---
+  duration_ms: 0.860877
+  type: 'test'
+  ...
+# Subtest: Sin URL de base de datos falla antes de abrir PostgreSQL o migrar
+ok 332 - Sin URL de base de datos falla antes de abrir PostgreSQL o migrar
+  ---
+  duration_ms: 55.553114
+  type: 'test'
+  ...
+# Subtest: El SQL para segunda área es aditivo y conserva los registros existentes
+ok 333 - El SQL para segunda área es aditivo y conserva los registros existentes
+  ---
+  duration_ms: 0.302696
+  type: 'test'
+  ...
+# (node:5263) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5263) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/simulacros-kcj.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: catálogo: exactamente seis temas teóricos TECSUP y MMG independiente
+ok 334 - catálogo: exactamente seis temas teóricos TECSUP y MMG independiente
+  ---
+  duration_ms: 0.694072
+  type: 'test'
+  ...
+# Subtest: conductor puede practicar TECSUP y MMG, línea de mando no MMG
+ok 335 - conductor puede practicar TECSUP y MMG, línea de mando no MMG
+  ---
+  duration_ms: 0.164072
+  type: 'test'
+  ...
+# Subtest: cuatro alternativas y calificación no oficial por aciertos
+ok 336 - cuatro alternativas y calificación no oficial por aciertos
+  ---
+  duration_ms: 0.957019
+  type: 'test'
+  ...
+# Subtest: preparación práctica sin evaluación e interfaz restringida a conductor o editor
+ok 337 - preparación práctica sin evaluación e interfaz restringida a conductor o editor
+  ---
+  duration_ms: 0.457794
+  type: 'test'
+  ...
+# (node:5274) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5274) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/superadmin.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: ADMIN: solo roles reales y ninguna autorización técnica inventada
+ok 338 - ADMIN: solo roles reales y ninguna autorización técnica inventada
+  ---
+  duration_ms: 0.864382
+  type: 'test'
+  ...
+# Subtest: ADMIN: prohíbe cambio de rol propio y último administrador
+ok 339 - ADMIN: prohíbe cambio de rol propio y último administrador
+  ---
+  duration_ms: 0.665199
+  type: 'test'
+  ...
+# Subtest: ADMIN: la baja lógica no elimina la última cuenta ADMIN ni la propia
+ok 340 - ADMIN: la baja lógica no elimina la última cuenta ADMIN ni la propia
+  ---
+  duration_ms: 0.257959
+  type: 'test'
+  ...
+# Subtest: ADMIN: respeta la relación única de conductores y propietarios
+ok 341 - ADMIN: respeta la relación única de conductores y propietarios
+  ---
+  duration_ms: 0.153897
+  type: 'test'
+  ...
+# Subtest: ADMIN: no reactiva un usuario si la ficha laboral sigue inactiva
+ok 342 - ADMIN: no reactiva un usuario si la ficha laboral sigue inactiva
+  ---
+  duration_ms: 0.321443
+  type: 'test'
+  ...
+# Subtest: ADMIN: exige motivo auditable
+ok 343 - ADMIN: exige motivo auditable
+  ---
+  duration_ms: 0.134918
+  type: 'test'
+  ...
+# Subtest: Acciones ADMIN: todas verifican identidad y dejan trazabilidad
+ok 344 - Acciones ADMIN: todas verifican identidad y dejan trazabilidad
+  ---
+  duration_ms: 3.104861
+  type: 'test'
+  ...
+# Subtest: Cambio de rol y desactivación revocan sesiones anteriores
+ok 345 - Cambio de rol y desactivación revocan sesiones anteriores
+  ---
+  duration_ms: 0.303086
+  type: 'test'
+  ...
+# Subtest: UI de ADMIN: editar, cambiar función, desactivar y reactivar
+ok 346 - UI de ADMIN: editar, cambiar función, desactivar y reactivar
+  ---
+  duration_ms: 0.482661
+  type: 'test'
+  ...
+# Subtest: Se mantienen las aprobaciones de área: salud, mantenimiento y SSOMA
+ok 347 - Se mantienen las aprobaciones de área: salud, mantenimiento y SSOMA
+  ---
+  duration_ms: 0.410855
+  type: 'test'
+  ...
+# (node:5280) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5280) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/tareo-origen.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Tareo solo acepta fuentes controladas
+ok 348 - Tareo solo acepta fuentes controladas
+  ---
+  duration_ms: 2.327957
+  type: 'test'
+  ...
+# Subtest: Registro interno exige justificación verificable
+ok 349 - Registro interno exige justificación verificable
+  ---
+  duration_ms: 0.191061
+  type: 'test'
+  ...
+# Subtest: Servicio concluido y asignado al trabajador respalda el tareo
+ok 350 - Servicio concluido y asignado al trabajador respalda el tareo
+  ---
+  duration_ms: 0.185754
+  type: 'test'
+  ...
+# Subtest: Tareo no se atribuye al servicio de otro conductor
+ok 351 - Tareo no se atribuye al servicio de otro conductor
+  ---
+  duration_ms: 0.125195
+  type: 'test'
+  ...
+# Subtest: ROSTER o servicio solo planificado no son horas efectivas
+ok 352 - ROSTER o servicio solo planificado no son horas efectivas
+  ---
+  duration_ms: 0.114328
+  type: 'test'
+  ...
+# Subtest: No admite tareo fuera de ventana del servicio
+ok 353 - No admite tareo fuera de ventana del servicio
+  ---
+  duration_ms: 0.106978
+  type: 'test'
+  ...
+# Subtest: Formulario separa área automática de origen, no envía campo manual source
+ok 354 - Formulario separa área automática de origen, no envía campo manual source
+  ---
+  duration_ms: 1.683528
+  type: 'test'
+  ...
+# Subtest: Área se guarda como fotografía histórica sin modificar registros anteriores
+ok 355 - Área se guarda como fotografía histórica sin modificar registros anteriores
+  ---
+  duration_ms: 1.042444
+  type: 'test'
+  ...
+# (node:5300) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5300) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/tipos-unidad.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: El catálogo solo incluye los cuatro tipos aprobados por KCJ
+ok 356 - El catálogo solo incluye los cuatro tipos aprobados por KCJ
+  ---
+  duration_ms: 1.462643
+  type: 'test'
+  ...
+# Subtest: El servidor acepta solo los cuatro valores autorizados
+ok 357 - El servidor acepta solo los cuatro valores autorizados
+  ---
+  duration_ms: 0.678979
+  type: 'test'
+  ...
+# Subtest: El alta muestra selector obligatorio y comparte el catálogo con el servidor
+ok 358 - El alta muestra selector obligatorio y comparte el catálogo con el servidor
+  ---
+  duration_ms: 2.041335
+  type: 'test'
+  ...
+# Subtest: Se conservan los tipos históricos sin migración destructiva
+ok 359 - Se conservan los tipos históricos sin migración destructiva
+  ---
+  duration_ms: 0.342324
+  type: 'test'
+  ...
+# (node:5306) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5306) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/unidades-medida.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Nueve unidades de medida estandarizadas para KCJ
+ok 360 - Nueve unidades de medida estandarizadas para KCJ
+  ---
+  duration_ms: 1.186326
+  type: 'test'
+  ...
+# Subtest: El servidor acepta únicamente códigos del catálogo, no texto arbitrario
+ok 361 - El servidor acepta únicamente códigos del catálogo, no texto arbitrario
+  ---
+  duration_ms: 1.040221
+  type: 'test'
+  ...
+# Subtest: Pantalla y acción del inventario comparten el catálogo oficial
+ok 362 - Pantalla y acción del inventario comparten el catálogo oficial
+  ---
+  duration_ms: 1.755214
+  type: 'test'
+  ...
+# Subtest: No se cambian las unidades guardadas ni se crea migración destructiva
+ok 363 - No se cambian las unidades guardadas ni se crea migración destructiva
+  ---
+  duration_ms: 0.655434
+  type: 'test'
+  ...
+# (node:5307) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5307) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/validaciones-prepiloto-real.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Stock: solo INGRESO y SALIDA, cantidades enteras y positivas
+ok 364 - Stock: solo INGRESO y SALIDA, cantidades enteras y positivas
+  ---
+  duration_ms: 1.314916
+  type: 'test'
+  ...
+# Subtest: SSOMA: rechazar severidades arbitrarias que evitan el bloqueo crítico
+ok 365 - SSOMA: rechazar severidades arbitrarias que evitan el bloqueo crítico
+  ---
+  duration_ms: 0.234505
+  type: 'test'
+  ...
+# Subtest: Alta integrada: no hacer cuentas desde RRHH ni roles de propietario
+ok 366 - Alta integrada: no hacer cuentas desde RRHH ni roles de propietario
+  ---
+  duration_ms: 0.351107
+  type: 'test'
+  ...
+# Subtest: Alta integrada: transacción única, usuario vinculado y salida confirmada
+ok 367 - Alta integrada: transacción única, usuario vinculado y salida confirmada
+  ---
+  duration_ms: 0.602316
+  type: 'test'
+  ...
+# Subtest: Conductor y cuenta dual: el panel bloquea servicios ajenos
+ok 368 - Conductor y cuenta dual: el panel bloquea servicios ajenos
+  ---
+  duration_ms: 0.215227
+  type: 'test'
+  ...
+# Subtest: Inicio, asignación y cambio de unidad repiten elegibilidad dentro de transacción serializable
+ok 369 - Inicio, asignación y cambio de unidad repiten elegibilidad dentro de transacción serializable
+  ---
+  duration_ms: 0.468449
+  type: 'test'
+  ...
+# Subtest: Kilometraje y año sin decimales ni valores fuera de rango
+ok 370 - Kilometraje y año sin decimales ni valores fuera de rango
+  ---
+  duration_ms: 0.205463
+  type: 'test'
+  ...
+# Subtest: Reportes nuevos con evidencia vinculada al actor autenticado
+ok 371 - Reportes nuevos con evidencia vinculada al actor autenticado
+  ---
+  duration_ms: 0.523681
+  type: 'test'
+  ...
+# Subtest: Las veinte entradas tienen guía operativa sin inventar departamentos
+ok 372 - Las veinte entradas tienen guía operativa sin inventar departamentos
+  ---
+  duration_ms: 0.980344
+  type: 'test'
+  ...
+# (node:5333) ExperimentalWarning: Type Stripping is an experimental feature and might change at any time
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:5333) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/tests/versiones-seguras.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to /tmp/kcjfinal/KCJ_CONTROL_EMPRESARIAL/package.json.
+# Subtest: Next.js declara parche de seguridad del 3 nov 2026 o posterior en línea 15.5
+ok 373 - Next.js declara parche de seguridad del 3 nov 2026 o posterior en línea 15.5
+  ---
+  duration_ms: 1.118366
+  type: 'test'
+  ...
+# Subtest: React y React DOM se mantienen alineados con versión 19.2.9 parcheada
+ok 374 - React y React DOM se mantienen alineados con versión 19.2.9 parcheada
+  ---
+  duration_ms: 0.131374
+  type: 'test'
+  ...
+# Subtest: El proyecto permite ejecutar auditorías offline sin descargar paquetes
+ok 375 - El proyecto permite ejecutar auditorías offline sin descargar paquetes
+  ---
+  duration_ms: 0.162189
+  type: 'test'
+  ...
+1..375
+# tests 375
+# suites 0
+# pass 375
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2352.529512
+
+> kcj-control-empresarial@1.0.16-estabilizacion-27nov audit:static
+> node scripts/auditoria-estatica-profunda.mjs
+
+{
+  "status": "PASA",
+  "checkedAt": "2026-11-27T21:34:56.451Z",
+  "counts": {
+    "files": 183,
+    "imports": 364,
+    "parseErrors": 0,
+    "apiRoutes": 13,
+    "clientFiles": 20
+  },
+  "modules": 20,
+  "issues": [],
+  "warnings": []
+}
+
+> kcj-control-empresarial@1.0.16-estabilizacion-27nov audit:navegacion
+> node scripts/auditar-navegacion.mjs
+
+{
+  "modules": 20,
+  "withContent": 20,
+  "withNav": 20,
+  "withIcon": 20,
+  "pausesRoute": true,
+  "pdfRoute": true,
+  "missing": []
+}
+
+> kcj-control-empresarial@1.0.16-estabilizacion-27nov audit:migraciones
+> node scripts/auditar-migraciones.mjs
+
+{
+  "status": "PASA",
+  "migrations": 20,
+  "prismaModels": 46,
+  "createdTables": 46,
+  "missing": [],
+  "unexpected": [],
+  "missingColumns": [],
+  "destructiveMigrations": [],
+  "errors": [],
+  "note": "Sólo estructura SQL estática; no ejecuta migraciones ni prueba datos reales."
+}

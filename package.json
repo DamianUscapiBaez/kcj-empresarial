@@ -1,6 +1,6 @@
 {
   "name": "kcj-control-empresarial",
-  "version": "1.0.4-piloto-claves-administradas",
+  "version": "1.0.16-estabilizacion-27nov",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -20,12 +20,19 @@
     "db:seed:demo": "tsx prisma/seed-demo.ts",
     "verify:package": "node scripts/verificar-paquete.mjs",
     "db:check-login": "tsx scripts/verificar-acceso-inicial.ts",
-    "db:diagnose": "node scripts/diagnostico-estructura.mjs"
+    "db:diagnose": "node scripts/diagnostico-estructura.mjs",
+    "db:integration:cuentas": "tsx scripts/prueba-cuentas-ensayo.ts",
+    "audit:static": "node scripts/auditoria-estatica-profunda.mjs",
+    "audit:navegacion": "node scripts/auditar-navegacion.mjs",
+    "check:offline": "npm run test && npm run audit:static && npm run audit:navegacion && npm run audit:migraciones",
+    "audit:migraciones": "node scripts/auditar-migraciones.mjs",
+    "admin:principal:diagnostico": "node scripts/proteger-administrador-principal.mjs --diagnostico",
+    "admin:principal:activar": "node scripts/proteger-administrador-principal.mjs --activar"
   },
   "dependencies": {
-    "next": "15.5.7",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
+    "next": "15.5.29",
+    "react": "19.2.9",
+    "react-dom": "19.2.9",
     "@prisma/client": "6.19.0",
     "zod": "3.24.2",
     "@aws-sdk/client-s3": "^3.850.0",

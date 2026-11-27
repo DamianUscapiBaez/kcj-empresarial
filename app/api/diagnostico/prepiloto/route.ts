@@ -1,6 +1,6 @@
 import {NextResponse} from "next/server";
 import {currentUser} from "@/lib/auth";
-import {rolesActivos} from "@/lib/permisos-kcj";
+import {rolesSesion} from "@/lib/roles-sesion";
 import {prisma} from "@/lib/prisma";
 import {TABLAS_KCJ,COLUMNAS_CRITICAS_KCJ,MIGRACIONES_KCJ} from "@/lib/esquema-requerido-kcj";
 export const runtime="nodejs";
@@ -13,7 +13,7 @@ export async function GET(){
  try{
   const u=await currentUser();
   if(!u)return NextResponse.json({error:"Autenticación necesaria"},{status:401,headers});
-  if(!rolesActivos(u).includes("ADMIN"))return NextResponse.json({error:"Solo ADMIN"},{status:403,headers});
+  if(!(await rolesSesion(u)).includes("ADMIN"))return NextResponse.json({error:"Solo ADMIN"},{status:403,headers});
   const [tablas,columnas]=await Promise.all([
    prisma.$queryRaw<Tabla[]>`SELECT table_name FROM information_schema.tables WHERE table_schema=current_schema() AND table_type='BASE TABLE'`,
    prisma.$queryRaw<Columna[]>`SELECT table_name,column_name FROM information_schema.columns WHERE table_schema=current_schema()`,

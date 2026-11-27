@@ -1,3 +1,4 @@
+import {ThemeToggle} from "@/components/ui/ThemeToggle";
 import {rolesActivos} from "@/lib/permisos-kcj";
 import {panelActual} from "@/lib/panel-sesion";
 import {panelesDisponibles,rolesParaPanel,nombrePanel} from "@/lib/paneles-kcj";
@@ -57,7 +58,8 @@ export default async function DashboardLayout({children}:{children:React.ReactNo
        <p className="text-xs text-slate-500">Control y gestión empresarial</p>
       </div>
      </div>
-     <div className="flex min-w-0 items-center gap-3">
+     <div className="flex min-w-0 items-center gap-2">
+      <ThemeToggle scope={user.id}/>
       <div className="hidden min-w-0 text-right sm:block"><p className="truncate text-sm font-semibold text-slate-800">{user.role==="ADMIN"?"Centro de Control":user.displayName}</p><p className="text-xs text-[#56636F]">{panel==="conductor"?"Panel Conductor · KCJ CONNECT":panel.startsWith("area:")?`Panel de ${nombrePanel(panel)}`:user.role==="ADMIN"?`Administración principal · ${user.displayName}`:user.role.replaceAll("_"," ")}</p></div>
       <div title={user.displayName} className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-kcj-charcoal text-xs font-bold text-white">{initials||"KC"}</div>
       {dual&&<Link href="/seleccionar-panel" className="kcj-focus hidden rounded-lg border border-kcj-border px-3 py-2 text-xs font-semibold text-kcj-charcoal hover:bg-kcj-redSoft sm:inline-flex">Cambiar área</Link>}

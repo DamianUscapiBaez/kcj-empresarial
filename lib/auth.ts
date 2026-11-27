@@ -8,14 +8,16 @@ import { trabajadorMinimoSesion } from "@/lib/auth-select";
 import {panelActual} from "@/lib/panel-sesion";
 import {rolesParaPanel} from "@/lib/paneles-kcj";
 export const COOKIE="kcj_session";
-export async function currentUser(){
+export async function currentUser(allowPasswordChange=false){
  const raw=(await cookies()).get(COOKIE)?.value;
  if(!raw)return null;
  const session=await prisma.session.findUnique({where:{tokenHash:tokenHash(raw)},include:{user:{include:{worker:{select:trabajadorMinimoSesion},grants:{where:{revokedAt:null}}}}}});
  if(!session||session.revokedAt||session.expiresAt<new Date()||!session.user.active||(session.user.workerId&&!session.user.worker?.active))return null;
+ if(!allowPasswordChange&&session.user.role==="PROPIETARIO"&&session.user.mustChangePassword)return null;
  return session.user;
 }
-export async function requireUser(){const user=await currentUser();if(!user)redirect("/login");return user;}
+export async function requirePasswordChangeUser(){const user=await currentUser(true);if(!user)redirect("/login");return user;}
+export async function requireUser(){const user=await requirePasswordChangeUser();if(user.role==="PROPIETARIO"&&user.mustChangePassword)redirect("/cambiar-clave");return user;}
 export async function requireRole(...roles:Role[]){
  const user=await requireUser();
  const panel=await panelActual(user);

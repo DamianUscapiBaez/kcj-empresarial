@@ -6,7 +6,7 @@ type CuentaConRoles={role:Role;grants?:{role:Role;revokedAt?:Date|null}[]};
 export function rolesHabilitados(user:CuentaConRoles):Role[]{
  return [...new Set([user.role,...(user.grants??[]).filter(g=>!g.revokedAt).map(g=>g.role)])];
 }
-export const TITULOS_AREA:Partial<Record<Role,string>>={GERENCIA:"Gerencia",RRHH:"Recursos Humanos",OPERACIONES:"Operaciones",JEFE_OPERACIONES:"Jefatura de Operaciones",SSOMA:"SSOMA",MANTENIMIENTO:"Mantenimiento",SALUD:"Salud Ocupacional",INSTRUCTOR:"Capacitación",ALMACEN:"Almacén y herramientas",HOMOLOGACION:"Homologación del personal",COLABORADOR:"Administrativo"};
+export const TITULOS_AREA:Partial<Record<Role,string>>={GERENCIA:"Gerencia",RRHH:"Recursos Humanos",OPERACIONES:"Operaciones",JEFE_OPERACIONES:"Jefatura de Operaciones",SSOMA:"SSOMA",MANTENIMIENTO:"Mantenimiento",SALUD:"Salud Ocupacional",INSTRUCTOR:"Capacitación",ALMACEN:"Almacén y herramientas",HOMOLOGACION:"Homologación del personal",COLABORADOR:"Administrativo",PROPIETARIO:"Proveedor vehicular"};
 export function nombrePanel(panel:PanelKCJ):string{
  if(panel==="administrativo")return "Administrativo";
  if(panel==="conductor")return "Conductor · KCJ CONNECT";
@@ -16,15 +16,16 @@ export function nombrePanel(panel:PanelKCJ):string{
 /** Una sola área ingresa sin selector; dos administrativas (Gerencia + RRHH) se eligen. */
 export function panelesDisponibles(user:CuentaConRoles):PanelKCJ[]{
  const roles=rolesHabilitados(user);
- const admin=roles.filter(r=>r!=="CONDUCTOR");
+ const admin=roles.filter(r=>r!=="CONDUCTOR"&&r!=="PROPIETARIO");
+ const proveedor=roles.includes("PROPIETARIO")?["area:PROPIETARIO" as const]:[];
  // Homologación, Instructor y Almacén son permisos/funciones, NO áreas de trabajo.
  const areasAdministrativas=admin.filter(r=>!["HOMOLOGACION","ALMACEN","INSTRUCTOR"].includes(r));
  const conductor=roles.includes("CONDUCTOR");
  // ADMIN conserva Centro de Control: no se puede crear un panel sin permisos de ADMIN.
  if(areasAdministrativas.length>1&&!admin.includes("ADMIN"))return [
-  ...areasAdministrativas.map(r=>`area:${r}` as const),...(conductor?["conductor" as const]:[])
+  ...areasAdministrativas.map(r=>`area:${r}` as const),...(conductor?["conductor" as const]:[]),...proveedor
  ];
- return [...(admin.length?["administrativo" as const]:[]),...(conductor?["conductor" as const]:[])];
+ return [...(admin.length?["administrativo" as const]:[]),...(conductor?["conductor" as const]:[]),...proveedor];
 }
 export function puedeSeleccionarPanel(user:CuentaConRoles,panel:string):panel is PanelKCJ {
  return panelesDisponibles(user).includes(panel as PanelKCJ);
@@ -40,5 +41,5 @@ export function rolesParaPanel(user:CuentaConRoles,panel:PanelKCJ):Role[]{
   const elegido=panel.slice(5) as Role;
   return roles.includes(elegido)&&elegido!=="CONDUCTOR"?[elegido]:[];
  }
- return roles.filter(r=>r!=="CONDUCTOR");
+ return roles.filter(r=>r!=="CONDUCTOR"&&r!=="PROPIETARIO");
 }

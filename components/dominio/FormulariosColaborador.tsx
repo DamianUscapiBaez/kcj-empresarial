@@ -22,7 +22,7 @@ export function RegistrarColaboradorForm({action,areas,puedeCrearAcceso=false}:{
   <Intro title="Registrar colaborador" subtitle="Una ficha por persona. Selecciona el área de trabajo principal y, solo si corresponde, una segunda área."/>
   <div className="grid gap-4 px-5 py-5 sm:grid-cols-2 sm:px-6">
    <label className={label}>DNI / documento *<input className={input} name="document" minLength={6} maxLength={16} required autoComplete="off"/></label>
-   <label className={label}>Nombres y apellidos *<input className={input} name="name" minLength={3} maxLength={150} required autoComplete="name"/></label>
+   <label className={label}>Nombres y apellidos *<input className={`${input} uppercase`} name="name" onChange={e=>{e.currentTarget.value=e.currentTarget.value.toLocaleUpperCase("es-PE");}} minLength={3} maxLength={150} required autoComplete="name"/></label>
    <label className={label}>Primera área de trabajo (principal) *<AreaSelect name="area" areas={areas} value={principal} onChange={v=>{setPrincipal(v);if(v===secundaria)setSecundaria("");}}/></label>
    <label className={label}>Segunda área de trabajo (opcional)<AreaSelect name="secondaryArea" areas={areas} value={secundaria} onChange={setSecundaria} optional excluded={principal}/></label>
    <label className={label}>Celular de contacto (opcional)<input className={input} name="phone" type="tel" autoComplete="tel" placeholder="Ej.: 987 654 321"/></label>

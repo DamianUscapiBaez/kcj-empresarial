@@ -24,7 +24,7 @@ export function AdminEditarCuentaForm({cuentas,action}:{cuentas:CuentaEditable[]
     <input className="input" name="login" value={login} onChange={e=>setLogin(e.target.value)} minLength={6} maxLength={32} required disabled={!id}/>
    </label>
    <label className="block min-w-0 space-y-1.5 text-sm font-medium text-slate-700">Nombre visible *
-    <input className="input" name="displayName" value={displayName} onChange={e=>setDisplayName(e.target.value)} minLength={3} maxLength={120} required disabled={!id}/>
+    <input className="input uppercase" name="displayName" value={displayName} onChange={e=>setDisplayName(e.target.value.toLocaleUpperCase("es-PE"))} minLength={3} maxLength={120} required disabled={!id}/>
    </label>
    <label className="block min-w-0 space-y-1.5 text-sm font-medium text-slate-700 sm:col-span-2">Motivo del cambio *
     <textarea className="input" name="reason" required minLength={10} maxLength={500} rows={2} placeholder="Indica por qué se actualizan estos datos"/>

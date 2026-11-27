@@ -21,7 +21,7 @@ export function validarAltaConAcceso(crearAcceso:boolean,actorEsAdmin:boolean):v
 }
 
 /** En el panel Conductor una cuenta dual solo opera servicios de su propia ficha. */
-export function autorizarOperacionServicio(panel:"administrativo"|"conductor",actorWorkerId:string|null,serviceWorkerId:string|null,rolOperaciones:boolean):void{
+export function autorizarOperacionServicio(panel:"administrativo"|"conductor"|`area:${string}`,actorWorkerId:string|null,serviceWorkerId:string|null,rolOperaciones:boolean):void{
  if(panel==="conductor"){
   if(!actorWorkerId||serviceWorkerId!==actorWorkerId)throw new Error("El conductor solo puede gestionar sus servicios asignados");
  }else if(!rolOperaciones){throw new Error("Solo Operaciones puede gestionar servicios ajenos desde el panel administrativo");}

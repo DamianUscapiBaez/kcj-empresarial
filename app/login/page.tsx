@@ -1,3 +1,4 @@
+import {ThemeToggle} from "@/components/ui/ThemeToggle";
 import {login} from "@/app/actions-auth";
 import {KcjLogo} from "@/components/ui/KcjLogo";
 import {UIIcon} from "@/components/ui/ModuleIcon";
@@ -12,7 +13,7 @@ export default async function LoginPage({searchParams}:{searchParams:Promise<{er
    <p className="relative text-xs font-medium text-slate-200">KCJ CONTROL · Uso corporativo autorizado</p>
   </section>
   <section className="flex min-h-screen items-center justify-center px-5 py-12 sm:px-10 lg:px-12">
-   <div className="w-full max-w-md">
+   <div className="w-full max-w-md"><div className="mb-4 flex justify-end"><ThemeToggle/></div>
     <div className="mb-8 lg:hidden"><KcjLogo size="large"/></div>
     <div className="mb-8"><p className="kcj-eyebrow">Acceso seguro</p><h2 className="mt-2 text-3xl font-black tracking-tight text-kcj-charcoal">Bienvenido a KCJ CONTROL</h2><p className="mt-2 text-sm leading-6 text-kcj-muted">Ingresa con tu cuenta corporativa asignada por Administración.</p></div>
     <div className="rounded-3xl border border-kcj-border bg-white p-6 shadow-pane sm:p-8">

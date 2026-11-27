@@ -62,7 +62,7 @@ test("Vista de dueño: filtrado en consulta SQL y separación de expediente priv
  const ficha=read("app/dashboard/ficha-vehicular/[id]/page.tsx");
  const ownerPart=ficha.split("if(isOwner){")[1].split("const vehicle=await prisma.vehicle.findUnique")[0];
  assert.match(ownerPart,/findFirst\(\{where:\{id,ownerId:user.ownerId\}/);
- assert.doesNotMatch(ownerPart,/custody:|workOrders:|checklists:|miningDocuments:|clearances:|VIN \/ serie/);
+ assert.doesNotMatch(ownerPart,/custody:|senderName:|receiverName:|worker:|services:|recordedBy:|performedBy:|VIN \/ serie/);
  const content=read("components/dominio/ContenidoModulo.tsx");
  assert.match(content,/GestionPropietarios/);
  assert.match(content,/where:\{ownerId:user.ownerId/);

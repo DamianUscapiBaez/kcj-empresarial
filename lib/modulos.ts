@@ -15,7 +15,7 @@ export const modules = [
  {slug:"simulacros-mmg",title:"Simulacro MMG – Manejo a la Izquierda",description:"Práctica teórica para conductores"},
  {slug:"rrhh",title:"Recursos Humanos",description:"Contratos y expediente laboral"},
  {slug:"salud",title:"Salud Ocupacional",description:"Solo aptitud operativa"},
- {slug:"propietarios",title:"Propietarios",description:"Fichas, unidades vinculadas y cuentas de acceso"},
+ {slug:"propietarios",title:"Proveedores vehiculares",description:"Fichas, unidades vinculadas y cuentas de acceso"},
  {slug:"comunicaciones",title:"Comunicaciones",description:"Avisos y confirmaciones"},
  {slug:"reportes",title:"Reportes y estadísticas",description:"Indicadores y auditoría"},
  {slug:"custodia",title:"Entrega y recepción",description:"Actas y custodia"},
@@ -33,7 +33,7 @@ const roles: Record<ModuleSlug,readonly Role[]> = {
  "simulacros-tecsup":["ADMIN","INSTRUCTOR","CONDUCTOR","GERENCIA","JEFE_OPERACIONES","OPERACIONES","SSOMA","MANTENIMIENTO","HOMOLOGACION"],
  "simulacros-mmg":["ADMIN","INSTRUCTOR","CONDUCTOR"],
  rrhh:["ADMIN","RRHH","GERENCIA"],salud:["ADMIN","SALUD"],propietarios:["ADMIN","OPERACIONES","JEFE_OPERACIONES","PROPIETARIO"],
- comunicaciones:["COLABORADOR","ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","CONDUCTOR","RRHH","SALUD","MANTENIMIENTO","HOMOLOGACION","INSTRUCTOR","ALMACEN","PROPIETARIO"],
+ comunicaciones:["COLABORADOR","ADMIN","GERENCIA","OPERACIONES","JEFE_OPERACIONES","SSOMA","CONDUCTOR","RRHH","SALUD","MANTENIMIENTO","HOMOLOGACION","INSTRUCTOR","ALMACEN"],
  reportes:["ADMIN","GERENCIA","JEFE_OPERACIONES","SSOMA","RRHH"], custodia:["ADMIN","OPERACIONES","JEFE_OPERACIONES","MANTENIMIENTO","SSOMA"],
  almacen:["ADMIN","ALMACEN","OPERACIONES","JEFE_OPERACIONES","RRHH","MANTENIMIENTO","GERENCIA","SSOMA"]
 };

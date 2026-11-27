@@ -1,4 +1,5 @@
-import {tieneAreaConductor,type AreasColaborador} from "./acceso-conductor-laboral";
+import {identificacionUniforme} from "./normalizacion-datos.ts";
+import {tieneAreaConductor,type AreasColaborador} from "./acceso-conductor-laboral.ts";
 /** Roles técnicos derivados de las áreas de trabajo: NO se preguntan otra vez al crear la ficha. */
 const AREA_ROL:Record<string,string>={
  "operaciones":"OPERACIONES", "mantenimiento":"MANTENIMIENTO", "recursos humanos":"RRHH",
@@ -12,7 +13,7 @@ export function dniCuentaInicial(documento:string):string{
  return dni; // Texto para preservar ceros iniciales; no convertir a número.
 }
 export function nombreNormalizado(value:string):string{
- return value.trim().replace(/\s+/g," ");
+ return identificacionUniforme(value);
 }
 export function rolesDesdeAreas(areas:AreasColaborador):{principal:string;adicionales:string[]}{
  const administrativas=[areas.area,areas.secondaryArea].filter((x):x is string=>Boolean(x)&&x!.trim().toLocaleLowerCase("es-PE")!=="conductor");

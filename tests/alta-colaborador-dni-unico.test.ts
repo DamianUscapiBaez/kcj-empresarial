@@ -19,7 +19,7 @@ test("Las áreas sin rol operativo autorizado no se convierten en ADMIN",()=>{
  assert.equal(rolesDesdeAreas({area:"Gerencia",secondaryArea:null}).principal,"GERENCIA");
 });
 test("Normalización de nombres para prevenir duplicados por espacios y mayúsculas",()=>{
- assert.equal(nombreNormalizado("  Ana   María   Pérez "),"Ana María Pérez");
+ assert.equal(nombreNormalizado("  Ana   María   Pérez "),"ANA MARÍA PÉREZ");
  assert.equal(nombreEsPosibleDuplicado(" ANA  María Pérez ","Ana María Pérez"),true);
  assert.equal(nombreEsPosibleDuplicado("Ana Pérez","Ana Torres"),false);
 });

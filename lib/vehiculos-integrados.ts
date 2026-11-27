@@ -2,7 +2,7 @@
  * Plantillas parametrizables: cantidades y equipamiento real los declara Operaciones.
  * No sustituyen la revisión de requisitos mineros de cada unidad o contrato.
  */
-import {validarTipoUnidadKCJ, type TipoUnidadKCJ} from "./tipos-unidad";
+import {validarTipoUnidadKCJ, type TipoUnidadKCJ} from "./tipos-unidad.ts";
 
 export const VERSION_CHECKLIST_VEHICULO=1;
 export type ResultadoItem="CONFORME"|"OBSERVADO"|"NO_CONFORME"|"NO_APLICA";

@@ -7,3 +7,6 @@ node_modules
 .DS_Store
 coverage
 *.tsbuildinfo
+
+# Resguardos temporales de reparación de PostgreSQL. No versionar ni compartir.
+respaldos_kcj_privados/

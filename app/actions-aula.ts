@@ -1,4 +1,5 @@
 "use server";
+import {umbralHistorico} from "@/lib/notas-vigesimales";
 import {requireEvidence,requireEvidenceOwned} from "@/lib/evidencias";
 import {randomBytes} from "node:crypto";
 import {Prisma} from "@prisma/client";
@@ -6,11 +7,12 @@ import {revalidatePath} from "next/cache";
 import {prisma} from "@/lib/prisma";
 import {requireRole,requireUser} from "@/lib/auth";
 import {tieneRol} from "@/lib/permisos-kcj";
+import {rolesSesion} from "@/lib/roles-sesion";
 import {field,numberField,optionalField,flag} from "@/lib/form";
 import {scoreQuiz,canTakeAttempt} from "@/lib/dominio-kcj";
 import {acreditableSinExamen,puedeCerrarParticipacionVirtual,validarRegistroPresencial,MODALIDADES_AULA} from "@/lib/asistencia-aula";
 import {catalogoChecklist,validarChecklist,VERSION_CHECKLIST_VEHICULO,type RespuestaChecklist} from "@/lib/vehiculos-integrados";
-export async function crearCurso(form:FormData){const u=await requireRole("ADMIN","INSTRUCTOR","SSOMA","SALUD");const c=await prisma.course.create({data:{title:field(form,"title",4,180),description:field(form,"description",10,4000),area:field(form,"area",3,80),hours:numberField(form,"hours",0.25,100),passingScore:numberField(form,"passingScore",50,100),maxAttempts:2,requireMaterial:true,requiresExam:!flag(form,"noExam"),modality:(()=>{const m=field(form,"modality");if(!MODALIDADES_AULA.includes(m as "PRESENCIAL"|"VIRTUAL"))throw new Error("Modalidad inválida");return m as "PRESENCIAL"|"VIRTUAL";})(),minVirtualMinutes:(()=>{const n=numberField(form,"minVirtualMinutes",1,240);if(!Number.isInteger(n))throw new Error("La duración mínima debe ser un número entero de minutos");return n;})()}});await prisma.auditLog.create({data:{userId:u.id,entity:"Course",entityId:c.id,action:"CREAR"}});revalidatePath("/dashboard/aula");}
+export async function crearCurso(form:FormData){const u=await requireRole("ADMIN","INSTRUCTOR","SSOMA","SALUD");const c=await prisma.course.create({data:{title:field(form,"title",4,180),description:field(form,"description",10,4000),area:field(form,"area",3,80),hours:numberField(form,"hours",0.25,100),passingScore:umbralHistorico(numberField(form,"passingScoreVigesimal",0,20)),maxAttempts:2,requireMaterial:true,requiresExam:!flag(form,"noExam"),modality:(()=>{const m=field(form,"modality");if(!MODALIDADES_AULA.includes(m as "PRESENCIAL"|"VIRTUAL"))throw new Error("Modalidad inválida");return m as "PRESENCIAL"|"VIRTUAL";})(),minVirtualMinutes:(()=>{const n=numberField(form,"minVirtualMinutes",1,240);if(!Number.isInteger(n))throw new Error("La duración mínima debe ser un número entero de minutos");return n;})()}});await prisma.auditLog.create({data:{userId:u.id,entity:"Course",entityId:c.id,action:"CREAR"}});revalidatePath("/dashboard/aula");}
 export async function crearPregunta(form:FormData){const u=await requireRole("ADMIN","INSTRUCTOR","SSOMA","SALUD");const courseId=field(form,"courseId");const options=[field(form,"optionA",1,800),field(form,"optionB",1,800),field(form,"optionC",1,800),field(form,"optionD",1,800)];const correct=field(form,"correct");if(!["0","1","2","3"].includes(correct))throw new Error("Alternativa correcta inválida");await prisma.$transaction(async tx=>{const course=await tx.course.findUniqueOrThrow({where:{id:courseId},include:{questions:true}});if(course.published)throw new Error("Curso publicado: para modificarlo cree otra versión");const q=await tx.question.create({data:{courseId,statement:field(form,"statement",8,1200),position:course.questions.length+1,choices:{create:options.map((text,index)=>({text,correct:index===Number(correct)}))}}});await tx.auditLog.create({data:{userId:u.id,entity:"Question",entityId:q.id,action:"CREAR"}});});revalidatePath("/dashboard/aula");}
 export async function publicarCurso(form:FormData){const u=await requireRole("INSTRUCTOR","SSOMA","SALUD","ADMIN");const courseId=field(form,"courseId");await prisma.$transaction(async tx=>{const c=await tx.course.findUniqueOrThrow({where:{id:courseId},include:{questions:{include:{choices:true}},materials:true}});if(c.published)throw new Error("Ya publicado");if(c.requireMaterial&&c.materials.length===0)throw new Error("Agregue material formativo antes de publicar");if(c.requiresExam&&(c.questions.length===0||c.questions.some(q=>q.choices.length<2||q.choices.filter(x=>x.correct).length!==1)))throw new Error("El cuestionario no está completo o no tiene exactamente una respuesta correcta por pregunta");await tx.course.update({where:{id:courseId},data:{published:true}});await tx.auditLog.create({data:{userId:u.id,entity:"Course",entityId:courseId,action:"PUBLICAR",payload:{version:c.version}}});});revalidatePath("/dashboard/aula");}
 export async function convocarCurso(form:FormData){const u=await requireRole("INSTRUCTOR","SSOMA","SALUD","ADMIN");const workerId=field(form,"workerId"),courseId=field(form,"courseId");const c=await prisma.course.findUniqueOrThrow({where:{id:courseId}});if(!c.published||c.archivedAt)throw new Error("El curso debe estar publicado y vigente");const e=await prisma.enrollment.upsert({where:{courseId_workerId:{courseId,workerId}},create:{courseId,workerId},update:{}});await prisma.auditLog.create({data:{userId:u.id,entity:"Enrollment",entityId:e.id,action:"CONVOCAR"}});revalidatePath("/dashboard/aula");}
@@ -67,8 +69,9 @@ export async function confirmarComunicado(form:FormData){const u=await requireUs
  */
 export async function registrarInspeccion(form:FormData){
  const u=await requireUser();
- if(!tieneRol(u,"CONDUCTOR","OPERACIONES","JEFE_OPERACIONES"))throw new Error("Sin permiso para inspeccionar");
- const workerId=tieneRol(u,"CONDUCTOR")?u.workerId:optionalField(form,"workerId");
+ const roles=await rolesSesion(u);
+ if(!roles.some(r=>r==="CONDUCTOR"||r==="OPERACIONES"||r==="JEFE_OPERACIONES"))throw new Error("Sin permiso para inspeccionar desde el área seleccionada");
+ const workerId=roles.includes("CONDUCTOR")?u.workerId:optionalField(form,"workerId");
  if(!workerId)throw new Error("Cuenta sin colaborador vinculado");
  const vehicleId=field(form,"vehicleId"),serviceId=field(form,"serviceId"),clientEventId=field(form,"clientEventId",8,100);
  const linked=await prisma.service.findUnique({where:{id:serviceId},include:{vehicle:{select:{type:true}}}});
@@ -84,6 +87,8 @@ export async function registrarInspeccion(form:FormData){
  await prisma.$transaction(async tx=>{
   const prior=await tx.inspection.findUnique({where:{clientEventId}});
   if(prior){if(prior.workerId!==workerId||prior.vehicleId!==vehicleId||prior.serviceId!==serviceId)throw new Error("Identificador de inspección en conflicto");return;}
+  const current=await tx.service.findUnique({where:{id:serviceId},include:{vehicle:{select:{type:true}}}});
+  if(!current||current.workerId!==workerId||current.vehicleId!==vehicleId||!["ASIGNADO","EN_CURSO"].includes(current.status)||current.vehicle?.type!==linked.vehicle!.type||current.startsAt.getTime()>now.getTime()+2*60*60*1000||current.endsAt.getTime()<now.getTime()-4*60*60*1000)throw new Error("La asignación cambió. Actualiza el formulario antes de registrar la inspección");
   const inspection=await tx.inspection.create({data:{workerId,vehicleId,serviceId,clientEventId,result:checked.status,templateVersion:VERSION_CHECKLIST_VEHICULO,checklist:{version:VERSION_CHECKLIST_VEHICULO,items:checked.items.map(x=>({code:x.code,result:x.result,note:x.note}))},occurredAt:now,evidenceKey:evidence,kilometers:km}});
   if(checked.status==="CRITICO"){
    const codes=new Set(checked.items.filter(x=>x.result==="NO_CONFORME").map(x=>x.code));

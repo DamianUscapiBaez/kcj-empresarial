@@ -28,11 +28,11 @@ export async function login(form:FormData){
 }
 export async function logout(){const raw=(await cookies()).get(COOKIE)?.value;if(raw)await prisma.session.updateMany({where:{tokenHash:tokenHash(raw)},data:{revokedAt:new Date()}});const jar=await cookies();jar.delete(COOKIE);jar.delete(COOKIE_PANEL);redirect("/login");}
 export async function changePassword(form:FormData){
- const user=await (async()=>{const {currentUser}=await import("@/lib/auth");return currentUser()})();
+ const user=await (async()=>{const {currentUser}=await import("@/lib/auth");return currentUser(true)})();
  if(!user)redirect("/login");
  const prev=String(form.get("actual")??"");const next=String(form.get("nueva")??"");const confirm=String(form.get("confirmar")??"");
  if(!passwordMatches(prev,user.passwordHash)||next.length<MIN_LONGITUD_CLAVE||next.length>MAX_LONGITUD_CLAVE||next!==confirm||next===prev)redirect("/cambiar-clave?error=1");
- await prisma.$transaction(async tx=>{await tx.user.update({where:{id:user.id},data:{passwordHash:passwordHash(next),mustChangePassword:false,failedLogins:0}});await tx.auditLog.create({data:{userId:user.id,entity:"User",entityId:user.id,action:"CAMBIO_CLAVE"}});const raw=(await cookies()).get(COOKIE)?.value;if(raw)await tx.session.updateMany({where:{userId:user.id,tokenHash:{not:tokenHash(raw)}},data:{revokedAt:new Date()}});});
+ await prisma.$transaction(async tx=>{const changed=await tx.user.updateMany({where:{id:user.id,active:true,passwordHash:user.passwordHash},data:{passwordHash:passwordHash(next),mustChangePassword:false,failedLogins:0,lockedUntil:null}});if(changed.count!==1)throw new Error("La cuenta cambió. Inicia sesión nuevamente antes de modificar la contraseña.");await tx.auditLog.create({data:{userId:user.id,entity:"User",entityId:user.id,action:"CAMBIO_CLAVE"}});const raw=(await cookies()).get(COOKIE)?.value;if(raw)await tx.session.updateMany({where:{userId:user.id,tokenHash:{not:tokenHash(raw)}},data:{revokedAt:new Date()}});});
  redirect("/dashboard");
 }
 export async function requireAccountActive(){return requireUser();}

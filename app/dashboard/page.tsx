@@ -17,7 +17,7 @@ export default async function Dashboard(){
  const panel=await panelActual(user);
  if(!panel)redirect("/seleccionar-panel");
  if(panel==="conductor")redirect("/dashboard/connect");
- if(user.role==="PROPIETARIO"){
+ if(panel==="area:PROPIETARIO"){
   const unidades=await prisma.vehicle.findMany({where:{ownerId:user.ownerId??"__SIN_PROPIETARIO__"},select:{id:true,code:true,plate:true,type:true,make:true,model:true},orderBy:{plate:"asc"},take:80});
   return <div className="space-y-5"><section className="rounded-2xl bg-kcj-charcoal p-6 text-white"><p className="text-xs font-bold uppercase tracking-widest">KCJ CONTROL · Portal del propietario</p><h1 className="mt-2 text-2xl font-black">Bienvenido, {user.displayName}</h1><p className="mt-2 text-sm">Aquí puedes consultar las unidades vehiculares registradas a tu nombre. No necesitas acceder a los módulos internos de KCJ.</p></section>
    <div className="card space-y-3"><h2 className="text-lg font-bold">Mis vehículos ({unidades.length})</h2>{unidades.length?unidades.map(v=><div key={v.id} className="flex flex-wrap items-center justify-between gap-3 border-b py-2"><div><p className="font-semibold">{v.plate} · {v.code}</p><p className="text-sm text-slate-600">{v.type} · {[v.make,v.model].filter(Boolean).join(" ")}</p></div><Link href={`/dashboard/ficha-vehicular/${v.id}`} className="rounded-lg border border-kcj-border px-3 py-2 text-sm font-semibold text-kcj-red">Consultar ficha</Link></div>):<p className="text-sm text-slate-600">Todavía no tienes vehículos vinculados; solicita a Operaciones que compruebe tu registro.</p>}<Link href="/dashboard/propietarios" className="inline-block font-semibold text-kcj-red underline">Abrir mis unidades</Link></div></div>;

@@ -1,0 +1,5 @@
+
+> kcj-control-empresarial@1.0.16-estabilizacion-27nov build
+> prisma generate && next build
+
+sh: 1: prisma: not found
